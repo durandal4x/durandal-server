@@ -1,0 +1,19 @@
+# /etc/systemd/system/durandal.service
+[Unit]
+Description=Durandal middleware server
+After=network.target
+
+[Service]
+User=deploy
+WorkingDirectory=/etc/durandal
+ExecStart=/apps/durandal/bin/durandal start
+ExecStop=/apps/durandal/bin/durandal stop
+Restart=on-failure
+LimitNOFILE=65536
+RemainAfterExit=yes
+RestartSec=5
+EnvironmentFile=/apps/durandal.vars
+SyslogIdentifier=durandal
+
+[Install]
+WantedBy=multi-user.target

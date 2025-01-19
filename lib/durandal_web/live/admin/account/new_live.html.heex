@@ -1,0 +1,15 @@
+<DurandalWeb.UserComponents.filter_bar selected="new" />
+
+<div class="row mt-4">
+  <div class="col">
+    <.live_component
+      module={DurandalWeb.Account.UserFormComponent}
+      id={:new}
+      action={:new}
+      user={%Durandal.Account.User{}}
+      patch={~p"/admin/accounts"}
+      title="New user form"
+      current_user={@current_user}
+    />
+  </div>
+</div>

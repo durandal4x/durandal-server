@@ -1,0 +1,27 @@
+<div id="index-live-wrapper">
+  <DurandalWeb.UserComponents.filter_bar selected="list">
+    <div class="col">
+      <input
+        type="text"
+        name="search-term"
+        id="search-term-input"
+        value=""
+        placeholder="Search"
+        class="form-control"
+        phx-keyup="update-search"
+        phx-debounce="500"
+      />
+    </div>
+  </DurandalWeb.UserComponents.filter_bar>
+
+  <.table id="users" rows={@users} table_class="table-sm table-hover">
+    <:col :let={user} label="Name"><%= user.name %></:col>
+    <:col :let={user} label="Groups"><%= Enum.join(user.groups, ", ") %></:col>
+
+    <:action :let={user}>
+      <.link navigate={~p"/admin/accounts/user/#{user}"} class="btn btn-secondary btn-sm">
+        Show
+      </.link>
+    </:action>
+  </.table>
+</div>

@@ -1,0 +1,10 @@
+- name: "Full setup for an Durandal instance with database"
+  hosts:
+    - combo
+  roles:
+    - debian
+    - postgres
+    - letsencrypt
+    - nginx
+    - durandal
+  

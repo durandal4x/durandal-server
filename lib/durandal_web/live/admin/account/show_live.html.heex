@@ -1,0 +1,52 @@
+<% selected =
+  cond do
+    assigns[:edit_mode] != true -> "show"
+    assigns[:edit_mode] == true and @user != nil and @user.id != nil -> "edit"
+    true -> "new"
+  end %>
+<DurandalWeb.UserComponents.filter_bar selected={selected} />
+
+<div :if={assigns[:edit_mode] != true} class="row mt-4">
+  <div class="col">
+    <.card :if={@user}>
+      <div class="float-end">
+        <a class="btn btn-info" href={~p"/admin/accounts/user/edit/#{@user.id}"}>
+          <Fontawesome.icon icon={StylingHelper.icon(:edit)} style="solid" /> Edit
+        </a>
+      </div>
+
+      <h4 class="d-inline-block">
+        <%= @user.name %>
+      </h4>
+
+      <table class="table table-sm">
+        <tbody>
+          <tr>
+            <td>Email</td>
+            <td><%= @user.email %></td>
+          </tr>
+          <tr>
+            <td>Groups</td>
+            <td><%= Enum.join(@user.groups, ", ") %></td>
+          </tr>
+          <tr>
+            <td>Permissions</td>
+            <td><%= Enum.join(@user.permissions, ", ") %></td>
+          </tr>
+        </tbody>
+      </table>
+    </.card>
+  </div>
+</div>
+
+<div :if={assigns[:edit_mode] == true and @user != nil} class="row mt-4">
+  <.live_component
+    module={DurandalWeb.Account.UserFormComponent}
+    id={:edit}
+    action={:edit}
+    user={@user}
+    patch={~p"/admin/accounts/user/#{@user.id}"}
+    title="Edit user form"
+    current_user={@current_user}
+  />
+</div>
