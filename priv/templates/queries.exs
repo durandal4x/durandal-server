@@ -37,10 +37,7 @@ defmodule Durandal.Context.ObjectQueries do
       where: objects.id in List.wrap(^id)
   end
 
-  def _where(query, :name, name) do
-    from objects in query,
-      where: objects.name in List.wrap(^name)
-  end
+  # WHERE FUNCTIONS
 
   def _where(query, :inserted_after, timestamp) do
     from objects in query,
@@ -75,15 +72,8 @@ defmodule Durandal.Context.ObjectQueries do
   end
 
   @spec _order_by(Ecto.Query.t(), any()) :: Ecto.Query.t()
-  def _order_by(query, "Name (A-Z)") do
-    from objects in query,
-      order_by: [asc: objects.name]
-  end
 
-  def _order_by(query, "Name (Z-A)") do
-    from objects in query,
-      order_by: [desc: objects.name]
-  end
+  # ORDER BY FUNCTIONS
 
   def _order_by(query, "Newest first") do
     from objects in query,

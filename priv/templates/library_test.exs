@@ -8,28 +8,19 @@ defmodule Durandal.ObjectLibTest do
 
   defp valid_attrs do
     %{
-      action: "some action",
-      ip: "127.0.0.1",
-      details: %{key: 1},
-      user_id: AccountFixtures.user_fixture().id
+      # VALID ATTRS
     }
   end
 
   defp update_attrs do
     %{
-      action: "some updated action",
-      ip: "127.0.0.127",
-      details: %{key: "updated"},
-      user_id: AccountFixtures.user_fixture().id
+      # UPDATE ATTRS
     }
   end
 
   defp invalid_attrs do
     %{
-      action: nil,
-      ip: nil,
-      details: nil,
-      user_id: nil
+      # INVALID ATTRS
     }
   end
 
@@ -60,7 +51,7 @@ defmodule Durandal.ObjectLibTest do
       assert {:ok, %Object{} = object} =
                Context.create_object(valid_attrs())
 
-      assert object.action == "some action"
+      assert object.FIRST_STRING_FIELD == "some FIRST_STRING_FIELD"
     end
 
     test "create_object/1 with invalid data returns error changeset" do
@@ -71,9 +62,9 @@ defmodule Durandal.ObjectLibTest do
       user_id = AccountFixtures.user_fixture().id
 
       assert {:ok, %Object{} = object} =
-               Context.create_object(user_id, "ip", "some action", %{})
+               Context.create_object(user_id, "ip", "some FIRST_STRING_FIELD", %{})
 
-      assert object.action == "some action"
+      assert object.FIRST_STRING_FIELD == "some FIRST_STRING_FIELD"
     end
 
     test "create_object/4 with invalid data returns error changeset" do
@@ -82,9 +73,9 @@ defmodule Durandal.ObjectLibTest do
 
     test "create_anonymous_object/3 with valid data creates a object" do
       assert {:ok, %Object{} = object} =
-               Context.create_anonymous_object("ip", "some action", %{})
+               Context.create_anonymous_object("ip", "some FIRST_STRING_FIELD", %{})
 
-      assert object.action == "some action"
+      assert object.FIRST_STRING_FIELD == "some FIRST_STRING_FIELD"
     end
 
     test "create_anonymous_object/3 with invalid data returns error changeset" do
@@ -97,7 +88,7 @@ defmodule Durandal.ObjectLibTest do
       assert {:ok, %Object{} = object} =
                Context.update_object(object, update_attrs())
 
-      assert object.action == "some updated action"
+      assert object.FIRST_STRING_FIELD == "some updated FIRST_STRING_FIELD"
     end
 
     test "update_object/2 with invalid data returns error changeset" do

@@ -4,36 +4,34 @@ defmodule Durandal.Context.Object do
   Description here
 
   ### Attributes
-
-  * `:v1` - Value 1
-  * `:v2` - Value 2
+  # SCHEMA DOC FIELDS
   """
-  use DurandalWeb, :schema
+  use Ecto.Schema
 
   @primary_key {:id, Ecto.UUID, autogenerate: true}
-  schema "object_table" do
-    field(:key, :string)
-    field(:value, :string)
+  schema "context_objects" do
+    # SCHEMA FIELDS
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @type id :: Ecto.UUID.t()
 
   # @type t :: %__MODULE__{
   #         id: id(),
-  #         key: String.t(),
-  #         field: String.t(),
+  # SCHEMA TYPE FIELDS
   #         inserted_at: DateTime.t(),
   #         updated_at: DateTime.t()
   #       }
 
+  @required_fields ~w()a
+  @optional_fields ~w()a
+
   @doc false
-  @spec changeset(map()) :: Ecto.Changeset.t()
   @spec changeset(map(), map()) :: Ecto.Changeset.t()
   def changeset(struct, attrs \\ %{}) do
     struct
-    |> cast(attrs, ~w(key value)a)
-    |> validate_required(~w(key value)a)
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
   end
 end

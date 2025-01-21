@@ -28,10 +28,10 @@ defmodule Application.Context.ObjectLib do
 
   ## Examples
 
-      iex> get_object!(123)
+      iex> get_object!("uuid1")
       %Object{}
 
-      iex> get_object!(456)
+      iex> get_object!("uuid2")
       ** (Ecto.NoResultsError)
 
   """
@@ -49,10 +49,10 @@ defmodule Application.Context.ObjectLib do
 
   ## Examples
 
-      iex> get_object(123)
+      iex> get_object("uuid1")
       %Object{}
 
-      iex> get_object(456)
+      iex> get_object("uuid2")
       nil
 
   """
