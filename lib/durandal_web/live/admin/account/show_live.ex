@@ -104,7 +104,10 @@ defmodule DurandalWeb.Admin.Account.ShowLive do
     socket
     |> assign(
       :tokens,
-      Durandal.Account.list_user_tokens(where: [user_id: user.id], order_by: ["Most recently used"])
+      Durandal.Account.list_user_tokens(
+        where: [user_id: user.id],
+        order_by: ["Most recently used"]
+      )
     )
   end
 end
