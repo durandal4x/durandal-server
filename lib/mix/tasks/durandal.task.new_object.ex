@@ -2,7 +2,7 @@ defmodule Mix.Tasks.Durandal.Task.NewObject.Docs do
   @moduledoc false
 
   def short_doc do
-    "A short description of your task"
+    "Create a set of helper files around contextual objects"
   end
 
   def example do
@@ -13,19 +13,13 @@ defmodule Mix.Tasks.Durandal.Task.NewObject.Docs do
     """
     #{short_doc()}
 
-    Longer explanation of your task
-
-    # mix durandal.task.new_object Context Object objects name:string age:integer
+    Create a set of helper files around contextual objects.
 
     ## Example
 
     ```bash
     #{example()}
     ```
-
-    ## Options
-
-    * `--example-option` or `-e` - Docs for your option
     """
   end
 end
@@ -303,7 +297,6 @@ if Code.ensure_loaded?(Igniter) do
 
     @impl Igniter.Mix.Task
     def igniter(igniter) do
-      # Do your work here and return an updated igniter
       igniter
       |> schema_file()
       |> library_file()
