@@ -12,8 +12,8 @@ defmodule Durandal.ObjectQueriesTest do
       null_values =
         ObjectQueries.object_query(
           where: [
-            key1: "",
-            key2: nil
+            not_a_key1: "",
+            not_a_key2: nil
           ]
         )
 
@@ -29,14 +29,16 @@ defmodule Durandal.ObjectQueriesTest do
       all_values =
         ObjectQueries.object_query(
           where: [
-            id: [1, 2],
-            id: 1,
+            id: ["uuid1", "uuid2"],
+            id: "uuid1",
+            # FIELD TEST
             inserted_after: Timex.now(),
             inserted_before: Timex.now(),
             updated_after: Timex.now(),
             updated_before: Timex.now()
           ],
           order_by: [
+            # ORDER BY TEST
             "Newest first",
             "Oldest first"
           ],
