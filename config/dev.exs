@@ -2,10 +2,6 @@ import Config
 
 # Configure your database
 config :durandal, Durandal.Repo,
-  username: "durandal_dev",
-  password: "postgres",
-  hostname: "localhost",
-  database: "durandal_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
