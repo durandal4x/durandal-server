@@ -20,11 +20,31 @@ if System.get_env("PHX_SERVER") do
   config :durandal, DurandalWeb.Endpoint, server: true
 end
 
+db_user = System.get_env("POSTGRES_USER", "durandal_dev")
+database = System.get_env("POSTGRES_DB", db_user)
+
+database =
+  if config_env() == :test do
+    "#{database}_test#{System.get_env("MIX_TEST_PARTITION")}"
+  else
+    database
+  end
+
+config :durandal, Durandal.Repo,
+  url: System.get_env("DATABASE_URL"),
+  username: db_user,
+  password: System.get_env("POSTGRES_PASSWORD", "password"),
+  database: database,
+  hostname: System.get_env("POSTGRES_HOST", "localhost"),
+  port: String.to_integer(System.get_env("POSTGRES_PORT", "5432")),
+  pool_size: String.to_integer(System.get_env("POSTGRES_POOL", "15"))
+
 if config_env() == :prod do
   System.get_env("DATABASE_USERNAME") || raise "environment variable DATABASE_USERNAME is missing"
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
+  # TODO: This doesn't need to be here, there's a block above :prod doing it
   config :durandal, Durandal.Repo,
     # ssl: true,
     username: System.get_env("DATABASE_USERNAME"),
