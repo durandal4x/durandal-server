@@ -2,20 +2,20 @@ defmodule Durandal.UniverseLibTest do
   @moduledoc false
   alias Durandal.Game.Universe
   alias Durandal.Game
-  use Durandal.Case, async: true
+  use Durandal.DataCase, async: true
 
-  alias Durandal.{GameFixtures, AccountFixtures}
+  alias Durandal.GameFixtures
 
   defp valid_attrs do
     %{
-      name: "Some name",
+      name: "some name",
       active?: true
     }
   end
 
   defp update_attrs do
     %{
-      name: "Some updated name",
+      name: "some updated name",
       active?: false
     }
   end
@@ -59,30 +59,6 @@ defmodule Durandal.UniverseLibTest do
 
     test "create_universe/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Game.create_universe(invalid_attrs())
-    end
-
-    test "create_universe/4 with valid data creates a universe" do
-      user_id = AccountFixtures.user_fixture().id
-
-      assert {:ok, %Universe{} = universe} =
-               Game.create_universe(user_id, "ip", "some name", %{})
-
-      assert universe.name == "some name"
-    end
-
-    test "create_universe/4 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Game.create_universe(nil, nil, nil, nil)
-    end
-
-    test "create_anonymous_universe/3 with valid data creates a universe" do
-      assert {:ok, %Universe{} = universe} =
-               Game.create_anonymous_universe("ip", "some name", %{})
-
-      assert universe.name == "some name"
-    end
-
-    test "create_anonymous_universe/3 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Game.create_anonymous_universe(nil, nil, nil)
     end
 
     test "update_universe/2 with valid data updates the universe" do

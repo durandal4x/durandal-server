@@ -174,7 +174,7 @@ defmodule Durandal.Account.UserTokenLib do
       context: context,
       user_agent: user_agent,
       ip: ip,
-      expires_at: DateTime.utc_now() |> DateTime.shift(day: 31)
+      expires_at: DateTime.utc_now() |> DateTime.add(31, :day)
     })
     |> Repo.insert()
   end
