@@ -1,6 +1,6 @@
 defmodule Durandal.ObjectQueriesTest do
   @moduledoc false
-  use Durandal.Case, async: true
+  use Durandal.DataCase, async: true
 
   alias Durandal.Context.ObjectQueries
 
@@ -32,10 +32,10 @@ defmodule Durandal.ObjectQueriesTest do
             id: ["uuid1", "uuid2"],
             id: "uuid1",
             # FIELD TEST
-            inserted_after: Timex.now(),
-            inserted_before: Timex.now(),
-            updated_after: Timex.now(),
-            updated_before: Timex.now()
+            inserted_after: DateTime.utc_now(),
+            inserted_before: DateTime.utc_now(),
+            updated_after: DateTime.utc_now(),
+            updated_before: DateTime.utc_now()
           ],
           order_by: [
             # ORDER BY TEST

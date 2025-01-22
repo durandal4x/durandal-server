@@ -600,7 +600,7 @@ defmodule DurandalWeb.CoreComponents do
     <Fontawesome.icon
       icon={if @value == true, do: assigns[true], else: assigns[false]}
       style={@rest[:style] || "regular"}
-      class={[@rest[:style] || "", @colour_class]}
+      class={"#{@rest[:style] || ""} #{@colour_class}"}
     />
     """
   end

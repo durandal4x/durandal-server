@@ -1,6 +1,6 @@
 defmodule Durandal.UniverseQueriesTest do
   @moduledoc false
-  use Durandal.Case, async: true
+  use Durandal.DataCase, async: true
 
   alias Durandal.Game.UniverseQueries
 
@@ -35,14 +35,14 @@ defmodule Durandal.UniverseQueriesTest do
             name: "Some string",
             active?: [true, false],
             active?: true,
-            inserted_after: Timex.now(),
-            inserted_before: Timex.now(),
-            updated_after: Timex.now(),
-            updated_before: Timex.now()
+            inserted_after: DateTime.utc_now(),
+            inserted_before: DateTime.utc_now(),
+            updated_after: DateTime.utc_now(),
+            updated_before: DateTime.utc_now()
           ],
           order_by: [
-            "name (A-Z)",
-            "name (Z-A)",
+            "Name (A-Z)",
+            "Name (Z-A)",
             "Newest first",
             "Oldest first"
           ],

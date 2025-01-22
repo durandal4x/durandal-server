@@ -2,9 +2,9 @@ defmodule Durandal.ObjectLibTest do
   @moduledoc false
   alias Durandal.Context.Object
   alias Durandal.Context
-  use Durandal.Case, async: true
+  use Durandal.DataCase, async: true
 
-  alias Durandal.{ContextFixtures, AccountFixtures}
+  alias Durandal.ContextFixtures
 
   defp valid_attrs do
     %{
@@ -56,30 +56,6 @@ defmodule Durandal.ObjectLibTest do
 
     test "create_object/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Context.create_object(invalid_attrs())
-    end
-
-    test "create_object/4 with valid data creates a object" do
-      user_id = AccountFixtures.user_fixture().id
-
-      assert {:ok, %Object{} = object} =
-               Context.create_object(user_id, "ip", "some FIRST_STRING_FIELD", %{})
-
-      assert object.FIRST_STRING_FIELD == "some FIRST_STRING_FIELD"
-    end
-
-    test "create_object/4 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Context.create_object(nil, nil, nil, nil)
-    end
-
-    test "create_anonymous_object/3 with valid data creates a object" do
-      assert {:ok, %Object{} = object} =
-               Context.create_anonymous_object("ip", "some FIRST_STRING_FIELD", %{})
-
-      assert object.FIRST_STRING_FIELD == "some FIRST_STRING_FIELD"
-    end
-
-    test "create_anonymous_object/3 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Context.create_anonymous_object(nil, nil, nil)
     end
 
     test "update_object/2 with valid data updates the object" do

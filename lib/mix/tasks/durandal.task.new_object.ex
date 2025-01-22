@@ -245,7 +245,7 @@ if Code.ensure_loaded?(Igniter) do
       valid_attrs =
         fields
         |> Enum.map_join(",\n", fn
-          [name, "string"] -> "#{name}: \"Some #{name}\""
+          [name, "string"] -> "#{name}: \"some #{name}\""
           [name, "integer"] -> "#{name}: 123"
           [name, "boolean"] -> "#{name}: true"
         end)
@@ -253,7 +253,7 @@ if Code.ensure_loaded?(Igniter) do
       update_attrs =
         fields
         |> Enum.map_join(",\n", fn
-          [name, "string"] -> "#{name}: \"Some updated #{name}\""
+          [name, "string"] -> "#{name}: \"some updated #{name}\""
           [name, "integer"] -> "#{name}: 456"
           [name, "boolean"] -> "#{name}: false"
         end)
@@ -319,8 +319,8 @@ if Code.ensure_loaded?(Igniter) do
         |> Enum.map(fn
           ["name", _type] ->
             [
-              "\"name (A-Z)\",",
-              "\"name (Z-A)\","
+              "\"Name (A-Z)\",",
+              "\"Name (Z-A)\","
             ]
 
           _ ->
@@ -390,6 +390,9 @@ if Code.ensure_loaded?(Igniter) do
       |> library_test_file()
       |> queries_test_file()
       |> create_migration()
+      |> Igniter.add_warning("Fixtures not created")
+
+      # TODO: Add fixtures
     end
   end
 else
