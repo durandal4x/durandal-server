@@ -34,7 +34,7 @@ defmodule Durandal.Context.ObjectQueries do
 
   def _where(query, :id, id) do
     from objects in query,
-      where: objects.id in List.wrap(^id)
+      where: objects.id in ^List.wrap(id)
   end
 
   # WHERE FUNCTIONS
@@ -88,27 +88,5 @@ defmodule Durandal.Context.ObjectQueries do
 
   @spec do_preload(Ecto.Query.t(), List.t() | nil) :: Ecto.Query.t()
   defp do_preload(query, nil), do: query
-
-  defp do_preload(query, _), do: query
-  # defp do_preload(query, preloads) do
-  #   preloads
-  #   |> List.wrap
-  #   |> Enum.reduce(query, fn key, query_acc ->
-  #     _preload(query_acc, key)
-  #   end)
-  # end
-
-  # @spec _preload(Ecto.Query.t(), any) :: Ecto.Query.t()
-  # def _preload(query, :relation) do
-  #   from object in query,
-  #     left_join: relations in assoc(object, :relation),
-  #     preload: [relation: relations]
-  # end
-
-  # def _preload(query, {:relation, join_query}) do
-  #   from object in query,
-  #     left_join: relations in subquery(join_query),
-  #       on: relations.id == query.relation_id,
-  #     preload: [relation: relations]
-  # end
+  # PRELOAD FUNCTIONS
 end

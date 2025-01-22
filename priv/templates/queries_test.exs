@@ -31,18 +31,20 @@ defmodule Durandal.ObjectQueriesTest do
           where: [
             id: ["uuid1", "uuid2"],
             id: "uuid1",
-            # FIELD TEST
             inserted_after: DateTime.utc_now(),
             inserted_before: DateTime.utc_now(),
             updated_after: DateTime.utc_now(),
-            updated_before: DateTime.utc_now()
+            updated_before: DateTime.utc_now(),
+            # FIELD TEST
           ],
           order_by: [
-            # ORDER BY TEST
             "Newest first",
-            "Oldest first"
+            "Oldest first",
+            # ORDER BY TEST
           ],
-          preload: []
+          preload: [
+            # PRELOAD TESTS
+          ]
         )
 
       assert all_values != @empty_query

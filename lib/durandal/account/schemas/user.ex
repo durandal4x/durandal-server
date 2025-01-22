@@ -32,6 +32,8 @@ defmodule Durandal.Account.User do
 
     has_many :tokens, Durandal.Account.UserToken
 
+    has_many :team_memberships, Durandal.Player.TeamMember
+
     timestamps(type: :utc_datetime)
   end
 
