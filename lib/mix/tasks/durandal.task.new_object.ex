@@ -137,9 +137,9 @@ if Code.ensure_loaded?(Igniter) do
       schema_fields =
         fields
         |> Enum.map_join("\n", fn
-          [name, "datetime"] -> "    field(#{name}, :utc_datetime)"
-          [name, type] -> "    field(#{name}, :#{type})"
-          [name, "array", sub_type] -> "    field(#{name}, {:array, :#{sub_type}})"
+          [name, "datetime"] -> "    field(:#{name}, :utc_datetime)"
+          [name, type] -> "    field(:#{name}, :#{type})"
+          [name, "array", sub_type] -> "    field(:#{name}, {:array, :#{sub_type}})"
         end)
 
       schema_type_fields =
@@ -187,7 +187,7 @@ if Code.ensure_loaded?(Igniter) do
             """
             def _where(query, :#{name}, #{name}) do
               from objects in query,
-                where: objects.#{name} in List.wrap(^#{name})
+                where: objects.#{name} in ^List.wrap(#{name})
             end
             """
         end)
@@ -363,12 +363,14 @@ if Code.ensure_loaded?(Igniter) do
         end)
 
       body = """
-      create_if_not_exists table(:#{String.downcase(context)}_#{plural}, primary_key: false) do
-        add(:id, :uuid, primary_key: true, null: false)
+      def changed do
+        create_if_not_exists table(:#{String.downcase(context)}_#{plural}, primary_key: false) do
+          add(:id, :uuid, primary_key: true, null: false)
 
-        #{field_defs}
+          #{field_defs}
 
-        timestamps(type: :utc_datetime)
+          timestamps(type: :utc_datetime)
+        end
       end
       """
 

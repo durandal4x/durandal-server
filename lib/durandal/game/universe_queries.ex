@@ -34,17 +34,17 @@ defmodule Durandal.Game.UniverseQueries do
 
   def _where(query, :id, id) do
     from universes in query,
-      where: universes.id in List.wrap(^id)
+      where: universes.id in ^List.wrap(id)
   end
 
   def _where(query, :name, name) do
     from universes in query,
-      where: universes.name in List.wrap(^name)
+      where: universes.name in ^List.wrap(name)
   end
 
   def _where(query, :active?, active?) do
     from universes in query,
-      where: universes.active? in List.wrap(^active?)
+      where: universes.active? in ^List.wrap(active?)
   end
 
   def _where(query, :inserted_after, timestamp) do

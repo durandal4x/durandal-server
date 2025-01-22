@@ -8,11 +8,12 @@ defmodule Durandal.Game.Universe do
   * `:active?` - field description
   """
   use Ecto.Schema
+  import Ecto.Changeset
 
   @primary_key {:id, Ecto.UUID, autogenerate: true}
   schema "game_universes" do
-    field(name, :string)
-    field(active?, :boolean)
+    field(:name, :string)
+    field(:active?, :boolean)
 
     timestamps(type: :utc_datetime)
   end

@@ -7,6 +7,7 @@ defmodule Durandal.Context.Object do
   # SCHEMA DOC FIELDS
   """
   use Ecto.Schema
+  import Ecto.Changeset
 
   @primary_key {:id, Ecto.UUID, autogenerate: true}
   schema "context_objects" do
