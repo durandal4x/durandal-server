@@ -24,16 +24,16 @@ end
 # unfortunately `mix test` doesn't work correctly so for now dockerised users can't run the unit
 # tests until this gets worked out
 if config_env() != :test do
-config :durandal, Durandal.Repo,
-  url: System.get_env("POSTGRES_URL"),
-  username: System.get_env("POSTGRES_USERNAME", "durandal_dev"),
-  password: System.get_env("POSTGRES_PASSWORD", "postgres"),
-  hostname: System.get_env("POSTGRES_HOSTNAME", "postgres"),
-  database: System.get_env("POSTGRES_DB_NAME", "durandal_dev"),
-  port: String.to_integer(System.get_env("POSTGRES_PORT", "5432")),
-  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
-  stacktrace: true,
-  show_sensitive_data_on_connection_error: true
+  config :durandal, Durandal.Repo,
+    url: System.get_env("POSTGRES_URL"),
+    username: System.get_env("POSTGRES_USERNAME", "durandal_dev"),
+    password: System.get_env("POSTGRES_PASSWORD", "postgres"),
+    hostname: System.get_env("POSTGRES_HOSTNAME", "localhost"),
+    database: System.get_env("POSTGRES_DB_NAME", "durandal_dev"),
+    port: String.to_integer(System.get_env("POSTGRES_PORT", "5432")),
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+    stacktrace: true,
+    show_sensitive_data_on_connection_error: true
 end
 
 if config_env() == :prod do

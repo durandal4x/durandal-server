@@ -69,10 +69,12 @@ defmodule Durandal.MixProject do
       {:dart_sass, "~> 0.6"},
       {:fontawesome_icons, "~> 0.0.6"},
       {:cachex, "~> 3.6"},
-      {:typedstruct, "~> 0.5.2", runtime: false},
       {:excoveralls, "~> 0.18.1", only: :test, runtime: false},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:igniter, "~> 0.5", only: [:dev, :test]}
+      {:igniter, "~> 0.5", only: [:dev, :test]},
+      {:progress_bar, "~> 3.0", only: [:dev, :test]},
+      {:db_cluster, "~> 0.0.3"},
+      {:oban, "~> 2.19"}
     ]
   end
 

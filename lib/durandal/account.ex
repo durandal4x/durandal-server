@@ -1,4 +1,7 @@
 defmodule Durandal.Account do
+  @moduledoc """
+
+  """
   alias Durandal.Account.{User, UserLib, UserQueries}
 
   @doc false

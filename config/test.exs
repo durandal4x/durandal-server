@@ -7,7 +7,7 @@ import Config
 # Run `mix help test` for more information.
 config :durandal, Durandal.Repo,
   username: "durandal_test",
-  password: "123456789",
+  password: "postgres",
   hostname: "localhost",
   database: "durandal_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
