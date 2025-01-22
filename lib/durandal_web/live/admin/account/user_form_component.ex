@@ -10,7 +10,7 @@ defmodule DurandalWeb.Account.UserFormComponent do
     ~H"""
     <div>
       <h3>
-        <%= @title %>
+        {@title}
       </h3>
 
       <.form for={@form} phx-target={@myself} phx-change="validate" phx-submit="save" id="user-form">

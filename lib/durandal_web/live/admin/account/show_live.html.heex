@@ -16,22 +16,22 @@
       </div>
 
       <h4 class="d-inline-block">
-        <%= @user.name %>
+        {@user.name}
       </h4>
 
       <table class="table table-sm">
         <tbody>
           <tr>
             <td>Email</td>
-            <td><%= @user.email %></td>
+            <td>{@user.email}</td>
           </tr>
           <tr>
             <td>Groups</td>
-            <td><%= Enum.join(@user.groups, ", ") %></td>
+            <td>{Enum.join(@user.groups, ", ")}</td>
           </tr>
           <tr>
             <td>Permissions</td>
-            <td><%= Enum.join(@user.permissions, ", ") %></td>
+            <td>{Enum.join(@user.permissions, ", ")}</td>
           </tr>
         </tbody>
       </table>

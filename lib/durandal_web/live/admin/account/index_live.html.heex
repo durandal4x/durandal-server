@@ -15,8 +15,8 @@
   </DurandalWeb.UserComponents.filter_bar>
 
   <.table id="users" rows={@users} table_class="table-sm table-hover">
-    <:col :let={user} label="Name"><%= user.name %></:col>
-    <:col :let={user} label="Groups"><%= Enum.join(user.groups, ", ") %></:col>
+    <:col :let={user} label="Name">{user.name}</:col>
+    <:col :let={user} label="Groups">{Enum.join(user.groups, ", ")}</:col>
 
     <:action :let={user}>
       <.link navigate={~p"/admin/accounts/user/#{user}"} class="btn btn-secondary btn-sm">
