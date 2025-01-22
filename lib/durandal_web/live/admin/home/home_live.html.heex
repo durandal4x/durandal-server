@@ -3,6 +3,15 @@
 <div class="row">
   <.menu_card
     :if={allow?(@current_user, ~w(admin))}
+    icon="fa-game-board"
+    icon_class="fa-duotone"
+    url={~p"/admin/games"}
+  >
+    Games
+  </.menu_card>
+
+  <.menu_card
+    :if={allow?(@current_user, ~w(admin))}
     icon="fa-tachometer-alt"
     icon_class="fa-duotone"
     url={~p"/admin/live_dashboard"}

@@ -37,7 +37,7 @@ defmodule Durandal.Game.UniverseLib do
   """
   @spec get_universe!(Universe.id(), Durandal.query_args()) :: Universe.t()
   def get_universe!(universe_id, query_args \\ []) do
-    (query_args ++ [id: universe_id])
+    (query_args ++ [id: universe_id, limit: 1])
     |> UniverseQueries.universe_query()
     |> Repo.one!()
   end
@@ -58,7 +58,7 @@ defmodule Durandal.Game.UniverseLib do
   """
   @spec get_universe(Universe.id(), Durandal.query_args()) :: Universe.t() | nil
   def get_universe(universe_id, query_args \\ []) do
-    (query_args ++ [id: universe_id])
+    (query_args ++ [id: universe_id, limit: 1])
     |> UniverseQueries.universe_query()
     |> Repo.one()
   end

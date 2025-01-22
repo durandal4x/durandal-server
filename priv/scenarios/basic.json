@@ -1,0 +1,196 @@
+{
+  "systems": [
+    {
+      "id": "$solar-system",
+      "name": "Solar System",
+      "type": "system",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "size": 1000,
+      "objects": [
+        {
+          "id": "$sun",
+          "name": "Sun",
+          "type": "$so-star",
+          
+          "position": [0, 0, 0],
+          "velocity": [0, 0, 0],
+          
+          "orbiting": null,
+          "orbit_distance": 0,
+          "orbit_clockwise": true,
+          "orbit_period": 0
+        },
+        {
+          "id": "$earth",
+          "name": "Earth",
+          "type": "$so-planet",
+          "position": [10000, 0, 0],
+          "velocity": [0, 0, 0],
+          "orbiting": "$sun",
+          "orbit_distance": 100,
+          "orbit_clockwise": true,
+          "orbit_period": 100
+        }
+      ],
+      "stations": [
+        {
+          "id": "$station1",
+          "name": "Station 1",
+          "team": "$team1",
+          "position": [7500, 2500, 0],
+          "velocity": [5, 0, 0],
+          "orbiting": null,
+          "orbit_distance": null,
+          "orbit_clockwise": null,
+          "orbit_period": null,
+          "modules": [
+            {
+              "type": "$sm-solar",
+              "build_progress": 100,
+              "health": 100
+            },
+            {
+              "type": "$sm-shipyard",
+              "build_progress": 100,
+              "health": 100
+            },
+            {
+              "type": "$sm-laser-turret",
+              "build_progress": 100,
+              "health": 100
+            }
+          ]
+        },
+        {
+          "id": "$station2",
+          "name": "Station 2",
+          "team": "$team2",
+          "position": [-7500, 2500, 0],
+          "velocity": [5, 0, 0],
+          "orbiting": null,
+          "orbit_distance": null,
+          "orbit_clockwise": null,
+          "orbit_period": null,
+          "modules": [
+            {
+              "type": "$sm-solar",
+              "build_progress": 100,
+              "health": 100
+            },
+            {
+              "type": "$sm-shipyard",
+              "build_progress": 100,
+              "health": 100
+            },
+            {
+              "type": "$sm-laser-turret",
+              "build_progress": 100,
+              "health": 100
+            }
+          ]
+        }
+      ],
+      "ships": [
+        {
+          "name": "Team 1 fighter",
+          "team": "$team1",
+          "type": "$ship-fighter",
+          "position": [7500, 2500, 0],
+          "velocity": [0, 0, 0],
+          "orbiting": null,
+          "orbit_distance": null,
+          "orbit_clockwise": null,
+          "orbit_period": null,
+          "build_progress": 100,
+          "health": 100
+        },
+        {
+          "name": "Team 1 builder",
+          "team": "$team1",
+          "type": "$ship-builder",
+          "position": [7500, 2500, 0],
+          "velocity": [0, 0, 0],
+          "orbiting": null,
+          "orbit_distance": null,
+          "orbit_clockwise": null,
+          "orbit_period": null,
+          "build_progress": 100,
+          "health": 100
+        },
+        {
+          "name": "Team 2 fighter",
+          "team": "$team2",
+          "type": "$ship-fighter",
+          "position": [-7500, 2500, 0],
+          "velocity": [0, 0, 0],
+          "orbiting": null,
+          "orbit_distance": null,
+          "orbit_clockwise": null,
+          "orbit_period": null,
+          "build_progress": 100,
+          "health": 100
+        },
+        {
+          "name": "Team 2 builder",
+          "team": "$team2",
+          "type": "$ship-builder",
+          "position": [-7500, 2500, 0],
+          "velocity": [0, 0, 0],
+          "orbiting": null,
+          "orbit_distance": null,
+          "orbit_clockwise": null,
+          "orbit_period": null,
+          "build_progress": 100,
+          "health": 100
+        }
+      ]
+    }
+  ],
+  "ship_types": [
+    {
+      "id": "$ship-fighter",
+      "name": "Fighter"
+    },
+    {
+      "id": "$ship-builder",
+      "name": "Builder"
+    }
+  ],
+  "station_module_types": [
+    {
+      "id": "$sm-solar",
+      "name": "Solar panels"
+    },
+    {
+      "id": "$sm-shipyard",
+      "name": "Shipyard"
+    },
+    {
+      "id": "$sm-laser-turret",
+      "name": "Laser turret"
+    }
+  ],
+  "system_object_types": [
+    {
+      "id": "$so-star",
+      "name": "Star"
+    },
+    {
+      "id": "$so-planet",
+      "name": "Planet"
+    }
+  ],
+  "teams": [
+    {
+      "id": "$team1",
+      "name": "Team 1"
+    },
+    {
+      "id": "$team2",
+      "name": "Team 2"
+    }
+  ]
+}

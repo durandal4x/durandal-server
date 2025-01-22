@@ -32,7 +32,9 @@ defmodule Durandal.Account.User do
 
     has_many :tokens, Durandal.Account.UserToken
 
-    timestamps(type: :utc_datetime)
+    has_many :team_memberships, Durandal.Player.TeamMember
+
+    timestamps(type: :utc_datetime_usec)
   end
 
   @type id :: Ecto.UUID.t()

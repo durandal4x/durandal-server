@@ -8,7 +8,7 @@ defmodule Durandal.Repo.Migrations.CreateGameUniversesTable do
       add(:name, :string)
       add(:active?, :boolean)
 
-      timestamps(type: :utc_datetime)
+      timestamps(type: :utc_datetime_usec)
     end
   end
 end

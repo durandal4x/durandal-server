@@ -316,7 +316,8 @@ defmodule Durandal.Account.UserLib do
       allow_ip_login_attempt?(ip) == false ->
         false
 
-      # allow_user_login_attempt?(userid) == false ->
+      # TODO: Include this check
+      # not allow_user_login_attempt?(userid) ->
       #   false
 
       true ->

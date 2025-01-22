@@ -65,28 +65,56 @@ defmodule DurandalWeb.Router do
     end
   end
 
-  scope "/play", DurandalWeb.Play do
+  scope "/admin/games", DurandalWeb.Admin.Game do
     pipe_through [:browser]
 
-    live_session :play_index,
+    live_session :admin_game_index,
       on_mount: [
-        {DurandalWeb.UserAuth, :ensure_authenticated}
+        {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserAuth, {:authorise, "admin"}}
       ] do
-      live "/new", NewLive.Index, :index
-      live "/find", FindLive.Index, :index
-      live "/find/:game_id", FindLive.Index, :game
-    end
-
-    live_session :play_in_game,
-      on_mount: [
-        {DurandalWeb.UserAuth, :ensure_authenticated}
-      ] do
-      live "/ward/:game_id", WardLive.Index, :index
-      live "/patients/:game_id", PatientsLive.Index, :index
-      live "/desk/:game_id", DeskLive.Index, :index
-      live "/job/:game_id/:job_id", JobLive.Index, :index
+      live "/", HomeLive, :index
     end
   end
+
+  scope "/admin/games/universes", DurandalWeb.Admin.Game.Universe do
+    pipe_through [:browser]
+
+    live_session :admin_universes,
+      on_mount: [
+        {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
+      ] do
+      live "/", IndexLive
+      live "/new", NewLive
+      live "/edit/:universe_id", ShowLive, :edit
+      live "/delete/:universe_id", ShowLive, :delete
+      live "/:universe_id", ShowLive
+    end
+  end
+
+  # scope "/play", DurandalWeb.Play do
+  #   pipe_through [:browser]
+
+  #   live_session :play_index,
+  #     on_mount: [
+  #       {DurandalWeb.UserAuth, :ensure_authenticated}
+  #     ] do
+  #     live "/new", NewLive.Index, :index
+  #     live "/find", FindLive.Index, :index
+  #     live "/find/:game_id", FindLive.Index, :game
+  #   end
+
+  #   live_session :play_in_game,
+  #     on_mount: [
+  #       {DurandalWeb.UserAuth, :ensure_authenticated}
+  #     ] do
+  #     live "/ward/:game_id", WardLive.Index, :index
+  #     live "/patients/:game_id", PatientsLive.Index, :index
+  #     live "/desk/:game_id", DeskLive.Index, :index
+  #     live "/job/:game_id/:job_id", JobLive.Index, :index
+  #   end
+  # end
 
   scope "/", DurandalWeb do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
