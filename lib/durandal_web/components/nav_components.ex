@@ -30,7 +30,7 @@ defmodule DurandalWeb.NavComponents do
         <%= if assigns[:icon] do %>
           <i class={"fa-fw #{@icon}"}></i>
         <% end %>
-        <%= @text %>
+        {@text}
       </a>
     </li>
     """
@@ -110,7 +110,7 @@ defmodule DurandalWeb.NavComponents do
   def tab_header(assigns) do
     ~H"""
     <ul class="nav nav-tabs" role="tablist">
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </ul>
     """
   end
@@ -127,7 +127,7 @@ defmodule DurandalWeb.NavComponents do
     ~H"""
     <li class="nav-item">
       <.link patch={@url} class={"nav-link #{@active_class}"}>
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </.link>
     </li>
     """
@@ -191,7 +191,7 @@ defmodule DurandalWeb.NavComponents do
     <div class={"#{@col_classes} menu-card #{@extra_classes}"} {@dynamic_attrs}>
       <a href={@url} class="block-link" style={@style}>
         <Fontawesome.icon icon={@icon} style={@icon_class} size={@icon_size} /><br />
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </a>
     </div>
     """
@@ -222,7 +222,7 @@ defmodule DurandalWeb.NavComponents do
           style={if @active, do: "solid", else: "regular"}
           size="2x"
         /><br />
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </a>
     </div>
     """
@@ -247,7 +247,7 @@ defmodule DurandalWeb.NavComponents do
     ~H"""
     <div class={"btn btn-outline-#{@colour} #{@active_class}"} {@rest}>
       <Fontawesome.icon :if={@icon} icon={@icon} style={if @active, do: "solid", else: "regular"} />
-      &nbsp; <%= render_slot(@inner_block) %>
+      &nbsp; {render_slot(@inner_block)}
     </div>
     """
   end
@@ -272,7 +272,7 @@ defmodule DurandalWeb.NavComponents do
     ~H"""
     <.link navigate={@url} class={"btn btn-outline-#{@colour} #{@active_class}"} {@rest}>
       <Fontawesome.icon :if={@icon} icon={@icon} style={if @active, do: "solid", else: "regular"} />
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </.link>
     """
   end
@@ -306,7 +306,7 @@ defmodule DurandalWeb.NavComponents do
     ~H"""
     <.link patch={@url} class={"btn btn-outline-#{@colour} #{@active_class}"} {@rest}>
       <Fontawesome.icon :if={@icon} icon={@icon} style={if @active, do: "solid", else: "regular"} />
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </.link>
     """
   end
@@ -324,11 +324,11 @@ defmodule DurandalWeb.NavComponents do
               <%= for breadcrumb <- breadcrumb_trail do %>
                 <%= if breadcrumb[:url] == "#" do %>
                   <li class="breadcrumb-item active" aria-current="page">
-                    <a href={breadcrumb[:url]}><%= breadcrumb[:name] %></a>
+                    <a href={breadcrumb[:url]}>{breadcrumb[:name]}</a>
                   </li>
                 <% else %>
                   <li class="breadcrumb-item">
-                    <a href={breadcrumb[:url]}><%= breadcrumb[:name] %></a>
+                    <a href={breadcrumb[:url]}>{breadcrumb[:name]}</a>
                   </li>
                 <% end %>
               <% end %>
@@ -338,7 +338,7 @@ defmodule DurandalWeb.NavComponents do
 
         <%= if assigns[:breadcrumb_extra] do %>
           <div id="breadcrumb-right">
-            <%= assigns[:breadcrumb_extra] %>
+            {assigns[:breadcrumb_extra]}
           </div>
         <% end %>
       </div>
@@ -392,7 +392,7 @@ defmodule DurandalWeb.NavComponents do
           <% else %>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <% end %>
-          &nbsp; <%= r.item_label %>
+          &nbsp; {r.item_label}
         </a>
       </div>
     </div>
@@ -441,7 +441,7 @@ defmodule DurandalWeb.NavComponents do
             id="signout-link"
           >
             <i class="fa-regular fa-sign-out fa-fw"></i> &nbsp;
-            Sign out <%= @current_user.name %>
+            Sign out {@current_user.name}
           </a>
         </form>
       </div>

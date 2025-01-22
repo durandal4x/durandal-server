@@ -22,7 +22,7 @@ defmodule DurandalWeb.BootstrapComponents do
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
-        <%= @label %>
+        {@label}
       </button>
       <ul class="dropdown-menu">
         <.dropdown_item
@@ -53,7 +53,7 @@ defmodule DurandalWeb.BootstrapComponents do
         class={["dropdown-item cursor-pointer", @selected && "bg-primary_transparent", ""]}
         phx-click={@click}
       >
-        <%= @label %>
+        {@label}
       </span>
     </li>
     """
@@ -61,7 +61,7 @@ defmodule DurandalWeb.BootstrapComponents do
 
   def dropdown_item(%{url: _} = assigns) do
     ~H"""
-    <li><a class="dropdown-item" href={@url}><%= @label %></a></li>
+    <li><a class="dropdown-item" href={@url}>{@label}</a></li>
     """
   end
 
@@ -84,7 +84,7 @@ defmodule DurandalWeb.BootstrapComponents do
       {@rest}
     >
       <div class="card-body">
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </div>
     </div>
     """
@@ -110,7 +110,7 @@ defmodule DurandalWeb.BootstrapComponents do
       ]}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end

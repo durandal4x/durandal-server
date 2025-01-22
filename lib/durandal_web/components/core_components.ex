@@ -45,7 +45,7 @@ defmodule DurandalWeb.CoreComponents do
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <%= render_slot(@title) %>
+            {render_slot(@title)}
             <button
               type="button"
               class="btn-close"
@@ -57,11 +57,11 @@ defmodule DurandalWeb.CoreComponents do
           </div>
 
           <div class="modal-body">
-            <%= render_slot(@body) %>
+            {render_slot(@body)}
           </div>
 
           <div :if={not Enum.empty?(@footer)} class="modal-footer">
-            <%= render_slot(@footer) %>
+            {render_slot(@footer)}
           </div>
         </div>
       </div>
@@ -128,7 +128,7 @@ defmodule DurandalWeb.CoreComponents do
         </button>
       </div>
       <div class="toast-body">
-        <%= msg %>
+        {msg}
       </div>
     </div>
     """
@@ -190,9 +190,9 @@ defmodule DurandalWeb.CoreComponents do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
       <div class="">
-        <%= render_slot(@inner_block, f) %>
+        {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
-          <%= render_slot(action, f) %>
+          {render_slot(action, f)}
         </div>
       </div>
     </.form>
@@ -220,7 +220,7 @@ defmodule DurandalWeb.CoreComponents do
       ]}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end
@@ -282,9 +282,9 @@ defmodule DurandalWeb.CoreComponents do
         {@rest}
       />
       <label class="form-check-label" for={@id}>
-        <strong><%= @label %></strong><%= assigns[:text] %>
+        <strong>{@label}</strong>{assigns[:text]}
         <%= if assigns[:description] do %>
-          &nbsp;<%= assigns[:description] %>
+          &nbsp;{assigns[:description]}
         <% end %>
       </label>
     </div>
@@ -294,12 +294,12 @@ defmodule DurandalWeb.CoreComponents do
   def input(%{type: "select"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
-      <.label :if={@label} for={@id}><%= @label %></.label>
+      <.label :if={@label} for={@id}>{@label}</.label>
       <select id={@id} name={@name} class="form-control" multiple={@multiple} {@rest}>
-        <option :if={@prompt} value=""><%= @prompt %></option>
-        <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+        <option :if={@prompt} value="">{@prompt}</option>
+        {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -307,7 +307,7 @@ defmodule DurandalWeb.CoreComponents do
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
-      <.label :if={@label} for={@id}><%= @label %></.label>
+      <.label :if={@label} for={@id}>{@label}</.label>
       <br />
       <textarea
         id={@id || @name}
@@ -319,7 +319,7 @@ defmodule DurandalWeb.CoreComponents do
         ]}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -327,7 +327,7 @@ defmodule DurandalWeb.CoreComponents do
   def input(assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
-      <.label :if={@label} for={@id}><%= @label %></.label>
+      <.label :if={@label} for={@id}>{@label}</.label>
       <input
         type={@type}
         name={@name}
@@ -339,7 +339,7 @@ defmodule DurandalWeb.CoreComponents do
         ]}
         {@rest}
       />
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -353,7 +353,7 @@ defmodule DurandalWeb.CoreComponents do
   def label(assigns) do
     ~H"""
     <label for={@for} class="control-label">
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </label>
     """
   end
@@ -367,7 +367,7 @@ defmodule DurandalWeb.CoreComponents do
     ~H"""
     <p class="phx-no-feedback:hidden mt-3 flex gap-3 text-sm leading-6 text-danger">
       <Fontawesome.icon icon="circle-exclamation" style="regular" />
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </p>
     """
   end
@@ -385,13 +385,13 @@ defmodule DurandalWeb.CoreComponents do
     <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
         <h1 class="text-lg font-semibold leading-8 text-zinc-800">
-          <%= render_slot(@inner_block) %>
+          {render_slot(@inner_block)}
         </h1>
         <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
-          <%= render_slot(@subtitle) %>
+          {render_slot(@subtitle)}
         </p>
       </div>
-      <div class="flex-none"><%= render_slot(@actions) %></div>
+      <div class="flex-none">{render_slot(@actions)}</div>
     </header>
     """
   end
@@ -441,9 +441,9 @@ defmodule DurandalWeb.CoreComponents do
       <table class={"table #{@table_class}"}>
         <thead class="">
           <tr>
-            <th :for={col <- @col} class=""><%= col[:label] %></th>
+            <th :for={col <- @col} class="">{col[:label]}</th>
             <th :if={@action != []} colspan={Enum.count(@action)}>
-              <span class="visually-hidden"><%= gettext("Actions") %></span>
+              <span class="visually-hidden">{gettext("Actions")}</span>
             </th>
           </tr>
         </thead>
@@ -459,12 +459,12 @@ defmodule DurandalWeb.CoreComponents do
             class={@row_class && @row_class.(row)}
           >
             <td :for={{col, _i} <- Enum.with_index(@col)} class={["", @row_click && "cursor-pointer"]}>
-              <%= render_slot(col, @row_item.(row)) %>
+              {render_slot(col, @row_item.(row))}
             </td>
             <td :if={@action != []}>
               <div class="">
                 <span :for={action <- @action} class="">
-                  <%= render_slot(action, @row_item.(row)) %>
+                  {render_slot(action, @row_item.(row))}
                 </span>
               </div>
             </td>
@@ -492,8 +492,8 @@ defmodule DurandalWeb.CoreComponents do
     <div class="mt-14">
       <dl class="-my-4 divide-y divide-zinc-100">
         <div :for={item <- @item} class="flex gap-4 py-4 sm:gap-8">
-          <dt class="w-1/4 flex-none text-[0.8125rem] leading-6 text-zinc-500"><%= item.title %></dt>
-          <dd class="text-sm leading-6 text-zinc-700"><%= render_slot(item) %></dd>
+          <dt class="w-1/4 flex-none text-[0.8125rem] leading-6 text-zinc-500">{item.title}</dt>
+          <dd class="text-sm leading-6 text-zinc-700">{render_slot(item)}</dd>
         </div>
       </dl>
     </div>
@@ -516,7 +516,7 @@ defmodule DurandalWeb.CoreComponents do
         class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
       >
         <Fontawesome.icon icon="arrow-left" style="regular" />
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </.link>
     </div>
     """
