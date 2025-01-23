@@ -20,6 +20,10 @@ if System.get_env("PHX_SERVER") do
   config :durandal, DurandalWeb.Endpoint, server: true
 end
 
+# TODO: These are the settings used to allow the docker container to connect to the database
+# unfortunately `mix test` doesn't work correctly so for now dockerised users can't run the unit
+# tests until this gets worked out
+if config_env() != :test do
 config :durandal, Durandal.Repo,
   url: System.get_env("POSTGRES_URL"),
   username: System.get_env("POSTGRES_USERNAME", "durandal_dev"),
@@ -30,6 +34,7 @@ config :durandal, Durandal.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   stacktrace: true,
   show_sensitive_data_on_connection_error: true
+end
 
 if config_env() == :prod do
   System.get_env("DATABASE_USERNAME") || raise "environment variable DATABASE_USERNAME is missing"

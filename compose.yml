@@ -27,7 +27,7 @@ services:
     working_dir: /app
     hostname: durandal
     ports:
-      - 4225:4000
+      - 4000:4000
     volumes:
       - .:/app
       - deps:/app/deps
