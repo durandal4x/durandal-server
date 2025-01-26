@@ -1,0 +1,80 @@
+volumes:
+  db: {}
+  deps:
+  build:
+
+services:
+  db:
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "durandal_dev"
+    image: "postgres:17.2-bookworm"
+    # profiles: ["postgres"]
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    stop_grace_period: "3s"
+    volumes:
+      - "db:/var/lib/postgresql/data"
+
+  durandal:
+    build:
+      context: .
+      target: base
+      ssh:
+        - default
+    entrypoint: ["sh", "entrypoint.dev.sh"]
+    command: elixir --sname durandal -S mix phx.server
+    working_dir: /app
+    hostname: durandal
+    ports:
+      - 4000:4000
+    volumes:
+      - .:/app
+      - deps:/app/deps
+      - build:/app/_build
+      - ~/.ssh:/root/.ssh:ro
+    environment:
+      - POSTGRES_URL=postgresql://postgres:postgres@db/durandal_dev
+      - TIME_ZONE=Europe/London
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:4000/health/"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 3
+    #   start_period: 3m
+    depends_on:
+      db:
+        condition: "service_started"
+        required: false
+
+  durandal_test:
+    profiles: ["test"]
+    build:
+      context: .
+      target: base
+      ssh:
+        - default
+    hostname: durandal
+    entrypoint: ["sh", "entrypoint.dev.sh"]
+    command: mix test
+    working_dir: /app
+    volumes:
+      - .:/app
+      - deps:/app/deps
+      - build:/app/_build
+      - ~/.ssh:/root/.ssh:ro
+    environment:
+      - MIX_ENV=test
+    depends_on:
+      - db
+
+  durandal_ci_test:
+    profiles: ["ci-test"]
+    extends: durandal_test
+    volumes:
+      - $SSH_AUTH_SOCK:${SSH_AUTH_SOCK}:ro
+    environment:
+      - SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
+    depends_on:
+      - db
+

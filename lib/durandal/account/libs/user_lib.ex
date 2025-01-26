@@ -311,13 +311,13 @@ defmodule Durandal.Account.UserLib do
   login attempts for this user.
   """
   @spec allow_login_attempt?(User.id(), String.t() | nil) :: boolean
-  def allow_login_attempt?(userid, ip \\ nil) do
+  def allow_login_attempt?(_userid, ip \\ nil) do
     cond do
       allow_ip_login_attempt?(ip) == false ->
         false
 
-      allow_user_login_attempt?(userid) == false ->
-        false
+      # allow_user_login_attempt?(userid) == false ->
+      #   false
 
       true ->
         true
@@ -332,30 +332,10 @@ defmodule Durandal.Account.UserLib do
     # TODO: Call out to get the maximum number of IP attempts
     # max_allowed_ip = Durandal.get_server_setting_value("login.ip_rate_limit")
 
-    if max_allowed_ip == nil do
-      true
-    else
-      current_ip_count = Cachex.fetch!(:login_count_ip, ip, fn -> 0 end)
+    current_ip_count = Cachex.fetch!(:login_count_ip, ip, fn -> 0 end)
 
-      # As long as we're below the max it's okay
-      current_ip_count <= max_allowed_ip
-    end
-  end
-
-  @spec allow_user_login_attempt?(User.id()) :: boolean
-  defp allow_user_login_attempt?(userid) do
-    max_allowed_user = nil
-    # TODO: Call out to get the maximum number of user login attempts
-    # max_allowed_user = Durandal.Settings.get_server_setting_value("login.user_rate_limit")
-
-    if max_allowed_user == nil do
-      true
-    else
-      current_user_count = Cachex.fetch!(:login_count_user, userid, fn -> 0 end)
-
-      # As long as we're below the max it's okay
-      current_user_count <= max_allowed_user
-    end
+    # As long as we're below the max it's okay
+    current_ip_count <= max_allowed_ip
   end
 
   @doc """

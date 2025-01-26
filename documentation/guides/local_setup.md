@@ -54,6 +54,7 @@ iex -S mix phx.server
 
 If all goes to plan you should be able to access your site locally at [http://localhost:4000/](http://localhost:4000/).
 
+# Stuff for 
 ### Libraries you need to get yourself
 The site makes liberal use of [FontAwesome](https://fontawesome.com/) so if you are using the site you'll need to download it and do the following
 ```bash
@@ -61,21 +62,13 @@ fontawesome/css/all.css -> priv/static/css/fontawesome.css
 fontawesome/webfonts -> priv/static/webfonts
 ```
 
-## Connecting to the your server locally
-```bash
-openssl s_client -connect localhost:8201
-```
-
-### config/dev.secret.exs
-If you want to do things like have a discord bot in development you don't want these details going into git. You can create a file `config/dev.secret.exs` where you can put these config details; the file must act like any other config file though is already ignored by gitignore.
-
 ## Creating your admin account
 ```elixir
 Durandal.Account.create_user(%{
   name: "root",
   email: "root@localhost",
   password: "password",
-  groups: ["admin"],
+  groups: ["admin"], 
   permissions: ["admin"]
 })
 ```
