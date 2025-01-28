@@ -16,6 +16,8 @@ defmodule Durandal.Game.Universe do
     field(:active?, :boolean)
 
     timestamps(type: :utc_datetime)
+
+    has_many :teams, Durandal.Player.Team
   end
 
   @type id :: Ecto.UUID.t()

@@ -8,7 +8,10 @@
 import Config
 
 config :durandal,
-  ecto_repos: [Durandal.Repo]
+  ecto_repos: [Durandal.Repo],
+  generators: [
+    timestamp_type: :utc_datetime
+  ]
 
 # Configures the endpoint
 config :durandal, DurandalWeb.Endpoint,

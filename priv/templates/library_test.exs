@@ -51,7 +51,7 @@ defmodule Durandal.ObjectLibTest do
       assert {:ok, %Object{} = object} =
                Context.create_object(valid_attrs())
 
-      assert object.FIRST_STRING_FIELD == "some FIRST_STRING_FIELD"
+      # VALIDATE CREATE VALUES
     end
 
     test "create_object/1 with invalid data returns error changeset" do
@@ -64,7 +64,7 @@ defmodule Durandal.ObjectLibTest do
       assert {:ok, %Object{} = object} =
                Context.update_object(object, update_attrs())
 
-      assert object.FIRST_STRING_FIELD == "some updated FIRST_STRING_FIELD"
+      # VALIDATE UPDATE VALUES
     end
 
     test "update_object/2 with invalid data returns error changeset" do
