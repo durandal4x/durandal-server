@@ -33,16 +33,8 @@ defmodule Durandal.Application do
       Durandal.Caches.ServerSettingCache,
       Durandal.Caches.LoginCountCache,
       Durandal.Caches.TypeLookupCache,
-
-      # Cachex caches
-      add_cache(:user_token_identifier_cache, ttl: :timer.minutes(5)),
-      add_cache(:durandal_metadata),
-      add_cache(:one_time_login_code, ttl: :timer.seconds(30)),
-      add_cache(:user_by_user_id_cache, ttl: :timer.minutes(5)),
-
-      # Login rate limiting
-      add_cache(:login_count_ip, ttl: :timer.minutes(5)),
-      add_cache(:login_count_user, ttl: :timer.minutes(5))
+      Durandal.Caches.MetadataCache,
+      Durandal.Caches.UserCache
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -62,20 +54,6 @@ defmodule Durandal.Application do
   defp startup() do
     Durandal.System.StartupLib.perform()
     :ok
-  end
-
-  @spec add_cache(atom) :: map()
-  @spec add_cache(atom, list) :: map()
-  defp add_cache(name, opts \\ []) when is_atom(name) do
-    %{
-      id: name,
-      start:
-        {Cachex, :start_link,
-         [
-           name,
-           opts
-         ]}
-    }
   end
 
   # Tell Phoenix to update the endpoint configuration
