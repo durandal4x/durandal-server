@@ -67,6 +67,13 @@ defmodule DurandalWeb do
     end
   end
 
+  def server do
+    quote do
+      def ok(socket), do: {:ok, socket}
+      def noreply(socket), do: {:noreply, socket}
+    end
+  end
+
   def live_view do
     quote do
       use Phoenix.LiveView,

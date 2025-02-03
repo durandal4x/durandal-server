@@ -141,4 +141,139 @@ defmodule Durandal.Game.UniverseLib do
   def change_universe(%Universe{} = universe, attrs \\ %{}) do
     Universe.changeset(universe, attrs)
   end
+
+
+  # Server related functions
+  @doc """
+  Spins up a set of supervisors and servers related to running a universe universe, specifically:
+  - `Durandal.Game.UniverseSupervisor`
+  - `Durandal.Game.UniverseServer`
+  - `Durandal.Game.UniverseRegistry`
+  """
+  # Durandal.Game.UniverseLib.start_universe_supervisor("193af924-d0fa-48e6-ac57-313a9505e1bf")
+  @spec start_universe_supervisor(Durandal.universe_id()) :: any
+  def start_universe_supervisor(universe_id) do
+    DynamicSupervisor.start_child(Durandal.GameSupervisor, {
+      Durandal.Game.UniverseSupervisor,
+      %{
+        universe_id: universe_id
+      }
+    })
+  end
+
+  def supervisor_name(universe_id) do
+    "universe_#{universe_id}_supervisor"
+    |> String.replace("-", "_")
+    |> String.to_atom()
+  end
+
+  def dynamic_supervisor_name(universe_id) do
+    "universe_#{universe_id}_dynamic_supervisor"
+    |> String.replace("-", "_")
+    |> String.to_atom()
+  end
+
+  def registry_name(universe_id) do
+    "universe_#{universe_id}_registry"
+    |> String.replace("-", "_")
+    |> String.to_atom()
+  end
+
+  def server_name(universe_id) do
+    "universe_#{universe_id}_server"
+    |> String.replace("-", "_")
+    |> String.to_atom()
+  end
+
+  # defp do_start_universe_server(universe_id) do
+  #   supervisor = get_process_name_from_universe_id(universe_id, "supervisor")
+  #   name = get_process_name_from_universe_id(universe_id, "server")
+
+  #   r = DynamicSupervisor.start_child(supervisor, {
+  #     Durandal.Game.UniverseServer,
+  #     name: name,
+  #     data: %{universe_id: universe_id}
+  #   })
+
+  #   IO.puts ""
+  #   IO.inspect r, label: "#{__MODULE__}:#{__ENV__.line}"
+  #   IO.puts ""
+
+  #   r
+  # end
+
+  # @doc """
+  # Returns a boolean regarding the existence of the universe.
+  # """
+  # @spec universe_exists?(Universe.id()) :: boolean
+  # def universe_exists?(universe_id) do
+  #   case Horde.Registry.lookup(Durandal.GameRegistry, universe_id) do
+  #     [{_pid, _}] -> true
+  #     _ -> false
+  #   end
+  # end
+
+  # @doc false
+  # @spec get_universe_pid(Universe.id()) :: pid() | nil
+  # def get_universe_pid(universe_id) do
+  #   case Horde.Registry.lookup(Durandal.UniverseRegistry, universe_id) do
+  #     [{pid, _}] -> pid
+  #     _ -> nil
+  #   end
+  # end
+
+  # @doc false
+  # @spec cast_universe(Universe.id(), any) :: any | nil
+  # def cast_universe(universe_id, msg) do
+  #   case get_universe_pid(universe_id) do
+  #     nil ->
+  #       nil
+
+  #     pid ->
+  #       GenServer.cast(pid, msg)
+  #       :ok
+  #   end
+  # end
+
+  # @doc false
+  # @spec call_universe(Universe.id(), any) :: any | nil
+  # def call_universe(universe_id, message) when is_binary(universe_id) do
+  #   case get_universe_pid(universe_id) do
+  #     nil ->
+  #       nil
+
+  #     pid ->
+  #       try do
+  #         GenServer.call(pid, message)
+
+  #         # If the process has somehow died, we just return nil
+  #       catch
+  #         :exit, _ ->
+  #           nil
+  #       end
+  #   end
+  # end
+
+  # @doc false
+  # @spec stop_universe_server(Universe.id()) :: :ok | nil
+  # def stop_universe_server(universe_id) do
+  #   case get_universe_pid(universe_id) do
+  #     nil ->
+  #       nil
+
+  #     p ->
+  #       Durandal.broadcast(universe_topic(universe_id), %{
+  #         event: :universe_closed,
+  #         universe_id: universe_id
+  #       })
+
+  #       Durandal.broadcast(global_universe_topic(), %{
+  #         event: :universe_closed,
+  #         universe_id: universe_id
+  #       })
+
+  #       DynamicSupervisor.terminate_child(Durandal.UniverseSupervisor, p)
+  #       :ok
+  #   end
+  # end
 end
