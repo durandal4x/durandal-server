@@ -12,7 +12,12 @@ defmodule Durandal do
   @type system_id :: Durandal.Space.System.id()
   @type system_object_id :: Durandal.Space.SystemObject.id()
   @type station_id :: Durandal.Space.Station.id()
+  @type station_module_id :: Durandal.Space.StationModule.id()
   @type ship_id :: Durandal.Space.Ship.id()
+
+  @type station_module_type_id :: Durandal.Types.StationModuleType.id()
+  @type system_object_type_id :: Durandal.Types.SystemObjectType.id()
+  @type ship_type_id :: Durandal.Types.ShipType.id()
 
   @type query_args ::
           keyword(

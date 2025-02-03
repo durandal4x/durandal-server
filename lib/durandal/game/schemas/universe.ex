@@ -18,6 +18,9 @@ defmodule Durandal.Game.Universe do
     has_many(:teams, Durandal.Player.Team)
     has_many(:systems, Durandal.Space.System)
 
+    field(:next_tick, :utc_datetime_usec)
+    field(:tick_schedule, :string)
+
     field(:scenario, :string, virtual: true)
 
     timestamps(type: :utc_datetime_usec)
@@ -34,7 +37,7 @@ defmodule Durandal.Game.Universe do
   #       }
 
   @required_fields ~w(name)a
-  @optional_fields ~w(active? scenario)a
+  @optional_fields ~w(active? scenario next_tick tick_schedule)a
 
   @doc false
   @spec changeset(map(), map()) :: Ecto.Changeset.t()

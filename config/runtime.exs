@@ -31,7 +31,9 @@ if config_env() != :test do
     hostname: System.get_env("POSTGRES_HOSTNAME", "localhost"),
     database: System.get_env("POSTGRES_DB_NAME", "durandal_dev"),
     port: String.to_integer(System.get_env("POSTGRES_PORT", "5432")),
-    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+    stacktrace: true,
+    show_sensitive_data_on_connection_error: true
 end
 
 if config_env() == :prod do

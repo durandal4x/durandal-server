@@ -63,6 +63,7 @@ defmodule Durandal.MixProject do
 
       # Extra deps
       {:typedstruct, "~> 0.5.2", runtime: false},
+      {:horde, "~> 0.9"},
       {:ecto_psql_extras, "~> 0.7"},
       {:argon2_elixir, "~> 4.0"},
       {:phoenix_pubsub, "~> 2.0"},
