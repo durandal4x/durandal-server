@@ -51,8 +51,15 @@ defmodule DurandalWeb.NavComponents do
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <!-- Navbar brand -->
           <a class="navbar-brand mt-2 mt-lg-0" href="/">
+            <img
+              src={~p"/images/favicon.png"}
+              height="38"
+              style="margin-right: 5px;"
+              class="d-inline align-top"
+            />
             <i
-              class={"fa-fw #{Application.get_env(:durandal, Durandal)[:site_icon]}"}
+              :if={false}
+              class={"fa-fw fa-duotone fa-#{Application.get_env(:durandal, :site_icon)}"}
               style="margin: -4px 20px 0 0px;"
             >
             </i>
@@ -71,9 +78,7 @@ defmodule DurandalWeb.NavComponents do
                 route={~p"/admin/accounts"}
               />
 
-              <.top_nav_item text="Games" active={@active == "game"} route={~p"/"} />
-
-              <.top_nav_item text="Logging" active={@active == "logging"} route={~p"/"} />
+              <.top_nav_item text="Games" active={@active == "game"} route={~p"/admin/games"} />
             <% end %>
           </ul>
           <!-- Left links -->

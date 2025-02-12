@@ -1,4 +1,4 @@
-defmodule DurandalWeb.Gettext do
+defmodule Durandal.Gettext do
   @moduledoc """
   A module providing Internationalization with a gettext-based API.
 

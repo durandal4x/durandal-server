@@ -1,6 +1,6 @@
-defmodule Durandal.Context.Object do
+defmodule Durandal.$Context.$Object do
   @moduledoc """
-  # Object
+  # $Object
   Description here
 
   ### Attributes
@@ -10,7 +10,7 @@ defmodule Durandal.Context.Object do
   import Ecto.Changeset
 
   @primary_key {:id, Ecto.UUID, autogenerate: true}
-  schema "context_objects" do
+  schema "$context_$objects" do
     # SCHEMA FIELDS
 
     timestamps(type: :utc_datetime)
@@ -20,7 +20,7 @@ defmodule Durandal.Context.Object do
 
   # @type t :: %__MODULE__{
   #         id: id(),
-  # SCHEMA TYPE FIELDS
+# SCHEMA TYPE FIELDS
   #         inserted_at: DateTime.t(),
   #         updated_at: DateTime.t()
   #       }

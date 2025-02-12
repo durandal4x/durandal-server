@@ -8,7 +8,11 @@
 import Config
 
 config :durandal,
-  ecto_repos: [Durandal.Repo]
+  ecto_repos: [Durandal.Repo],
+  site_icon: "moon-over-sun",
+  generators: [
+    timestamp_type: :utc_datetime
+  ]
 
 # Configures the endpoint
 config :durandal, DurandalWeb.Endpoint,
@@ -20,6 +24,9 @@ config :durandal, DurandalWeb.Endpoint,
   ],
   pubsub_server: Durandal.PubSub,
   live_view: [signing_salt: "51GUT9iP"]
+
+config :db_cluster,
+  repo: Durandal.Repo
 
 # Configures the mailer
 #
