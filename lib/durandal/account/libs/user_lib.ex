@@ -192,6 +192,14 @@ defmodule Durandal.Account.UserLib do
     |> maybe_decache_user()
   end
 
+  @spec update_user_admin_set_password(User.t(), map) ::
+          {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  def update_user_admin_set_password(%User{} = user, attrs) do
+    User.changeset(user, attrs, :admin_set_password)
+    |> Durandal.Repo.update()
+    |> maybe_decache_user()
+  end
+
   # Clears the cache for a user after a successful database option
   @spec maybe_decache_user(any()) :: any()
   defp maybe_decache_user({:ok, user}) do

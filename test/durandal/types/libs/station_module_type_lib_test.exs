@@ -10,21 +10,30 @@ defmodule Durandal.StationModuleTypeLibTest do
   defp valid_attrs do
     %{
       name: "some name",
-      universe_id: universe_fixture().id
+      universe_id: universe_fixture().id,
+      max_health: 123,
+      damage: 123,
+      build_time: 123
     }
   end
 
   defp update_attrs do
     %{
       name: "some updated name",
-      universe_id: universe_fixture().id
+      universe_id: universe_fixture().id,
+      max_health: 456,
+      damage: 456,
+      build_time: 456
     }
   end
 
   defp invalid_attrs do
     %{
       name: nil,
-      universe_id: nil
+      universe_id: nil,
+      max_health: nil,
+      damage: nil,
+      build_time: nil
     }
   end
 
@@ -56,6 +65,9 @@ defmodule Durandal.StationModuleTypeLibTest do
                Types.create_station_module_type(valid_attrs())
 
       assert station_module_type.name == "some name"
+      assert station_module_type.damage == 123
+      assert station_module_type.max_health == 123
+      assert station_module_type.build_time == 123
     end
 
     test "create_station_module_type/1 with invalid data returns error changeset" do
@@ -69,6 +81,9 @@ defmodule Durandal.StationModuleTypeLibTest do
                Types.update_station_module_type(station_module_type, update_attrs())
 
       assert station_module_type.name == "some updated name"
+      assert station_module_type.damage == 456
+      assert station_module_type.max_health == 456
+      assert station_module_type.build_time == 456
     end
 
     test "update_station_module_type/2 with invalid data returns error changeset" do

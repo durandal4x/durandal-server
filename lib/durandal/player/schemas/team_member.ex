@@ -11,25 +11,22 @@ defmodule Durandal.Player.TeamMember do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @primary_key {:id, Ecto.UUID, autogenerate: true}
+  @primary_key false
   schema "player_team_members" do
     field(:roles, {:array, :string})
-    belongs_to(:team, Durandal.Player.Team, type: Ecto.UUID)
-    belongs_to(:user, Durandal.Account.User, type: Ecto.UUID)
+    belongs_to(:team, Durandal.Player.Team, type: Ecto.UUID, primary_key: true)
+    belongs_to(:user, Durandal.Account.User, type: Ecto.UUID, primary_key: true)
 
     timestamps(type: :utc_datetime_usec)
   end
 
-  @type id :: Ecto.UUID.t()
-
   # @type t :: %__MODULE__{
-  #         id: id(),
-  #       roles: [String.t()],
-  #         team_id: Durandal.Player.Team.id(),
-  #         user_id: Durandal.Account.User.id(),
-  #         inserted_at: DateTime.t(),
-  #         updated_at: DateTime.t()
-  #       }
+  #        roles: [String.t()],
+  #        team_id: Durandal.Player.Team.id(),
+  #        user_id: Durandal.Account.User.id(),
+  #        inserted_at: DateTime.t(),
+  #        updated_at: DateTime.t()
+  #      }
 
   @required_fields ~w(roles team_id user_id)a
   @optional_fields ~w()a

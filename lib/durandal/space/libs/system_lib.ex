@@ -5,6 +5,9 @@ defmodule Durandal.Space.SystemLib do
   use DurandalMacros, :library
   alias Durandal.Space.{System, SystemQueries}
 
+  @spec topic(Durandal.system_id()) :: String.t()
+  def topic(system_id), do: "Durandal.Space.System:#{system_id}"
+
   @doc """
   Returns the list of systems.
 
@@ -80,6 +83,10 @@ defmodule Durandal.Space.SystemLib do
     %System{}
     |> System.changeset(attrs)
     |> Repo.insert()
+    |> Durandal.broadcast_on_ok(&topic/1, :system, %{event: :created_system})
+    |> Durandal.broadcast_on_ok({&Durandal.Game.universe_topic/1, :universe_id}, :system, %{
+      event: :created_system
+    })
   end
 
   @doc """
@@ -99,6 +106,10 @@ defmodule Durandal.Space.SystemLib do
     system
     |> System.changeset(attrs)
     |> Repo.update()
+    |> Durandal.broadcast_on_ok(&topic/1, :system, %{event: :updated_system})
+    |> Durandal.broadcast_on_ok({&Durandal.Game.universe_topic/1, :universe_id}, :system, %{
+      event: :updated_system
+    })
   end
 
   @doc """
@@ -116,6 +127,10 @@ defmodule Durandal.Space.SystemLib do
   @spec delete_system(System.t()) :: {:ok, System.t()} | {:error, Ecto.Changeset.t()}
   def delete_system(%System{} = system) do
     Repo.delete(system)
+    |> Durandal.broadcast_on_ok(&topic/1, :system, %{event: :deleted_system})
+    |> Durandal.broadcast_on_ok({&Durandal.Game.universe_topic/1, :universe_id}, :system, %{
+      event: :deleted_system
+    })
   end
 
   @doc """

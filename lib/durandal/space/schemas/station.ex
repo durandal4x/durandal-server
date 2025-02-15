@@ -22,12 +22,15 @@ defmodule Durandal.Space.Station do
     field(:name, :string)
     belongs_to(:team, Durandal.Player.Team, type: Ecto.UUID)
     belongs_to(:system, Durandal.Space.System, type: Ecto.UUID)
+    belongs_to(:universe, Durandal.Game.Universe, type: Ecto.UUID)
     field(:position, {:array, :integer})
     field(:velocity, {:array, :integer})
     belongs_to(:orbiting, Durandal.Space.SystemObject, type: Ecto.UUID)
     field(:orbit_distance, :integer)
     field(:orbit_clockwise, :boolean)
     field(:orbit_period, :integer)
+
+    has_many(:modules, Durandal.Space.StationModule)
 
     timestamps(type: :utc_datetime_usec)
   end
@@ -49,7 +52,7 @@ defmodule Durandal.Space.Station do
   #         updated_at: DateTime.t()
   #       }
 
-  @required_fields ~w(name team_id position velocity)a
+  @required_fields ~w(name team_id system_id position velocity universe_id)a
   @optional_fields ~w(orbiting_id orbit_distance orbit_clockwise orbit_period)a
 
   @doc false

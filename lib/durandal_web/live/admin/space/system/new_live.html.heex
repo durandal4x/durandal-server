@@ -1,0 +1,15 @@
+<DurandalWeb.UserComponents.filter_bar selected="new" />
+
+<div class="row mt-4">
+  <div class="col">
+    <.live_component
+      module={DurandalWeb.Space.SystemFormComponent}
+      id={:new}
+      action={:new}
+      system={%Durandal.Space.System{}}
+      patch={~p"/admin/systems"}
+      title="New system form"
+      current_user={@current_user}
+    />
+  </div>
+</div>

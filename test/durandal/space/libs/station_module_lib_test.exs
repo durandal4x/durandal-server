@@ -4,6 +4,7 @@ defmodule Durandal.StationModuleLibTest do
   alias Durandal.Space
   use Durandal.DataCase, async: true
 
+  import Durandal.GameFixtures, only: [universe_fixture: 0]
   import Durandal.TypesFixtures, only: [station_module_type_fixture: 0]
   alias Durandal.SpaceFixtures
 
@@ -11,6 +12,7 @@ defmodule Durandal.StationModuleLibTest do
     %{
       station_id: SpaceFixtures.station_fixture().id,
       type_id: station_module_type_fixture().id,
+      universe_id: universe_fixture().id,
       build_progress: 123,
       health: 123
     }
@@ -20,6 +22,7 @@ defmodule Durandal.StationModuleLibTest do
     %{
       station_id: SpaceFixtures.station_fixture().id,
       type_id: station_module_type_fixture().id,
+      universe_id: universe_fixture().id,
       build_progress: 456,
       health: 456
     }
@@ -28,6 +31,7 @@ defmodule Durandal.StationModuleLibTest do
   defp invalid_attrs do
     %{
       station_id: nil,
+      universe_id: nil,
       type_id: nil,
       build_progress: nil,
       health: nil

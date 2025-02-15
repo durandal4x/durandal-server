@@ -1,8 +1,8 @@
-defmodule Durandal.Game.Libs.ScenarioLib do
+defmodule Durandal.Game.ScenarioLib do
   @moduledoc """
   A set of functions for initialising game conditions
 
-  Durandal.Game.Libs.ScenarioLib.load_from_file("basic")
+  Durandal.Game.ScenarioLib.load_from_file("basic")
   """
   alias Durandal.{Repo, Game}
 
@@ -13,8 +13,8 @@ defmodule Durandal.Game.Libs.ScenarioLib do
   defp build_ids(data) do
     data
     |> do_build_ids
-    |> List.flatten
-    |> Map.new
+    |> List.flatten()
+    |> Map.new()
   end
 
   @spec do_build_ids(map()) :: list()
@@ -33,7 +33,7 @@ defmodule Durandal.Game.Libs.ScenarioLib do
       _ ->
         nil
     end)
-    |> Enum.reject(&(is_nil(&1)))
+    |> Enum.reject(&is_nil(&1))
   end
 
   defp do_build_ids(_), do: []
@@ -56,12 +56,14 @@ defmodule Durandal.Game.Libs.ScenarioLib do
   @spec load_from_struct(map(), list()) :: {:ok, Durandal.Game.Universe.t()}
   def load_from_struct(data, opts \\ []) do
     Repo.transaction(fn ->
-      {:ok, universe} = Game.create_universe(%{
-        name: opts[:name] || Ecto.UUID.generate()
-      })
+      {:ok, universe} =
+        Game.create_universe(%{
+          name: opts[:name] || Ecto.UUID.generate()
+        })
 
-      ids = build_ids(data)
-      |> Map.put("$universe", universe.id)
+      ids =
+        build_ids(data)
+        |> Map.put("$universe", universe.id)
 
       build_teams(data["teams"], ids)
       build_ship_types(data["ship_types"], ids)
@@ -85,76 +87,88 @@ defmodule Durandal.Game.Libs.ScenarioLib do
   end
 
   defp build_teams(data, ids) do
-    rows = data
-    |> Enum.map(fn team ->
-      %{
-        id: ids[team["id"]],
-        universe_id: ids["$universe"],
-        name: team["name"],
-        inserted_at: DateTime.utc_now(),
-        updated_at: DateTime.utc_now()
-      }
-    end)
+    rows =
+      data
+      |> Enum.map(fn team ->
+        %{
+          id: ids[team["id"]],
+          universe_id: ids["$universe"],
+          name: team["name"],
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
+        }
+      end)
 
     Repo.insert_all(Durandal.Player.Team, rows)
   end
 
   defp build_ship_types(data, ids) do
-    rows = data
-    |> Enum.map(fn type ->
-      %{
-        id: ids[type["id"]],
-        universe_id: ids["$universe"],
-        name: type["name"],
-        inserted_at: DateTime.utc_now(),
-        updated_at: DateTime.utc_now()
-      }
-    end)
+    rows =
+      data
+      |> Enum.map(fn type ->
+        %{
+          id: ids[type["id"]],
+          universe_id: ids["$universe"],
+          name: type["name"],
+          max_health: type["max_health"],
+          acceleration: type["acceleration"],
+          build_time: type["build_time"],
+          damage: type["damage"],
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
+        }
+      end)
 
     Repo.insert_all(Durandal.Types.ShipType, rows)
   end
 
   defp build_system_object_types(data, ids) do
-    rows = data
-    |> Enum.map(fn type ->
-      %{
-        id: ids[type["id"]],
-        universe_id: ids["$universe"],
-        name: type["name"],
-        inserted_at: DateTime.utc_now(),
-        updated_at: DateTime.utc_now()
-      }
-    end)
+    rows =
+      data
+      |> Enum.map(fn type ->
+        %{
+          id: ids[type["id"]],
+          universe_id: ids["$universe"],
+          name: type["name"],
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
+        }
+      end)
 
     Repo.insert_all(Durandal.Types.SystemObjectType, rows)
   end
 
   defp build_station_module_types(data, ids) do
-    rows = data
-    |> Enum.map(fn type ->
-      %{
-        id: ids[type["id"]],
-        universe_id: ids["$universe"],
-        name: type["name"],
-        inserted_at: DateTime.utc_now(),
-        updated_at: DateTime.utc_now()
-      }
-    end)
+    rows =
+      data
+      |> Enum.map(fn type ->
+        %{
+          id: ids[type["id"]],
+          universe_id: ids["$universe"],
+          name: type["name"],
+          max_health: type["max_health"],
+          build_time: type["build_time"],
+          damage: type["damage"],
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
+        }
+      end)
 
     Repo.insert_all(Durandal.Types.StationModuleType, rows)
   end
 
   defp build_systems(data, ids) do
-    rows = data
-    |> Enum.map(fn system ->
-      %{
-        id: ids[system["id"]],
-        universe_id: ids["$universe"],
-        name: system["name"],
-        inserted_at: DateTime.utc_now(),
-        updated_at: DateTime.utc_now()
-      }
-    end)
+    rows =
+      data
+      |> Enum.map(fn system ->
+        %{
+          id: ids[system["id"]],
+          universe_id: ids["$universe"],
+          name: system["name"],
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
+        }
+      end)
 
     Repo.insert_all(Durandal.Space.System, rows)
 
@@ -169,78 +183,73 @@ defmodule Durandal.Game.Libs.ScenarioLib do
   end
 
   defp build_system_objects(data, system_id, ids) do
-    rows = data
-    |> Enum.map(fn system_object ->
-      %{
-        id: ids[system_object["id"]],
-        name: system_object["name"],
-        type_id: ids[system_object["type"]],
-        system_id: system_id,
-
-        position: system_object["position"],
-        velocity: system_object["velocity"],
-
-        orbiting_id: ids[system_object["orbiting"]],
-        orbit_distance: system_object["orbit_distance"],
-        orbit_clockwise: system_object["orbit_clockwise"],
-        orbit_period: system_object["orbit_period"],
-
-        inserted_at: DateTime.utc_now(),
-        updated_at: DateTime.utc_now()
-      }
-    end)
+    rows =
+      data
+      |> Enum.map(fn system_object ->
+        %{
+          id: ids[system_object["id"]],
+          name: system_object["name"],
+          type_id: ids[system_object["type"]],
+          system_id: system_id,
+          position: system_object["position"],
+          velocity: system_object["velocity"],
+          orbiting_id: ids[system_object["orbiting"]],
+          orbit_distance: system_object["orbit_distance"],
+          orbit_clockwise: system_object["orbit_clockwise"],
+          orbit_period: system_object["orbit_period"],
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
+        }
+      end)
 
     Repo.insert_all(Durandal.Space.SystemObject, rows)
   end
 
   defp build_ships(data, system_id, ids) do
-    rows = data
-    |> Enum.map(fn ship ->
-      %{
-        id: ids[ship["id"]] || uuid(),
-        name: ship["name"],
-        team_id: ids[ship["team"]],
-        type_id: ids[ship["type"]],
-        system_id: system_id,
-
-        position: ship["position"],
-        velocity: ship["velocity"],
-
-        orbiting_id: ids[ship["orbiting"]],
-        orbit_distance: ship["orbit_distance"],
-        orbit_clockwise: ship["orbit_clockwise"],
-        orbit_period: ship["orbit_period"],
-
-        build_progress: ship["build_progress"],
-        health: ship["health"],
-
-        inserted_at: DateTime.utc_now(),
-        updated_at: DateTime.utc_now()
-      }
-    end)
+    rows =
+      data
+      |> Enum.map(fn ship ->
+        %{
+          id: ids[ship["id"]] || uuid(),
+          name: ship["name"],
+          team_id: ids[ship["team"]],
+          type_id: ids[ship["type"]],
+          system_id: system_id,
+          position: ship["position"],
+          velocity: ship["velocity"],
+          orbiting_id: ids[ship["orbiting"]],
+          orbit_distance: ship["orbit_distance"],
+          orbit_clockwise: ship["orbit_clockwise"],
+          orbit_period: ship["orbit_period"],
+          build_progress: ship["build_progress"],
+          health: ship["health"],
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
+        }
+      end)
 
     Repo.insert_all(Durandal.Space.Ship, rows)
   end
 
   defp build_stations(data, system_id, ids) do
-    rows = data
-    |> Enum.map(fn station ->
-      %{
-        id: ids[station["id"]],
-        name: station["name"],
-        team_id: ids[station["team"]],
-        system_id: system_id,
-        position: station["position"],
-        velocity: station["velocity"],
-        orbiting_id: ids[station["orbiting"]],
-        orbit_distance: station["orbit_distance"],
-        orbit_clockwise: station["orbit_clockwise"],
-        orbit_period: station["orbit_period"],
-
-        inserted_at: DateTime.utc_now(),
-        updated_at: DateTime.utc_now()
-      }
-    end)
+    rows =
+      data
+      |> Enum.map(fn station ->
+        %{
+          id: ids[station["id"]],
+          name: station["name"],
+          team_id: ids[station["team"]],
+          system_id: system_id,
+          position: station["position"],
+          velocity: station["velocity"],
+          orbiting_id: ids[station["orbiting"]],
+          orbit_distance: station["orbit_distance"],
+          orbit_clockwise: station["orbit_clockwise"],
+          orbit_period: station["orbit_period"],
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
+        }
+      end)
 
     Repo.insert_all(Durandal.Space.Station, rows)
 
@@ -253,19 +262,19 @@ defmodule Durandal.Game.Libs.ScenarioLib do
   end
 
   defp build_station_modules(data, station_id, ids) do
-    rows = data
-    |> Enum.map(fn module ->
-      %{
-        id: ids[module["id"]] || uuid(),
-        type_id: ids[module["type"]],
-        station_id: station_id,
-        build_progress: module["build_progress"],
-        health: module["health"],
-
-        inserted_at: DateTime.utc_now(),
-        updated_at: DateTime.utc_now()
-      }
-    end)
+    rows =
+      data
+      |> Enum.map(fn module ->
+        %{
+          id: ids[module["id"]] || uuid(),
+          type_id: ids[module["type"]],
+          station_id: station_id,
+          build_progress: module["build_progress"],
+          health: module["health"],
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
+        }
+      end)
 
     Repo.insert_all(Durandal.Space.StationModule, rows)
   end

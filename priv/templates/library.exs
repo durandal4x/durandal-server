@@ -5,6 +5,9 @@ defmodule $Application.$Context.$ObjectLib do
   use $ApplicationMacros, :library
   alias $Application.$Context.{$Object, $ObjectQueries}
 
+  @spec topic($Application.object_id()) :: String.t()
+  def topic(object_id), do: "$Application.$Context.$Object:#{object_id}"
+
   @doc """
   Returns the list of $objects.
 
@@ -80,6 +83,8 @@ defmodule $Application.$Context.$ObjectLib do
     %$Object{}
     |> $Object.changeset(attrs)
     |> Repo.insert()
+    |> $Application.broadcast_on_ok(&topic/1, :object, %{event: :created_object})
+    |> $Application.broadcast_on_ok({&$Application.ParentContext.parent_topic/1, :foreign_key_id}, :object, %{event: :created_object})
   end
 
   @doc """
@@ -99,6 +104,8 @@ defmodule $Application.$Context.$ObjectLib do
     $object
     |> $Object.changeset(attrs)
     |> Repo.update()
+    |> $Application.broadcast_on_ok(&topic/1, :object, %{event: :updated_object})
+    |> $Application.broadcast_on_ok({&$Application.ParentContext.parent_topic/1, :foreign_key_id}, :object, %{event: :updated_object})
   end
 
   @doc """
@@ -116,6 +123,8 @@ defmodule $Application.$Context.$ObjectLib do
   @spec delete_$object($Object.t) :: {:ok, $Object.t} | {:error, Ecto.Changeset.t}
   def delete_$object(%$Object{} = $object) do
     Repo.delete($object)
+    |> $Application.broadcast_on_ok(&topic/1, :object, %{event: :deleted_object})
+    |> $Application.broadcast_on_ok({&$Application.ParentContext.parent_topic/1, :foreign_key_id}, :object, %{event: :deleted_object})
   end
 
   @doc """

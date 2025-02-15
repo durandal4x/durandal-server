@@ -1,0 +1,31 @@
+<div id="index-live-wrapper">
+  <DurandalWeb.SystemObjectComponents.filter_bar selected="list">
+    <div class="col">
+      <input
+        type="text"
+        name="search-term"
+        id="search-term-input"
+        value=""
+        placeholder="Search"
+        class="form-control"
+        phx-keyup="update-search"
+        phx-debounce="500"
+      />
+    </div>
+  </DurandalWeb.SystemObjectComponents.filter_bar>
+
+  <div class="alert alert-danger">No live reload yet</div>
+
+  <.table id="system_objects" rows={@streams.system_objects} table_class="table-sm table-hover">
+    <:col :let={{_id, system_object}} label="Name">{system_object.name}</:col>
+
+    <:action :let={{_id, system_object}}>
+      <.link
+        navigate={~p"/admin/system_objects/#{system_object}"}
+        class="btn btn-secondary btn-sm"
+      >
+        Show
+      </.link>
+    </:action>
+  </.table>
+</div>

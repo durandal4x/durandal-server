@@ -292,7 +292,7 @@
     state: enabled
     permanent: yes
 
-- name: Enable HTTP port
+- name: Enable HTTPS port
   firewalld:
     zone: public
     port: "443/tcp"
@@ -316,11 +316,12 @@
 #     state: restarted
 #   when: reboot_required.stat.exists == false
 
-- name: restart sshd
-  service:
-    name: sshd
-    state: restarted
-  when: reboot_required.stat.exists == false
+# This was used in Debian but breaks with Ubuntu?
+# - name: restart sshd
+#   service:
+#     name: sshd
+#     state: restarted
+#   when: reboot_required.stat.exists == false
 
 - name: restart firewalld
   service:

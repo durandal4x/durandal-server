@@ -5,12 +5,15 @@ defmodule Durandal.StationLibTest do
   use Durandal.DataCase, async: true
 
   alias Durandal.SpaceFixtures
+  import Durandal.GameFixtures, only: [universe_fixture: 0]
   import Durandal.PlayerFixtures, only: [team_fixture: 0]
 
   defp valid_attrs do
     %{
       name: "some name",
       team_id: team_fixture().id,
+      universe_id: universe_fixture().id,
+      system_id: SpaceFixtures.system_fixture().id,
       position: [123, 456],
       velocity: [123, 456],
       orbiting_id: nil,
@@ -24,6 +27,8 @@ defmodule Durandal.StationLibTest do
     %{
       name: "some updated name",
       team_id: team_fixture().id,
+      universe_id: universe_fixture().id,
+      system_id: SpaceFixtures.system_fixture().id,
       position: [123, 456, 789],
       velocity: [123, 456, 789],
       orbiting_id: nil,
@@ -37,6 +42,8 @@ defmodule Durandal.StationLibTest do
     %{
       name: nil,
       team_id: nil,
+      universe_id: nil,
+      system_id: nil,
       position: nil,
       velocity: nil,
       orbiting_id: nil,

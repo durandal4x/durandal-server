@@ -160,19 +160,40 @@ defmodule Durandal.Account.User do
         user
         |> change_password(attrs)
         |> add_error(
-          :password_confirmation,
+          :existing,
           "Please enter your existing password to change your password."
         )
+
+      attrs["new_password"] == nil or attrs["new_password"] == "" ->
+        user
+        |> change_password(attrs)
+        |> add_error(:new_password, "Please enter a new password")
+
+      attrs["new_password_confirm"] == nil or attrs["new_password_confirm"] == "" ->
+        user
+        |> change_password(attrs)
+        |> add_error(:new_password_confirm, "Please confirm the new password")
+
+      attrs["new_password"] != attrs["new_password_confirm"] ->
+        user
+        |> change_password(attrs)
+        |> add_error(:new_password_confirm, "Confirmation password must match new password")
 
       valid_password?(attrs["existing"], user.password) == false ->
         user
         |> change_password(attrs)
-        |> add_error(:existing, "Incorrect password")
+        |> add_error(:existing, "Incorrect existing password")
 
       true ->
         user
         |> change_password(attrs)
     end
+  end
+
+  # For when we want to reset a password
+  def changeset(user, attrs, :admin_set_password) do
+    user
+    |> change_password(attrs)
   end
 
   # For when they don't know their password and you have verified their identity some other way
@@ -191,7 +212,8 @@ defmodule Durandal.Account.User do
 
   defp put_password_hash(
          %Ecto.Changeset{valid?: true, changes: %{password: password}} = changeset
-       ) do
+       )
+       when not is_nil(password) do
     change(changeset, password: Argon2.hash_pwd_salt(password))
   end
 

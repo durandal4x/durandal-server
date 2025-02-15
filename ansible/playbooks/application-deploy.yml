@@ -1,0 +1,6 @@
+- name: "Run the Durandal deploy scripts"
+  hosts:
+    - web
+  roles:
+    - application_deploy
+  

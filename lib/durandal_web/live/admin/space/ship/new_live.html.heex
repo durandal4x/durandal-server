@@ -1,0 +1,15 @@
+<DurandalWeb.SystemObjectComponents.filter_bar selected="new" />
+
+<div class="row mt-4">
+  <div class="col">
+    <.live_component
+      module={DurandalWeb.Space.SystemObjectFormComponent}
+      id={:new}
+      action={:new}
+      system_object={%Durandal.Space.SystemObject{}}
+      patch={~p"/admin/system_objects"}
+      title="New system_object form"
+      current_user={@current_user}
+    />
+  </div>
+</div>

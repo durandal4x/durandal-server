@@ -5,6 +5,7 @@ defmodule Durandal.SystemObjectLibTest do
   use Durandal.DataCase, async: true
 
   alias Durandal.SpaceFixtures
+  import Durandal.GameFixtures, only: [universe_fixture: 0]
   import Durandal.TypesFixtures, only: [system_object_type_fixture: 0]
 
   defp valid_attrs do
@@ -12,6 +13,7 @@ defmodule Durandal.SystemObjectLibTest do
       name: "some name",
       type_id: system_object_type_fixture().id,
       system_id: SpaceFixtures.system_fixture().id,
+      universe_id: universe_fixture().id,
       position: [123, 456],
       velocity: [123, 456],
       orbiting_id: nil,
@@ -26,6 +28,7 @@ defmodule Durandal.SystemObjectLibTest do
       name: "some updated name",
       type_id: system_object_type_fixture().id,
       system_id: SpaceFixtures.system_fixture().id,
+      universe_id: universe_fixture().id,
       position: [123, 456, 789],
       velocity: [123, 456, 789],
       orbiting_id: nil,
@@ -40,6 +43,7 @@ defmodule Durandal.SystemObjectLibTest do
       name: nil,
       type_id: nil,
       system_id: nil,
+      universe_id: nil,
       position: nil,
       velocity: nil,
       orbiting_id: nil,

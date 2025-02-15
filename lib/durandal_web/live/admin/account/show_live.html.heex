@@ -49,4 +49,17 @@
     title="Edit user form"
     current_user={@current_user}
   />
+
+  <div :if={@user.id}>
+    <hr />
+    <.live_component
+      module={DurandalWeb.Account.AdminPasswordFormComponent}
+      id={:edit_password}
+      action={:edit_password}
+      user={@user}
+      patch={~p"/admin/accounts/user/#{@user.id}"}
+      title="Edit user form"
+      current_user={@current_user}
+    />
+  </div>
 </div>

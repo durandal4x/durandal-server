@@ -1,0 +1,138 @@
+<% selected =
+  cond do
+    assigns[:edit_mode] != true -> "show"
+    assigns[:edit_mode] == true and @station != nil and @station.id != nil -> "edit"
+    true -> "new"
+  end %>
+<DurandalWeb.StationComponents.filter_bar selected={selected} />
+
+<div :if={assigns[:edit_mode] != true}>
+  <div class="row my-4">
+    <div class="col">
+      <.card :if={@station}>
+        <div class="float-end">
+          <a class="btn btn-danger" href={~p"/admin/stations/delete/#{@station.id}"}>
+            <Fontawesome.icon icon={StylingHelper.icon(:delete)} style="solid" /> Delete
+          </a>
+
+          <a class="btn btn-info" href={~p"/admin/stations/edit/#{@station.id}"}>
+            <Fontawesome.icon icon={StylingHelper.icon(:edit)} style="solid" /> Edit
+          </a>
+        </div>
+
+        <h4 class="d-inline-block">
+          {@station.name}
+        </h4>
+
+        <div class="row">
+          <div class="col">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>System</td>
+                  <td>{@station.system.name}</td>
+                  <td>
+                    <a href={~p"/admin/systems/#{@station.system_id}"}>
+                      <Fontawesome.icon icon="link" style="regular" />
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Team</td>
+                  <td>{@station.team.name}</td>
+                  <td>
+                    <a href={~p"/admin/teams/#{@station.team_id}"}>
+                      <Fontawesome.icon icon="link" style="regular" />
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>Position</td>
+                  <td>{format_vector(@station.position)}</td>
+                </tr>
+                <tr>
+                  <td>Type</td>
+                  <td>{format_vector(@station.velocity)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div :if={@station.orbiting} class="col">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>Orbiting</td>
+                  <td>{@station.orbiting.name}</td>
+                </tr>
+                <tr>
+                  <td>Distance</td>
+                  <td>{@station.orbit_distance}</td>
+                </tr>
+                <tr>
+                  <td>Clockwise?</td>
+                  <td>{@station.orbit_clockwise}</td>
+                </tr>
+                <tr>
+                  <td>Period</td>
+                  <td>{@station.orbit_period}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </.card>
+    </div>
+  </div>
+
+  <div :if={@station} class="row">
+    <div class="col">
+      <.card>
+        <h4>Modules</h4>
+        <.table id="modules" rows={@streams.station_modules} table_class="table-sm table-hover">
+          <:col :let={{_id, module}} label="Name">{module.type.name}</:col>
+          <:col :let={{_id, module}} label="Health">
+            {module.health}/{module.type.max_health}
+          </:col>
+          <:col :let={{_id, module}} label="Build progress">
+            <%= if module.build_progress >= module.type.build_time do %>
+              100%
+            <% else %>
+              {module.build_progress} ({(module.build_progress / module.type.build_time * 100)
+              |> :math.floor()
+              |> round}%)
+            <% end %>
+          </:col>
+          <:action :let={{_id, module}}>
+            <.link
+              navigate={~p"/admin/station_modules/#{module}"}
+              class="btn btn-sm btn-secondary"
+            >
+              Show
+            </.link>
+          </:action>
+        </.table>
+      </.card>
+    </div>
+  </div>
+</div>
+
+<div :if={assigns[:edit_mode] == true and @station != nil} class="row mt-4">
+  <.live_component
+    module={DurandalWeb.Space.StationFormComponent}
+    id={:edit}
+    action={:edit}
+    station={@station}
+    system_list={@system_list}
+    team_list={@team_list}
+    patch={~p"/admin/stations/#{@station.id}"}
+    title="Edit station form"
+  />
+</div>

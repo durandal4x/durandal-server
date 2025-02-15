@@ -7,6 +7,10 @@ defmodule Durandal.Space do
   alias Durandal.Space.{System, SystemLib, SystemQueries}
 
   @doc false
+  @spec system_topic(Durandal.system_id()) :: String.t()
+  defdelegate system_topic(system_id), to: SystemLib, as: :topic
+
+  @doc false
   @spec system_query(Durandal.query_args()) :: Ecto.Query.t()
   defdelegate system_query(args), to: SystemQueries
 
@@ -42,6 +46,10 @@ defmodule Durandal.Space do
   alias Durandal.Space.{Station, StationLib, StationQueries}
 
   @doc false
+  @spec station_topic(Durandal.station_id()) :: String.t()
+  defdelegate station_topic(station_id), to: StationLib, as: :topic
+
+  @doc false
   @spec station_query(Durandal.query_args()) :: Ecto.Query.t()
   defdelegate station_query(args), to: StationQueries
 
@@ -75,6 +83,10 @@ defmodule Durandal.Space do
 
   # StationModules
   alias Durandal.Space.{StationModule, StationModuleLib, StationModuleQueries}
+
+  @doc false
+  @spec station_module_topic(Durandal.station_module_id()) :: String.t()
+  defdelegate station_module_topic(station_module_id), to: StationModuleLib, as: :topic
 
   @doc false
   @spec station_module_query(Durandal.query_args()) :: Ecto.Query.t()
@@ -114,6 +126,10 @@ defmodule Durandal.Space do
   alias Durandal.Space.{Ship, ShipLib, ShipQueries}
 
   @doc false
+  @spec ship_topic(Durandal.ship_id()) :: String.t()
+  defdelegate ship_topic(ship_id), to: ShipLib, as: :topic
+
+  @doc false
   @spec ship_query(Durandal.query_args()) :: Ecto.Query.t()
   defdelegate ship_query(args), to: ShipQueries
 
@@ -147,6 +163,10 @@ defmodule Durandal.Space do
 
   # SystemObjects
   alias Durandal.Space.{SystemObject, SystemObjectLib, SystemObjectQueries}
+
+  @doc false
+  @spec system_object_topic(Durandal.system_object_id()) :: String.t()
+  defdelegate system_object_topic(system_object_id), to: SystemObjectLib, as: :topic
 
   @doc false
   @spec system_object_query(Durandal.query_args()) :: Ecto.Query.t()

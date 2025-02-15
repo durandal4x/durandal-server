@@ -38,77 +38,82 @@ defmodule Durandal.Space.ShipQueries do
   end
 
   def _where(query, :name, name) do
-    from objects in query,
-      where: objects.name in ^List.wrap(name)
+    from ships in query,
+      where: ships.name in ^List.wrap(name)
   end
 
   def _where(query, :team_id, team_id) do
-    from objects in query,
-      where: objects.team_id in ^List.wrap(team_id)
+    from ships in query,
+      where: ships.team_id in ^List.wrap(team_id)
+  end
+
+  def _where(query, :universe_id, universe_id) do
+    from ships in query,
+      where: ships.universe_id in ^List.wrap(universe_id)
   end
 
   def _where(query, :type_id, type_id) do
-    from objects in query,
-      where: objects.type_id in ^List.wrap(type_id)
+    from ships in query,
+      where: ships.type_id in ^List.wrap(type_id)
   end
 
   def _where(query, :system_id, system_id) do
-    from objects in query,
-      where: objects.system_id in ^List.wrap(system_id)
+    from ships in query,
+      where: ships.system_id in ^List.wrap(system_id)
   end
 
   def _where(query, :has_position, position) do
-    from(objects in query,
-      where: ^position in objects.position
+    from(ships in query,
+      where: ^position in ships.position
     )
   end
 
   def _where(query, :not_has_position, position) do
-    from(objects in query,
-      where: ^position not in objects.position
+    from(ships in query,
+      where: ^position not in ships.position
     )
   end
 
   def _where(query, :has_velocity, velocity) do
-    from(objects in query,
-      where: ^velocity in objects.velocity
+    from(ships in query,
+      where: ^velocity in ships.velocity
     )
   end
 
   def _where(query, :not_has_velocity, velocity) do
-    from(objects in query,
-      where: ^velocity not in objects.velocity
+    from(ships in query,
+      where: ^velocity not in ships.velocity
     )
   end
 
   def _where(query, :orbiting_id, orbiting_id) do
-    from objects in query,
-      where: objects.orbiting_id in ^List.wrap(orbiting_id)
+    from ships in query,
+      where: ships.orbiting_id in ^List.wrap(orbiting_id)
   end
 
   def _where(query, :orbit_distance, orbit_distance) do
-    from objects in query,
-      where: objects.orbit_distance in ^List.wrap(orbit_distance)
+    from ships in query,
+      where: ships.orbit_distance in ^List.wrap(orbit_distance)
   end
 
   def _where(query, :orbit_clockwise, orbit_clockwise) do
-    from objects in query,
-      where: objects.orbit_clockwise in ^List.wrap(orbit_clockwise)
+    from ships in query,
+      where: ships.orbit_clockwise in ^List.wrap(orbit_clockwise)
   end
 
   def _where(query, :orbit_period, orbit_period) do
-    from objects in query,
-      where: objects.orbit_period in ^List.wrap(orbit_period)
+    from ships in query,
+      where: ships.orbit_period in ^List.wrap(orbit_period)
   end
 
   def _where(query, :build_progress, build_progress) do
-    from objects in query,
-      where: objects.build_progress in ^List.wrap(build_progress)
+    from ships in query,
+      where: ships.build_progress in ^List.wrap(build_progress)
   end
 
   def _where(query, :health, health) do
-    from objects in query,
-      where: objects.health in ^List.wrap(health)
+    from ships in query,
+      where: ships.health in ^List.wrap(health)
   end
 
   def _where(query, :inserted_after, timestamp) do
@@ -178,20 +183,32 @@ defmodule Durandal.Space.ShipQueries do
   end
 
   def _preload(query, :team) do
-    from objects in query,
-      left_join: player_teams in assoc(objects, :team),
+    from ships in query,
+      left_join: player_teams in assoc(ships, :team),
       preload: [team: player_teams]
   end
 
+  def _preload(query, :system) do
+    from ships in query,
+      left_join: space_systems in assoc(ships, :system),
+      preload: [system: space_systems]
+  end
+
   def _preload(query, :type) do
-    from objects in query,
-      left_join: ship_types in assoc(objects, :type),
+    from ships in query,
+      left_join: ship_types in assoc(ships, :type),
       preload: [type: ship_types]
   end
 
   def _preload(query, :orbiting) do
-    from objects in query,
-      left_join: space_system_objects in assoc(objects, :orbiting),
-      preload: [orbiting: space_system_objects]
+    from ships in query,
+      left_join: space_system_ships in assoc(ships, :orbiting),
+      preload: [orbiting: space_system_ships]
+  end
+
+  def _preload(query, :universe) do
+    from ships in query,
+      left_join: game_universes in assoc(ships, :universe),
+      preload: [universe: game_universes]
   end
 end

@@ -28,7 +28,10 @@ defmodule Durandal.TypesFixtures do
       %StationModuleType{},
       %{
         name: data["name"] || "station_module_type_name_#{r}",
-        universe_id: data["universe_id"] || universe_fixture().id
+        universe_id: data["universe_id"] || universe_fixture().id,
+        damage: data["damage"] || 100,
+        max_health: data["max_health"] || 100,
+        build_time: data["build_time"] || 100
       }
     )
     |> Durandal.Repo.insert!()
@@ -44,7 +47,11 @@ defmodule Durandal.TypesFixtures do
       %ShipType{},
       %{
         name: data["name"] || "ship_type_name_#{r}",
-        universe_id: data["universe_id"] || universe_fixture().id
+        universe_id: data["universe_id"] || universe_fixture().id,
+        damage: data["damage"] || 100,
+        max_health: data["max_health"] || 100,
+        acceleration: data["acceleration"] || 100,
+        build_time: data["build_time"] || 100
       }
     )
     |> Durandal.Repo.insert!()

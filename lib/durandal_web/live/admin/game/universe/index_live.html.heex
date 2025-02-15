@@ -14,14 +14,14 @@
     </div>
   </DurandalWeb.UniverseComponents.filter_bar>
 
-  <.table id="universes" rows={@universes} table_class="table-sm table-hover">
-    <:col :let={universe} label="Name">{universe.name}</:col>
-    <:col :let={universe} label="Active?">
+  <.table id="universes" rows={@streams.universes} table_class="table-sm table-hover">
+    <:col :let={{_id, universe}} label="Name">{universe.name}</:col>
+    <:col :let={{_id, universe}} label="Active?">
       <.boolean_icon value={universe.active?} true="check" false="times" coloured={true} />
     </:col>
 
-    <:action :let={universe}>
-      <.link navigate={~p"/admin/games/universes/#{universe}"} class="btn btn-secondary btn-sm">
+    <:action :let={{_id, universe}}>
+      <.link navigate={~p"/admin/universes/#{universe}"} class="btn btn-secondary btn-sm">
         Show
       </.link>
     </:action>

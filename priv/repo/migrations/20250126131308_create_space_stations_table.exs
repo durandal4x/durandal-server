@@ -15,12 +15,21 @@ defmodule Durandal.Repo.Migrations.CreateSpaceStationsTable do
         type: :uuid
       )
 
+      add(:universe_id, references(:game_universes, on_delete: :nothing, type: :uuid),
+        type: :uuid
+      )
+
       add(:orbit_distance, :integer)
       add(:orbit_clockwise, :boolean)
       add(:orbit_period, :integer)
 
       timestamps(type: :utc_datetime_usec)
     end
+
+    create_if_not_exists(index(:space_stations, [:orbiting_id]))
+    create_if_not_exists(index(:space_stations, [:team_id]))
+    create_if_not_exists(index(:space_stations, [:system_id]))
+    create_if_not_exists(index(:space_stations, [:universe_id]))
 
     create_if_not_exists table(:space_station_modules, primary_key: false) do
       add(:id, :uuid, primary_key: true, null: false)
@@ -31,10 +40,18 @@ defmodule Durandal.Repo.Migrations.CreateSpaceStationsTable do
         type: :uuid
       )
 
+      add(:universe_id, references(:game_universes, on_delete: :nothing, type: :uuid),
+        type: :uuid
+      )
+
       add(:build_progress, :integer)
       add(:health, :integer)
 
       timestamps(type: :utc_datetime_usec)
     end
+
+    create_if_not_exists(index(:space_station_modules, [:station_id]))
+    create_if_not_exists(index(:space_station_modules, [:type_id]))
+    create_if_not_exists(index(:space_station_modules, [:universe_id]))
   end
 end

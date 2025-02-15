@@ -31,7 +31,10 @@ defmodule Durandal.StationModuleTypeQueriesTest do
           where: [
             id: ["005f5e0b-ee46-4c07-9f81-2d565c2ade30", "c11a487b-16a2-4806-bd7a-dcf110d16b61"],
             id: "005f5e0b-ee46-4c07-9f81-2d565c2ade30",
-            universe_id: ["005f5e0b-ee46-4c07-9f81-2d565c2ade30", "c11a487b-16a2-4806-bd7a-dcf110d16b61"],
+            universe_id: [
+              "005f5e0b-ee46-4c07-9f81-2d565c2ade30",
+              "c11a487b-16a2-4806-bd7a-dcf110d16b61"
+            ],
             universe_id: "005f5e0b-ee46-4c07-9f81-2d565c2ade30",
             inserted_after: DateTime.utc_now(),
             inserted_before: DateTime.utc_now(),

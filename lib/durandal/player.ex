@@ -7,6 +7,10 @@ defmodule Durandal.Player do
   alias Durandal.Player.{Team, TeamLib, TeamQueries}
 
   @doc false
+  @spec team_topic(Durandal.team_id()) :: String.t()
+  defdelegate team_topic(team_id), to: TeamLib, as: :topic
+
+  @doc false
   @spec team_query(Durandal.query_args()) :: Ecto.Query.t()
   defdelegate team_query(args), to: TeamQueries
 
@@ -50,12 +54,14 @@ defmodule Durandal.Player do
   defdelegate list_team_members(args), to: TeamMemberLib
 
   @doc section: :team_member
-  @spec get_team_member!(TeamMember.id(), Durandal.query_args()) :: TeamMember.t()
-  defdelegate get_team_member!(team_member_id, query_args \\ []), to: TeamMemberLib
+  @spec get_team_member!(Durandal.team_id(), Durandal.user_id(), Durandal.query_args()) ::
+          TeamMember.t()
+  defdelegate get_team_member!(team_id, user_id, query_args \\ []), to: TeamMemberLib
 
   @doc section: :team_member
-  @spec get_team_member(TeamMember.id(), Durandal.query_args()) :: TeamMember.t() | nil
-  defdelegate get_team_member(team_member_id, query_args \\ []), to: TeamMemberLib
+  @spec get_team_member(Durandal.team_id(), Durandal.user_id(), Durandal.query_args()) ::
+          TeamMember.t() | nil
+  defdelegate get_team_member(team_id, user_id, query_args \\ []), to: TeamMemberLib
 
   @doc section: :team_member
   @spec create_team_member(map) :: {:ok, TeamMember.t()} | {:error, Ecto.Changeset.t()}

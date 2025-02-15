@@ -52,6 +52,11 @@ defmodule Durandal.ShipQueriesTest do
               "5bed6cfe-0ffd-40bf-ad49-4e82ca65c9be"
             ],
             system_id: "fc7cd2d5-004a-4799-8cec-0d198016e292",
+            universe_id: [
+              "92a26447-572e-4e3e-893c-42008287a9aa",
+              "5bed6cfe-0ffd-40bf-ad49-4e82ca65c9be"
+            ],
+            universe_id: "fc7cd2d5-004a-4799-8cec-0d198016e292",
             has_position: 123,
             not_has_position: 456,
             has_velocity: 123,
@@ -81,7 +86,8 @@ defmodule Durandal.ShipQueriesTest do
           preload: [
             :team,
             :type,
-            :orbiting
+            :orbiting,
+            :universe
           ]
         )
 

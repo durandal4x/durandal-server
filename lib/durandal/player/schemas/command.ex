@@ -20,6 +20,7 @@ defmodule Durandal.Player.Command do
     field(:command_type, :string)
     field(:subject_type, :string)
     field(:subject_id, Ecto.UUID)
+    belongs_to(:universe, Durandal.Game.Universe, type: Ecto.UUID)
     field(:ordering, :integer)
     field(:contents, :map)
     belongs_to(:team, Durandal.Player.Team, type: Ecto.UUID)
@@ -43,7 +44,7 @@ defmodule Durandal.Player.Command do
   #         updated_at: DateTime.t()
   #       }
 
-  @required_fields ~w(command_type subject_type subject_id ordering contents team_id user_id)a
+  @required_fields ~w(command_type subject_type subject_id ordering contents team_id user_id universe_id)a
   @optional_fields ~w()a
 
   @doc false

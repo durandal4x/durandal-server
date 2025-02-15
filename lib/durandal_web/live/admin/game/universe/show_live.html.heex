@@ -11,11 +11,15 @@
     <div class="col">
       <.card :if={@universe}>
         <div class="float-end">
-          <a class="btn btn-danger" phx-click="delete" hhref={~p"/admin/games/universes/delete/#{@universe.id}"}>
+          <a
+            class="btn btn-danger"
+            phx-click="delete"
+            hhref={~p"/admin/universes/delete/#{@universe.id}"}
+          >
             <Fontawesome.icon icon={StylingHelper.icon(:delete)} style="solid" /> Delete
           </a>
 
-          <a class="btn btn-info" href={~p"/admin/games/universes/edit/#{@universe.id}"}>
+          <a class="btn btn-info" href={~p"/admin/universes/edit/#{@universe.id}"}>
             <Fontawesome.icon icon={StylingHelper.icon(:edit)} style="solid" /> Edit
           </a>
         </div>
@@ -29,7 +33,12 @@
             <tr>
               <td>Active?</td>
               <td>
-                <.boolean_icon value={@universe.active?} true="check" false="times" coloured={true} />
+                <.boolean_icon
+                  value={@universe.active?}
+                  true="check"
+                  false="times"
+                  coloured={true}
+                />
               </td>
             </tr>
           </tbody>
@@ -38,14 +47,16 @@
     </div>
   </div>
 
-  <div class="row" :if={@universe}>
+  <div :if={@universe} class="row">
     <div class="col">
       <.card>
         <h4>Systems</h4>
         <.table id="systems" rows={@streams.systems} table_class="table-sm table-hover">
-          <:col :let={{_id, system}} label="Name"><%= system.name %></:col>
+          <:col :let={{_id, system}} label="Name">{system.name}</:col>
           <:action :let={{_id, system}}>
-            <.link navigate={~p"/admin/systems/#{system}"} class="btn btn-sm btn-secondary">Show</.link>
+            <.link navigate={~p"/admin/systems/#{system}"} class="btn btn-sm btn-secondary">
+              Show
+            </.link>
           </:action>
         </.table>
       </.card>
@@ -54,9 +65,11 @@
       <.card>
         <h4>Teams</h4>
         <.table id="teams" rows={@streams.teams} table_class="table-sm table-hover">
-          <:col :let={{_id, team}} label="Name"><%= team.name %></:col>
+          <:col :let={{_id, team}} label="Name">{team.name}</:col>
           <:action :let={{_id, team}}>
-            <.link navigate={~p"/admin/teams/#{team}"} class="btn btn-sm btn-secondary">Show</.link>
+            <.link navigate={~p"/admin/teams/#{team}"} class="btn btn-sm btn-secondary">
+              Show
+            </.link>
           </:action>
         </.table>
       </.card>
@@ -70,7 +83,7 @@
     id={:edit}
     action={:edit}
     universe={@universe}
-    patch={~p"/admin/games/universes/#{@universe.id}"}
+    patch={~p"/admin/universes/#{@universe.id}"}
     title="Edit universe form"
   />
 </div>

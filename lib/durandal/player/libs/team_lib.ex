@@ -5,6 +5,9 @@ defmodule Durandal.Player.TeamLib do
   use DurandalMacros, :library
   alias Durandal.Player.{Team, TeamQueries}
 
+  @spec topic(Durandal.team_id()) :: String.t()
+  def topic(team_id), do: "Durandal.Player.Team:#{team_id}"
+
   @doc """
   Returns the list of teams.
 
@@ -80,6 +83,10 @@ defmodule Durandal.Player.TeamLib do
     %Team{}
     |> Team.changeset(attrs)
     |> Repo.insert()
+    |> Durandal.broadcast_on_ok(&topic/1, :team, %{event: :created_team})
+    |> Durandal.broadcast_on_ok({&Durandal.Game.universe_topic/1, :universe_id}, :team, %{
+      event: :created_team
+    })
   end
 
   @doc """
@@ -99,6 +106,10 @@ defmodule Durandal.Player.TeamLib do
     team
     |> Team.changeset(attrs)
     |> Repo.update()
+    |> Durandal.broadcast_on_ok(&topic/1, :team, %{event: :updated_team})
+    |> Durandal.broadcast_on_ok({&Durandal.Game.universe_topic/1, :universe_id}, :team, %{
+      event: :updated_team
+    })
   end
 
   @doc """
@@ -116,6 +127,10 @@ defmodule Durandal.Player.TeamLib do
   @spec delete_team(Team.t()) :: {:ok, Team.t()} | {:error, Ecto.Changeset.t()}
   def delete_team(%Team{} = team) do
     Repo.delete(team)
+    |> Durandal.broadcast_on_ok(&topic/1, :team, %{event: :deleted_team})
+    |> Durandal.broadcast_on_ok({&Durandal.Game.universe_topic/1, :universe_id}, :team, %{
+      event: :deleted_team
+    })
   end
 
   @doc """

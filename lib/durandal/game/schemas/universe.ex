@@ -13,10 +13,12 @@ defmodule Durandal.Game.Universe do
   @primary_key {:id, Ecto.UUID, autogenerate: true}
   schema "game_universes" do
     field(:name, :string)
-    field(:active?, :boolean, default: false)
+    field(:active?, :boolean, default: true)
 
     has_many(:teams, Durandal.Player.Team)
     has_many(:systems, Durandal.Space.System)
+
+    field(:scenario, :string, virtual: true)
 
     timestamps(type: :utc_datetime_usec)
   end
@@ -32,7 +34,7 @@ defmodule Durandal.Game.Universe do
   #       }
 
   @required_fields ~w(name)a
-  @optional_fields ~w(active?)a
+  @optional_fields ~w(active? scenario)a
 
   @doc false
   @spec changeset(map(), map()) :: Ecto.Changeset.t()

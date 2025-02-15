@@ -6,6 +6,8 @@ defmodule DurandalWeb.Admin.Game.Universe.IndexLive do
 
   @impl true
   def mount(_params, _session, socket) when is_connected?(socket) do
+    :ok = Durandal.subscribe(Game.universe_global_topic())
+
     socket
     |> assign(:site_menu_active, "game")
     |> assign(:search_term, "")
@@ -17,7 +19,7 @@ defmodule DurandalWeb.Admin.Game.Universe.IndexLive do
     {:ok,
      socket
      |> assign(:site_menu_active, "game")
-     |> assign(:universes, [])}
+     |> stream(:universes, [])}
   end
 
   @impl true
@@ -25,6 +27,25 @@ defmodule DurandalWeb.Admin.Game.Universe.IndexLive do
     socket
     |> assign(:search_term, search_term)
     |> get_universes
+    |> noreply
+  end
+
+  @impl true
+  def handle_info(%{event: :created_universe, topic: "Durandal.Global.Universe"} = msg, socket) do
+    socket
+    |> stream_insert(:universes, msg.universe)
+    |> noreply
+  end
+
+  def handle_info(%{event: :updated_universe, topic: "Durandal.Global.Universe"} = msg, socket) do
+    socket
+    |> stream_insert(:universes, msg.universe)
+    |> noreply
+  end
+
+  def handle_info(%{event: :deleted_universe, topic: "Durandal.Global.Universe"} = msg, socket) do
+    socket
+    |> stream_delete(:universes, msg.universe)
     |> noreply
   end
 
@@ -46,6 +67,6 @@ defmodule DurandalWeb.Admin.Game.Universe.IndexLive do
       Game.list_universes(where: [name_like: assigns.search_term], order_by: order_by, limit: 50)
 
     socket
-    |> assign(:universes, universes)
+    |> stream(:universes, universes, reset: true)
   end
 end

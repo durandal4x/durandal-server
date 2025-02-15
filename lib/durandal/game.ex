@@ -3,6 +3,13 @@ defmodule Durandal.Game do
   alias Durandal.Game.{Universe, UniverseLib, UniverseQueries}
 
   @doc false
+  @spec universe_global_topic() :: String.t()
+  defdelegate universe_global_topic(), to: UniverseLib, as: :global_topic
+
+  @spec universe_topic(Durandal.universe_id()) :: String.t()
+  defdelegate universe_topic(universe_id), to: UniverseLib, as: :topic
+
+  @doc false
   @spec universe_query(Durandal.query_args()) :: Ecto.Query.t()
   defdelegate universe_query(args), to: UniverseQueries
 

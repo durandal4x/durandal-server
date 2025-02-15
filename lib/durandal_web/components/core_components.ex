@@ -242,7 +242,7 @@ defmodule DurandalWeb.CoreComponents do
   attr :type, :string,
     default: "text",
     values: ~w(checkbox color date datetime-local email file hidden month number password
-               range radio search select tel text textarea time url week)
+               range radio search select tel text textarea time url week 3dvector)
 
   attr :field, Phoenix.HTML.FormField,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
@@ -319,6 +319,28 @@ defmodule DurandalWeb.CoreComponents do
         ]}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
+      <.error :for={msg <- @errors}>{msg}</.error>
+    </div>
+    """
+  end
+
+  def input(%{type: "3dvector"} = assigns) do
+    ~H"""
+    <div phx-feedback-for={@name}>
+      <.label :if={@label} for={@id}>{@label}</.label>
+      <input
+        :for={{v, idx} <- Enum.with_index(@value || assigns[:value])}
+        type={@type}
+        name={"#{@name}[]"}
+        id={@id || "#{@name}_#{idx}"}
+        value={v}
+        style="width: 80px;"
+        class={[
+          "form-control d-inline-block",
+          @errors != [] && "border-danger"
+        ]}
+        {@rest}
+      />
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
@@ -627,9 +649,9 @@ defmodule DurandalWeb.CoreComponents do
     # should be written to the errors.po file. The :count option is
     # set by Ecto and indicates we should also apply plural rules.
     if count = opts[:count] do
-      Gettext.dngettext(DurandalWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(Durandal.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(DurandalWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(Durandal.Gettext, "errors", msg, opts)
     end
   end
 

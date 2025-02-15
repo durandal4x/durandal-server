@@ -42,6 +42,9 @@ defmodule DurandalWeb.NavComponents do
   attr :current_user, :map, required: true
   attr :active, :string, required: true
 
+  attr :universe, :map
+  attr :team, :map
+
   def top_navbar(assigns) do
     ~H"""
     <nav class="navbar navbar-expand-lg m-0 p-0" id="top-nav">
@@ -87,6 +90,24 @@ defmodule DurandalWeb.NavComponents do
 
         <!-- Right elements -->
         <div class="d-flex align-items-center">
+          <a
+            :if={@team}
+            class="badge rounded-pill text-bg-info p-2 mx-1"
+            href={~p"/admin/teams/#{@team}"}
+          >
+            <Fontawesome.icon icon="users" style="solid" />
+            {@team.name}
+          </a>
+
+          <a
+            :if={@universe}
+            class="badge rounded-pill text-bg-info2 p-2 mx-1"
+            href={~p"/admin/universes/#{@universe}"}
+          >
+            <Fontawesome.icon icon="galaxy" style="solid" />
+            {@universe.name}
+          </a>
+
           <%= if @current_user do %>
             <DurandalWeb.NavComponents.recents_dropdown current_user={@current_user} />
             <DurandalWeb.NavComponents.account_dropdown current_user={@current_user} />
@@ -427,9 +448,9 @@ defmodule DurandalWeb.NavComponents do
         aria-labelledby="user-dropdown-link"
         style="min-width: 300px; max-width: 500px;"
       >
-        <a class="dropdown-item" href={~p"/"}>
-          <i class="fa-fw fa-user fa-solid"></i> &nbsp;
-          Account
+        <a class="dropdown-item" href={~p"/profile"}>
+          <i class="fa-fw fa-user-circle fa-solid"></i> &nbsp;
+          Profile
         </a>
 
         <hr style="margin: 0;" />

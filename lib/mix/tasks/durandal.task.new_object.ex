@@ -258,7 +258,7 @@ if Code.ensure_loaded?(Igniter) do
           [name, _type] ->
             """
             def _where(query, :#{name}, #{name}) do
-              from$ objects in query,
+              from $objects in query,
                 where: $objects.#{name} in ^List.wrap(#{name})
             end
             """
@@ -298,14 +298,14 @@ if Code.ensure_loaded?(Igniter) do
           ["name", _type] ->
             """
             def _order_by(query, "Name (A-Z)") do
-              from(users in query,
-                order_by: [asc: users.name]
+              from($objects in query,
+                order_by: [asc: $objects.name]
               )
             end
 
             def _order_by(query, "Name (Z-A)") do
-              from(users in query,
-                order_by: [desc: users.name]
+              from($objects in query,
+                order_by: [desc: $objects.name]
               )
             end
             """

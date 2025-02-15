@@ -10,21 +10,33 @@ defmodule Durandal.ShipTypeLibTest do
   defp valid_attrs do
     %{
       name: "some name",
-      universe_id: universe_fixture().id
+      universe_id: universe_fixture().id,
+      max_health: 123,
+      damage: 123,
+      acceleration: 123,
+      build_time: 123
     }
   end
 
   defp update_attrs do
     %{
       name: "some updated name",
-      universe_id: universe_fixture().id
+      universe_id: universe_fixture().id,
+      max_health: 456,
+      damage: 456,
+      acceleration: 456,
+      build_time: 456
     }
   end
 
   defp invalid_attrs do
     %{
       name: nil,
-      universe_id: nil
+      universe_id: nil,
+      max_health: nil,
+      damage: nil,
+      acceleration: nil,
+      build_time: nil
     }
   end
 
@@ -56,6 +68,10 @@ defmodule Durandal.ShipTypeLibTest do
                Types.create_ship_type(valid_attrs())
 
       assert ship_type.name == "some name"
+      assert ship_type.damage == 123
+      assert ship_type.acceleration == 123
+      assert ship_type.max_health == 123
+      assert ship_type.build_time == 123
     end
 
     test "create_ship_type/1 with invalid data returns error changeset" do
@@ -69,6 +85,10 @@ defmodule Durandal.ShipTypeLibTest do
                Types.update_ship_type(ship_type, update_attrs())
 
       assert ship_type.name == "some updated name"
+      assert ship_type.damage == 456
+      assert ship_type.acceleration == 456
+      assert ship_type.max_health == 456
+      assert ship_type.build_time == 456
     end
 
     test "update_ship_type/2 with invalid data returns error changeset" do

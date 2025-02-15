@@ -15,6 +15,10 @@ defmodule Durandal.Space.System do
     field(:name, :string)
     belongs_to(:universe, Durandal.Game.Universe, type: Ecto.UUID)
 
+    has_many(:system_objects, Durandal.Space.SystemObject)
+    has_many(:stations, Durandal.Space.Station)
+    has_many(:ships, Durandal.Space.Ship)
+
     timestamps(type: :utc_datetime_usec)
   end
 

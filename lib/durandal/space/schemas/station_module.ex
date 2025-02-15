@@ -16,6 +16,7 @@ defmodule Durandal.Space.StationModule do
   schema "space_station_modules" do
     belongs_to(:station, Durandal.Space.Station, type: Ecto.UUID)
     belongs_to(:type, Durandal.Types.StationModuleType, type: Ecto.UUID)
+    belongs_to(:universe, Durandal.Game.Universe, type: Ecto.UUID)
     field(:build_progress, :integer)
     field(:health, :integer)
 
@@ -34,7 +35,7 @@ defmodule Durandal.Space.StationModule do
   #         updated_at: DateTime.t()
   #       }
 
-  @required_fields ~w(station_id type_id build_progress health)a
+  @required_fields ~w(station_id type_id universe_id build_progress health)a
   @optional_fields ~w()a
 
   @doc false

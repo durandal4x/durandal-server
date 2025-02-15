@@ -5,6 +5,9 @@ defmodule Durandal.Space.SystemObjectLib do
   use DurandalMacros, :library
   alias Durandal.Space.{SystemObject, SystemObjectQueries}
 
+  @spec topic(Durandal.system_object_id()) :: String.t()
+  def topic(system_object_id), do: "Durandal.Space.SystemObject:#{system_object_id}"
+
   @doc """
   Returns the list of system_objects.
 
@@ -80,6 +83,10 @@ defmodule Durandal.Space.SystemObjectLib do
     %SystemObject{}
     |> SystemObject.changeset(attrs)
     |> Repo.insert()
+    |> Durandal.broadcast_on_ok(&topic/1, :system_object, %{event: :created_system_object})
+    |> Durandal.broadcast_on_ok({&Durandal.Space.system_topic/1, :system_id}, :system_object, %{
+      event: :created_system_object
+    })
   end
 
   @doc """
@@ -100,6 +107,10 @@ defmodule Durandal.Space.SystemObjectLib do
     system_object
     |> SystemObject.changeset(attrs)
     |> Repo.update()
+    |> Durandal.broadcast_on_ok(&topic/1, :system_object, %{event: :updated_system_object})
+    |> Durandal.broadcast_on_ok({&Durandal.Space.system_topic/1, :system_id}, :system_object, %{
+      event: :updated_system_object
+    })
   end
 
   @doc """
@@ -118,6 +129,10 @@ defmodule Durandal.Space.SystemObjectLib do
           {:ok, SystemObject.t()} | {:error, Ecto.Changeset.t()}
   def delete_system_object(%SystemObject{} = system_object) do
     Repo.delete(system_object)
+    |> Durandal.broadcast_on_ok(&topic/1, :system_object, %{event: :deleted_system_object})
+    |> Durandal.broadcast_on_ok({&Durandal.Space.system_topic/1, :system_id}, :system_object, %{
+      event: :deleted_system_object
+    })
   end
 
   @doc """

@@ -35,9 +35,10 @@ defmodule Durandal.Player.TeamMemberLib do
       ** (Ecto.NoResultsError)
 
   """
-  @spec get_team_member!(TeamMember.id(), Durandal.query_args()) :: TeamMember.t()
-  def get_team_member!(team_member_id, query_args \\ []) do
-    (query_args ++ [id: team_member_id])
+  @spec get_team_member!(Durandal.team_id(), Durandal.user_id(), Durandal.query_args()) ::
+          TeamMember.t()
+  def get_team_member!(team_id, user_id, query_args \\ []) do
+    (query_args ++ [team_id: team_id, user_id: user_id])
     |> TeamMemberQueries.team_member_query()
     |> Repo.one!()
   end
@@ -56,9 +57,10 @@ defmodule Durandal.Player.TeamMemberLib do
       nil
 
   """
-  @spec get_team_member(TeamMember.id(), Durandal.query_args()) :: TeamMember.t() | nil
-  def get_team_member(team_member_id, query_args \\ []) do
-    (query_args ++ [id: team_member_id])
+  @spec get_team_member(Durandal.team_id(), Durandal.user_id(), Durandal.query_args()) ::
+          TeamMember.t() | nil
+  def get_team_member(team_id, user_id, query_args \\ []) do
+    (query_args ++ [team_id: team_id, user_id: user_id])
     |> TeamMemberQueries.team_member_query()
     |> Repo.one()
   end

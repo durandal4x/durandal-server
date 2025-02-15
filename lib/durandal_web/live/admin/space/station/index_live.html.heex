@@ -1,0 +1,28 @@
+<div id="index-live-wrapper">
+  <DurandalWeb.StationComponents.filter_bar selected="list">
+    <div class="col">
+      <input
+        type="text"
+        name="search-term"
+        id="search-term-input"
+        value=""
+        placeholder="Search"
+        class="form-control"
+        phx-keyup="update-search"
+        phx-debounce="500"
+      />
+    </div>
+  </DurandalWeb.StationComponents.filter_bar>
+
+  <div class="alert alert-danger">No live reload yet</div>
+
+  <.table id="stations" rows={@streams.stations} table_class="table-sm table-hover">
+    <:col :let={{_id, station}} label="Name">{station.name}</:col>
+
+    <:action :let={{_id, station}}>
+      <.link navigate={~p"/admin/stations/#{station}"} class="btn btn-secondary btn-sm">
+        Show
+      </.link>
+    </:action>
+  </.table>
+</div>

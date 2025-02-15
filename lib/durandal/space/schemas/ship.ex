@@ -26,6 +26,7 @@ defmodule Durandal.Space.Ship do
     belongs_to(:team, Durandal.Player.Team, type: Ecto.UUID)
     belongs_to(:type, Durandal.Types.ShipType, type: Ecto.UUID)
     belongs_to(:system, Durandal.Space.System, type: Ecto.UUID)
+    belongs_to(:universe, Durandal.Game.Universe, type: Ecto.UUID)
     field(:position, {:array, :integer})
     field(:velocity, {:array, :integer})
     belongs_to(:orbiting, Durandal.Space.SystemObject, type: Ecto.UUID)
@@ -58,7 +59,7 @@ defmodule Durandal.Space.Ship do
   #         updated_at: DateTime.t()
   #       }
 
-  @required_fields ~w(name team_id type_id position velocity build_progress health)a
+  @required_fields ~w(name team_id type_id system_id position velocity build_progress health universe_id)a
   @optional_fields ~w(orbiting_id orbit_distance orbit_clockwise orbit_period)a
 
   @doc false

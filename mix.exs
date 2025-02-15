@@ -63,6 +63,7 @@ defmodule Durandal.MixProject do
       {:bandit, "~> 1.5"},
 
       # Extra deps
+      {:typedstruct, "~> 0.5.2", runtime: false},
       {:ecto_psql_extras, "~> 0.7"},
       {:argon2_elixir, "~> 4.0"},
       {:phoenix_pubsub, "~> 2.0"},

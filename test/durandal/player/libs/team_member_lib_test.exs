@@ -50,8 +50,8 @@ defmodule Durandal.TeamMemberLibTest do
 
     test "get_team_member!/1 and get_team_member/1 returns the team_member with given id" do
       team_member = PlayerFixtures.team_member_fixture()
-      assert Player.get_team_member!(team_member.id) == team_member
-      assert Player.get_team_member(team_member.id) == team_member
+      assert Player.get_team_member!(team_member.team_id, team_member.user_id) == team_member
+      assert Player.get_team_member(team_member.team_id, team_member.user_id) == team_member
     end
 
     test "create_team_member/1 with valid data creates a team_member" do
@@ -80,7 +80,7 @@ defmodule Durandal.TeamMemberLibTest do
       assert {:error, %Ecto.Changeset{}} =
                Player.update_team_member(team_member, invalid_attrs())
 
-      assert team_member == Player.get_team_member!(team_member.id)
+      assert team_member == Player.get_team_member!(team_member.team_id, team_member.user_id)
     end
 
     test "delete_team_member/1 deletes the team_member" do
@@ -88,10 +88,10 @@ defmodule Durandal.TeamMemberLibTest do
       assert {:ok, %TeamMember{}} = Player.delete_team_member(team_member)
 
       assert_raise Ecto.NoResultsError, fn ->
-        Player.get_team_member!(team_member.id)
+        Player.get_team_member!(team_member.team_id, team_member.user_id)
       end
 
-      assert Player.get_team_member(team_member.id) == nil
+      assert Player.get_team_member(team_member.team_id, team_member.user_id) == nil
     end
 
     test "change_team_member/1 returns a team_member changeset" do

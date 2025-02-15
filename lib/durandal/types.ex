@@ -11,35 +11,39 @@ defmodule Durandal.Types do
   defdelegate system_object_type_query(args), to: SystemObjectTypeQueries
 
   @doc section: :system_object_type
-  @spec list_object_type_types(Durandal.query_args()) :: [SystemObjectType.t()]
-  defdelegate list_object_type_types(args), to: SystemObjectTypeLib
+  @spec list_system_object_types(Durandal.query_args()) :: [SystemObjectType.t()]
+  defdelegate list_system_object_types(args), to: SystemObjectTypeLib
 
   @doc section: :system_object_type
-  @spec get_object_type!(SystemObjectType.id(), Durandal.query_args()) :: SystemObjectType.t()
-  defdelegate get_object_type!(system_object_type_id, query_args \\ []), to: SystemObjectTypeLib
+  @spec get_system_object_type!(SystemObjectType.id(), Durandal.query_args()) ::
+          SystemObjectType.t()
+  defdelegate get_system_object_type!(system_object_type_id, query_args \\ []),
+    to: SystemObjectTypeLib
 
   @doc section: :system_object_type
-  @spec get_object_type(SystemObjectType.id(), Durandal.query_args()) ::
+  @spec get_system_object_type(SystemObjectType.id(), Durandal.query_args()) ::
           SystemObjectType.t() | nil
-  defdelegate get_object_type(system_object_type_id, query_args \\ []), to: SystemObjectTypeLib
+  defdelegate get_system_object_type(system_object_type_id, query_args \\ []),
+    to: SystemObjectTypeLib
 
   @doc section: :system_object_type
-  @spec create_object_type(map) :: {:ok, SystemObjectType.t()} | {:error, Ecto.Changeset.t()}
-  defdelegate create_object_type(attrs), to: SystemObjectTypeLib
-
-  @doc section: :system_object_type
-  @spec update_object_type(SystemObjectType, map) ::
+  @spec create_system_object_type(map) ::
           {:ok, SystemObjectType.t()} | {:error, Ecto.Changeset.t()}
-  defdelegate update_object_type(system_object_type, attrs), to: SystemObjectTypeLib
+  defdelegate create_system_object_type(attrs), to: SystemObjectTypeLib
 
   @doc section: :system_object_type
-  @spec delete_object_type(SystemObjectType.t()) ::
+  @spec update_system_object_type(SystemObjectType, map) ::
           {:ok, SystemObjectType.t()} | {:error, Ecto.Changeset.t()}
-  defdelegate delete_object_type(system_object_type), to: SystemObjectTypeLib
+  defdelegate update_system_object_type(system_object_type, attrs), to: SystemObjectTypeLib
 
   @doc section: :system_object_type
-  @spec change_object_type(SystemObjectType.t(), map) :: Ecto.Changeset.t()
-  defdelegate change_object_type(system_object_type, attrs \\ %{}), to: SystemObjectTypeLib
+  @spec delete_system_object_type(SystemObjectType.t()) ::
+          {:ok, SystemObjectType.t()} | {:error, Ecto.Changeset.t()}
+  defdelegate delete_system_object_type(system_object_type), to: SystemObjectTypeLib
+
+  @doc section: :system_object_type
+  @spec change_system_object_type(SystemObjectType.t(), map) :: Ecto.Changeset.t()
+  defdelegate change_system_object_type(system_object_type, attrs \\ %{}), to: SystemObjectTypeLib
 
   # StationModuleTypes
   alias Durandal.Types.{StationModuleType, StationModuleTypeLib, StationModuleTypeQueries}

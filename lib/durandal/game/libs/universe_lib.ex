@@ -5,6 +5,12 @@ defmodule Durandal.Game.UniverseLib do
   use DurandalMacros, :library
   alias Durandal.Game.{Universe, UniverseQueries}
 
+  @spec global_topic() :: String.t()
+  def global_topic(), do: "Durandal.Global.Universe"
+
+  @spec topic(Durandal.universe_id()) :: String.t()
+  def topic(universe_id), do: "Durandal.Game.Universe:#{universe_id}"
+
   @doc """
   Returns the list of universes.
 
@@ -80,6 +86,7 @@ defmodule Durandal.Game.UniverseLib do
     %Universe{}
     |> Universe.changeset(attrs)
     |> Repo.insert()
+    |> Durandal.broadcast_on_ok(global_topic(), :universe, %{event: :created_universe})
   end
 
   @doc """
@@ -99,6 +106,8 @@ defmodule Durandal.Game.UniverseLib do
     universe
     |> Universe.changeset(attrs)
     |> Repo.update()
+    |> Durandal.broadcast_on_ok(global_topic(), :universe, %{event: :updated_universe})
+    |> Durandal.broadcast_on_ok(&topic/1, :universe, %{event: :updated_universe})
   end
 
   @doc """
@@ -116,6 +125,7 @@ defmodule Durandal.Game.UniverseLib do
   @spec delete_universe(Universe.t()) :: {:ok, Universe.t()} | {:error, Ecto.Changeset.t()}
   def delete_universe(%Universe{} = universe) do
     Repo.delete(universe)
+    |> Durandal.broadcast_on_ok(global_topic(), :universe, %{event: :deleted_universe})
   end
 
   @doc """

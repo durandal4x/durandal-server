@@ -5,6 +5,9 @@ defmodule Durandal.Space.StationModuleLib do
   use DurandalMacros, :library
   alias Durandal.Space.{StationModule, StationModuleQueries}
 
+  @spec topic(Durandal.station_module_id()) :: String.t()
+  def topic(station_module_id), do: "Durandal.Space.StationModule:#{station_module_id}"
+
   @doc """
   Returns the list of station_modules.
 
@@ -80,6 +83,14 @@ defmodule Durandal.Space.StationModuleLib do
     %StationModule{}
     |> StationModule.changeset(attrs)
     |> Repo.insert()
+    |> Durandal.broadcast_on_ok(&topic/1, :station_module, %{event: :created_station_module})
+    |> Durandal.broadcast_on_ok(
+      {&Durandal.Space.station_topic/1, :station_id},
+      :station_module,
+      %{
+        event: :created_station_module
+      }
+    )
   end
 
   @doc """
@@ -100,6 +111,14 @@ defmodule Durandal.Space.StationModuleLib do
     station_module
     |> StationModule.changeset(attrs)
     |> Repo.update()
+    |> Durandal.broadcast_on_ok(&topic/1, :station_module, %{event: :updated_station_module})
+    |> Durandal.broadcast_on_ok(
+      {&Durandal.Space.station_topic/1, :station_id},
+      :station_module,
+      %{
+        event: :updated_station_module
+      }
+    )
   end
 
   @doc """
@@ -118,6 +137,14 @@ defmodule Durandal.Space.StationModuleLib do
           {:ok, StationModule.t()} | {:error, Ecto.Changeset.t()}
   def delete_station_module(%StationModule{} = station_module) do
     Repo.delete(station_module)
+    |> Durandal.broadcast_on_ok(&topic/1, :station_module, %{event: :deleted_station_module})
+    |> Durandal.broadcast_on_ok(
+      {&Durandal.Space.station_topic/1, :station_id},
+      :station_module,
+      %{
+        event: :deleted_station_module
+      }
+    )
   end
 
   @doc """

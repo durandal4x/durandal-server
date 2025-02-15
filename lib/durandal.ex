@@ -5,6 +5,15 @@ defmodule Durandal do
 
   @type user_id :: Durandal.Account.User.id()
 
+  @type universe_id :: Durandal.Game.Universe.id()
+
+  @type team_id :: Durandal.Player.Team.id()
+
+  @type system_id :: Durandal.Space.System.id()
+  @type system_object_id :: Durandal.Space.SystemObject.id()
+  @type station_id :: Durandal.Space.Station.id()
+  @type ship_id :: Durandal.Space.Ship.id()
+
   @type query_args ::
           keyword(
             id: non_neg_integer() | nil,
@@ -26,6 +35,10 @@ defmodule Durandal do
   @doc false
   @spec broadcast(String.t(), map()) :: :ok
   defdelegate broadcast(topic, message), to: PubSubHelper
+
+  @doc false
+  @spec broadcast_on_ok({:ok, any} | {:error, any}, String.t() | function(), atom(), map()) :: :ok
+  defdelegate broadcast_on_ok(result, topic, result_key, message), to: PubSubHelper
 
   @doc false
   @spec subscribe(String.t()) :: :ok

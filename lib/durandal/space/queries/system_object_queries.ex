@@ -47,6 +47,11 @@ defmodule Durandal.Space.SystemObjectQueries do
       where: objects.type_id in ^List.wrap(type_id)
   end
 
+  def _where(query, :universe_id, universe_id) do
+    from objects in query,
+      where: objects.universe_id in ^List.wrap(universe_id)
+  end
+
   def _where(query, :system_id, system_id) do
     from objects in query,
       where: objects.system_id in ^List.wrap(system_id)
@@ -130,14 +135,14 @@ defmodule Durandal.Space.SystemObjectQueries do
   @spec _order_by(Ecto.Query.t(), any()) :: Ecto.Query.t()
 
   def _order_by(query, "Name (A-Z)") do
-    from(users in query,
-      order_by: [asc: users.name]
+    from(system_objects in query,
+      order_by: [asc: system_objects.name]
     )
   end
 
   def _order_by(query, "Name (Z-A)") do
-    from(users in query,
-      order_by: [desc: users.name]
+    from(system_objects in query,
+      order_by: [desc: system_objects.name]
     )
   end
 
@@ -178,5 +183,11 @@ defmodule Durandal.Space.SystemObjectQueries do
     from objects in query,
       left_join: space_system_objects in assoc(objects, :orbiting),
       preload: [orbiting: space_system_objects]
+  end
+
+  def _preload(query, :universe) do
+    from system_objects in query,
+      left_join: game_universes in assoc(system_objects, :universe),
+      preload: [universe: game_universes]
   end
 end

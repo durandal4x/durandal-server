@@ -5,6 +5,9 @@ defmodule Durandal.Space.ShipLib do
   use DurandalMacros, :library
   alias Durandal.Space.{Ship, ShipQueries}
 
+  @spec topic(Durandal.ship_id()) :: String.t()
+  def topic(ship_id), do: "Durandal.Space.Ship:#{ship_id}"
+
   @doc """
   Returns the list of ships.
 
@@ -80,6 +83,13 @@ defmodule Durandal.Space.ShipLib do
     %Ship{}
     |> Ship.changeset(attrs)
     |> Repo.insert()
+    |> Durandal.broadcast_on_ok(&topic/1, :ship, %{event: :created_ship})
+    |> Durandal.broadcast_on_ok({&Durandal.Player.team_topic/1, :team_id}, :ship, %{
+      event: :created_ship
+    })
+    |> Durandal.broadcast_on_ok({&Durandal.Space.system_topic/1, :system_id}, :ship, %{
+      event: :created_ship
+    })
   end
 
   @doc """
@@ -99,6 +109,13 @@ defmodule Durandal.Space.ShipLib do
     ship
     |> Ship.changeset(attrs)
     |> Repo.update()
+    |> Durandal.broadcast_on_ok(&topic/1, :ship, %{event: :updated_ship})
+    |> Durandal.broadcast_on_ok({&Durandal.Player.team_topic/1, :team_id}, :ship, %{
+      event: :updated_ship
+    })
+    |> Durandal.broadcast_on_ok({&Durandal.Space.system_topic/1, :system_id}, :ship, %{
+      event: :updated_ship
+    })
   end
 
   @doc """
@@ -116,6 +133,13 @@ defmodule Durandal.Space.ShipLib do
   @spec delete_ship(Ship.t()) :: {:ok, Ship.t()} | {:error, Ecto.Changeset.t()}
   def delete_ship(%Ship{} = ship) do
     Repo.delete(ship)
+    |> Durandal.broadcast_on_ok(&topic/1, :ship, %{event: :deleted_ship})
+    |> Durandal.broadcast_on_ok({&Durandal.Player.team_topic/1, :team_id}, :ship, %{
+      event: :deleted_ship
+    })
+    |> Durandal.broadcast_on_ok({&Durandal.Space.system_topic/1, :system_id}, :ship, %{
+      event: :deleted_ship
+    })
   end
 
   @doc """

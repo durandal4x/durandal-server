@@ -14,12 +14,18 @@ defmodule Durandal.Repo.Migrations.CreateSpaceSystemsTable do
       timestamps(type: :utc_datetime_usec)
     end
 
+    create_if_not_exists(index(:space_systems, [:universe_id]))
+
     create_if_not_exists table(:space_system_objects, primary_key: false) do
       add(:id, :uuid, primary_key: true, null: false)
 
       add(:name, :string)
 
       add(:type_id, references(:system_object_types, on_delete: :nothing, type: :uuid),
+        type: :uuid
+      )
+
+      add(:universe_id, references(:game_universes, on_delete: :nothing, type: :uuid),
         type: :uuid
       )
 
@@ -37,5 +43,10 @@ defmodule Durandal.Repo.Migrations.CreateSpaceSystemsTable do
 
       timestamps(type: :utc_datetime_usec)
     end
+
+    create_if_not_exists(index(:space_system_objects, [:type_id]))
+    create_if_not_exists(index(:space_system_objects, [:system_id]))
+    create_if_not_exists(index(:space_system_objects, [:orbiting_id]))
+    create_if_not_exists(index(:space_system_objects, [:universe_id]))
   end
 end

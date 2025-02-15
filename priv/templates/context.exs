@@ -1,20 +1,24 @@
   # $Objects
-  alias Durandal.$Context.{$Object, $ObjectLib, $ObjectQueries}
+  alias $Application.$Context.{$Object, $ObjectLib, $ObjectQueries}
 
   @doc false
-  @spec $object_query(Durandal.query_args()) :: Ecto.Query.t()
+  @spec $object_topic($Application.$object_id()) :: String.t()
+  defdelegate $object_topic($object_id), to: $ObjectLib, as: :topic
+
+  @doc false
+  @spec $object_query($Application.query_args()) :: Ecto.Query.t()
   defdelegate $object_query(args), to: $ObjectQueries
 
   @doc section: :$object
-  @spec list_$objects(Durandal.query_args()) :: [$Object.t()]
+  @spec list_$objects($Application.query_args()) :: [$Object.t()]
   defdelegate list_$objects(args), to: $ObjectLib
 
   @doc section: :$object
-  @spec get_$object!($Object.id(), Durandal.query_args()) :: $Object.t()
+  @spec get_$object!($Object.id(), $Application.query_args()) :: $Object.t()
   defdelegate get_$object!($object_id, query_args \\ []), to: $ObjectLib
 
   @doc section: :$object
-  @spec get_$object($Object.id(), Durandal.query_args()) :: $Object.t() | nil
+  @spec get_$object($Object.id(), $Application.query_args()) :: $Object.t() | nil
   defdelegate get_$object($object_id, query_args \\ []), to: $ObjectLib
 
   @doc section: :$object

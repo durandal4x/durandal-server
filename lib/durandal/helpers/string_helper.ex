@@ -30,4 +30,9 @@ defmodule Durandal.Helper.StringHelper do
     v
     |> String.replace(~r/[0-9](?=(?:[0-9]{3})+(?![0-9]))/, "\\0,")
   end
+
+  def format_vector(v) do
+    v
+    |> Enum.map_join(" - ", &format_number/1)
+  end
 end

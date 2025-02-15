@@ -1,0 +1,24 @@
+<div id="index-live-wrapper">
+  <DurandalWeb.TeamComponents.filter_bar selected="list">
+    <div class="col">
+      <input
+        type="text"
+        name="search-term"
+        id="search-term-input"
+        value=""
+        placeholder="Search"
+        class="form-control"
+        phx-keyup="update-search"
+        phx-debounce="500"
+      />
+    </div>
+  </DurandalWeb.TeamComponents.filter_bar>
+
+  <div class="alert alert-danger">No live reload yet</div>
+
+  <.live_component
+    module={DurandalWeb.Player.TeamTableComponent}
+    query_opts={@query_opts}
+    id="live-component-id"
+  />
+</div>

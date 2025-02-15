@@ -52,6 +52,11 @@ defmodule Durandal.Player.CommandQueries do
       where: commands.subject_id in ^List.wrap(subject_id)
   end
 
+  def _where(query, :universe_id, universe_id) do
+    from commands in query,
+      where: commands.universe_id in ^List.wrap(universe_id)
+  end
+
   def _where(query, :ordering, ordering) do
     from commands in query,
       where: commands.ordering in ^List.wrap(ordering)
@@ -136,5 +141,11 @@ defmodule Durandal.Player.CommandQueries do
     from commands in query,
       left_join: account_users in assoc(commands, :user),
       preload: [user: account_users]
+  end
+
+  def _preload(query, :universe) do
+    from commands in query,
+      left_join: game_universes in assoc(commands, :universe),
+      preload: [universe: game_universes]
   end
 end

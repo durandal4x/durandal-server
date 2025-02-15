@@ -45,6 +45,11 @@ defmodule Durandal.StationModuleQueriesTest do
               "5bed6cfe-0ffd-40bf-ad49-4e82ca65c9be"
             ],
             type_id: "fc7cd2d5-004a-4799-8cec-0d198016e292",
+            universe_id: [
+              "92a26447-572e-4e3e-893c-42008287a9aa",
+              "5bed6cfe-0ffd-40bf-ad49-4e82ca65c9be"
+            ],
+            universe_id: "fc7cd2d5-004a-4799-8cec-0d198016e292",
             build_progress: [123, 456],
             build_progress: 789,
             health: [123, 456],
@@ -56,7 +61,8 @@ defmodule Durandal.StationModuleQueriesTest do
           ],
           preload: [
             :station,
-            :type
+            :type,
+            :universe
           ]
         )
 

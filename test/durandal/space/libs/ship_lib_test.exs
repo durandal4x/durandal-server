@@ -5,6 +5,7 @@ defmodule Durandal.ShipLibTest do
   use Durandal.DataCase, async: true
 
   alias Durandal.SpaceFixtures
+  import Durandal.GameFixtures, only: [universe_fixture: 0]
   import Durandal.PlayerFixtures, only: [team_fixture: 0]
   import Durandal.TypesFixtures, only: [ship_type_fixture: 0]
 
@@ -13,6 +14,8 @@ defmodule Durandal.ShipLibTest do
       name: "some name",
       team_id: team_fixture().id,
       type_id: ship_type_fixture().id,
+      system_id: SpaceFixtures.system_fixture().id,
+      universe_id: universe_fixture().id,
       position: [123, 456],
       velocity: [123, 456],
       orbiting_id: nil,
@@ -29,6 +32,8 @@ defmodule Durandal.ShipLibTest do
       name: "some updated name",
       team_id: team_fixture().id,
       type_id: ship_type_fixture().id,
+      system_id: SpaceFixtures.system_fixture().id,
+      universe_id: universe_fixture().id,
       position: [123, 456, 789],
       velocity: [123, 456, 789],
       orbiting_id: nil,
@@ -45,6 +50,8 @@ defmodule Durandal.ShipLibTest do
       name: nil,
       team_id: nil,
       type_id: nil,
+      system_id: nil,
+      universe_id: nil,
       position: nil,
       velocity: nil,
       orbiting_id: nil,

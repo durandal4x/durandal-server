@@ -4,6 +4,7 @@ defmodule DurandalWeb.Game.UniverseFormComponent do
   # import Durandal.Helper.ColourHelper, only: [rgba_css: 2]
 
   alias Durandal.Game
+  alias Durandal.Game.ScenarioLib
 
   @impl true
   def render(assigns) do
@@ -30,13 +31,22 @@ defmodule DurandalWeb.Game.UniverseFormComponent do
             <label for="universe_active?" class="control-label">Active?:</label>
             <.input field={@form[:active?]} type="checkbox" phx-debounce="100" />
             <br />
+
+            <label for="universe_scenario" class="control-label">Scenario:</label>
+            <.input
+              field={@form[:scenario]}
+              type="select"
+              phx-debounce="100"
+              options={[{"Basic", "basic"}, {"Empty", "empty"}]}
+            />
+            <br />
           </div>
         </div>
 
         <%= if @universe.id do %>
           <div class="row">
             <div class="col">
-              <a href={~p"/admin/games/universes/#{@universe.id}"} class="btn btn-secondary btn-block">
+              <a href={~p"/admin/universes/#{@universe.id}"} class="btn btn-secondary btn-block">
                 Cancel
               </a>
             </div>
@@ -100,7 +110,7 @@ defmodule DurandalWeb.Game.UniverseFormComponent do
 
         {:noreply,
          socket
-         |> put_flash(:info, "User updated successfully")
+         |> put_flash(:info, "Universe updated successfully")
          |> redirect(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -109,13 +119,16 @@ defmodule DurandalWeb.Game.UniverseFormComponent do
   end
 
   defp save_universe(socket, :new, universe_params) do
-    case Game.create_universe(universe_params) do
+    {:ok, universe} =
+      ScenarioLib.load_from_file(universe_params["scenario"], name: universe_params["name"])
+
+    case Game.update_universe(universe, universe_params) do
       {:ok, universe} ->
         notify_parent({:saved, universe})
 
         {:noreply,
          socket
-         |> put_flash(:info, "User created successfully")
+         |> put_flash(:info, "Universe created successfully")
          |> redirect(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->

@@ -9,7 +9,8 @@ defmodule Durandal.Player.TeamMemberQueries do
     query = from(team_members in TeamMember)
 
     query
-    |> do_where(id: args[:id])
+    |> do_where(team_id: args[:team_id])
+    |> do_where(user_id: args[:user_id])
     |> do_where(args[:where])
     |> do_where(args[:search])
     |> do_preload(args[:preload])

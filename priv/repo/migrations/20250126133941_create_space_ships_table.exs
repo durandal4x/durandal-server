@@ -9,6 +9,11 @@ defmodule Durandal.Repo.Migrations.CreateSpaceShipsTable do
       add(:team_id, references(:player_teams, on_delete: :nothing, type: :uuid), type: :uuid)
       add(:type_id, references(:ship_types, on_delete: :nothing, type: :uuid), type: :uuid)
       add(:system_id, references(:space_systems, on_delete: :nothing, type: :uuid), type: :uuid)
+
+      add(:universe_id, references(:game_universes, on_delete: :nothing, type: :uuid),
+        type: :uuid
+      )
+
       add(:position, {:array, :integer})
       add(:velocity, {:array, :integer})
 
@@ -24,5 +29,11 @@ defmodule Durandal.Repo.Migrations.CreateSpaceShipsTable do
 
       timestamps(type: :utc_datetime_usec)
     end
+
+    create_if_not_exists(index(:space_ships, [:team_id]))
+    create_if_not_exists(index(:space_ships, [:type_id]))
+    create_if_not_exists(index(:space_ships, [:system_id]))
+    create_if_not_exists(index(:space_ships, [:universe_id]))
+    create_if_not_exists(index(:space_ships, [:orbiting_id]))
   end
 end

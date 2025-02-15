@@ -31,13 +31,11 @@ if config_env() != :test do
     hostname: System.get_env("POSTGRES_HOSTNAME", "localhost"),
     database: System.get_env("POSTGRES_DB_NAME", "durandal_dev"),
     port: String.to_integer(System.get_env("POSTGRES_PORT", "5432")),
-    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
-    stacktrace: true,
-    show_sensitive_data_on_connection_error: true
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 end
 
 if config_env() == :prod do
-  System.get_env("DATABASE_USERNAME") || raise "environment variable DATABASE_USERNAME is missing"
+  System.get_env("POSTGRES_USERNAME") || raise "environment variable POSTGRES_USERNAME is missing"
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 

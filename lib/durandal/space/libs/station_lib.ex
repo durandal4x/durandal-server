@@ -5,6 +5,9 @@ defmodule Durandal.Space.StationLib do
   use DurandalMacros, :library
   alias Durandal.Space.{Station, StationQueries}
 
+  @spec topic(Durandal.station_id()) :: String.t()
+  def topic(station_id), do: "Durandal.Space.Station:#{station_id}"
+
   @doc """
   Returns the list of stations.
 
@@ -80,6 +83,13 @@ defmodule Durandal.Space.StationLib do
     %Station{}
     |> Station.changeset(attrs)
     |> Repo.insert()
+    |> Durandal.broadcast_on_ok(&topic/1, :station, %{event: :created_station})
+    |> Durandal.broadcast_on_ok({&Durandal.Player.team_topic/1, :team_id}, :station, %{
+      event: :created_station
+    })
+    |> Durandal.broadcast_on_ok({&Durandal.Space.system_topic/1, :system_id}, :station, %{
+      event: :created_station
+    })
   end
 
   @doc """
@@ -99,6 +109,13 @@ defmodule Durandal.Space.StationLib do
     station
     |> Station.changeset(attrs)
     |> Repo.update()
+    |> Durandal.broadcast_on_ok(&topic/1, :station, %{event: :updated_station})
+    |> Durandal.broadcast_on_ok({&Durandal.Player.team_topic/1, :team_id}, :station, %{
+      event: :updated_station
+    })
+    |> Durandal.broadcast_on_ok({&Durandal.Space.system_topic/1, :system_id}, :station, %{
+      event: :updated_station
+    })
   end
 
   @doc """
@@ -116,6 +133,13 @@ defmodule Durandal.Space.StationLib do
   @spec delete_station(Station.t()) :: {:ok, Station.t()} | {:error, Ecto.Changeset.t()}
   def delete_station(%Station{} = station) do
     Repo.delete(station)
+    |> Durandal.broadcast_on_ok(&topic/1, :station, %{event: :deleted_station})
+    |> Durandal.broadcast_on_ok({&Durandal.Player.team_topic/1, :team_id}, :station, %{
+      event: :deleted_station
+    })
+    |> Durandal.broadcast_on_ok({&Durandal.Space.system_topic/1, :system_id}, :station, %{
+      event: :deleted_station
+    })
   end
 
   @doc """

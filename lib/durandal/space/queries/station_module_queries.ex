@@ -38,23 +38,28 @@ defmodule Durandal.Space.StationModuleQueries do
   end
 
   def _where(query, :station_id, station_id) do
-    from objects in query,
-      where: objects.station_id in ^List.wrap(station_id)
+    from station_modules in query,
+      where: station_modules.station_id in ^List.wrap(station_id)
   end
 
   def _where(query, :type_id, type_id) do
-    from objects in query,
-      where: objects.type_id in ^List.wrap(type_id)
+    from station_modules in query,
+      where: station_modules.type_id in ^List.wrap(type_id)
+  end
+
+  def _where(query, :universe_id, universe_id) do
+    from station_modules in query,
+      where: station_modules.universe_id in ^List.wrap(universe_id)
   end
 
   def _where(query, :build_progress, build_progress) do
-    from objects in query,
-      where: objects.build_progress in ^List.wrap(build_progress)
+    from station_modules in query,
+      where: station_modules.build_progress in ^List.wrap(build_progress)
   end
 
   def _where(query, :health, health) do
-    from objects in query,
-      where: objects.health in ^List.wrap(health)
+    from station_modules in query,
+      where: station_modules.health in ^List.wrap(health)
   end
 
   def _where(query, :inserted_after, timestamp) do
@@ -112,14 +117,20 @@ defmodule Durandal.Space.StationModuleQueries do
   end
 
   def _preload(query, :station) do
-    from objects in query,
-      left_join: space_stations in assoc(objects, :station),
+    from station_modules in query,
+      left_join: space_stations in assoc(station_modules, :station),
       preload: [station: space_stations]
   end
 
   def _preload(query, :type) do
-    from objects in query,
-      left_join: station_module_types in assoc(objects, :type),
+    from station_modules in query,
+      left_join: station_module_types in assoc(station_modules, :type),
       preload: [type: station_module_types]
+  end
+
+  def _preload(query, :universe) do
+    from station_modules in query,
+      left_join: game_universes in assoc(station_modules, :universe),
+      preload: [universe: game_universes]
   end
 end

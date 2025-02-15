@@ -56,6 +56,11 @@ defmodule Durandal.SystemObjectQueriesTest do
               "5bed6cfe-0ffd-40bf-ad49-4e82ca65c9be"
             ],
             orbiting_id: "fc7cd2d5-004a-4799-8cec-0d198016e292",
+            universe_id: [
+              "92a26447-572e-4e3e-893c-42008287a9aa",
+              "5bed6cfe-0ffd-40bf-ad49-4e82ca65c9be"
+            ],
+            universe_id: "fc7cd2d5-004a-4799-8cec-0d198016e292",
             orbit_distance: [123, 456],
             orbit_distance: 789,
             orbit_clockwise: [true, false],
@@ -72,7 +77,8 @@ defmodule Durandal.SystemObjectQueriesTest do
           preload: [
             :type,
             :system,
-            :orbiting
+            :orbiting,
+            :universe
           ]
         )
 

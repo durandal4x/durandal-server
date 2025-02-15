@@ -1,6 +1,7 @@
 defmodule DurandalWeb.Admin.Game.Universe.ShowLive do
   @moduledoc false
   use DurandalWeb, :live_view
+  alias Durandal.{Game, Space, Player}
 
   @impl true
   def mount(%{"universe_id" => universe_id}, _session, socket) when is_connected?(socket) do
@@ -11,7 +12,7 @@ defmodule DurandalWeb.Admin.Game.Universe.ShowLive do
       |> get_universe()
 
     if socket.assigns.universe do
-      # :ok = PubSub.subscribe(universe_topic(universe_id))
+      :ok = Durandal.subscribe(Game.universe_topic(universe_id))
 
       {:ok, socket}
     else
@@ -50,26 +51,64 @@ defmodule DurandalWeb.Admin.Game.Universe.ShowLive do
     Durandal.Game.DeleteUniverseTask.perform(socket.assigns.universe_id)
 
     socket
-    |> redirect(to: ~p"/admin/games/universes")
+    |> redirect(to: ~p"/admin/universes")
     |> put_flash(:info, "Universe deleted")
     |> noreply
   end
 
   @impl true
+  # Universe updates
   def handle_info(
-        %{topic: "Durandal.Game.Universe:" <> _, event: :client_updated} = msg,
+        %{event: :updated_universe, topic: "Durandal.Game.Universe:" <> _} = msg,
         socket
       ) do
-    new_client = socket.assigns.client |> Map.merge(msg.changes)
-
     socket
-    |> assign(:client, new_client)
+    |> assign(:universe, msg.universe)
     |> noreply
   end
 
-  def handle_info(%{topic: "Durandal.Game.Universe:" <> _}, socket) do
+  def handle_info(%{event: :deleted_universe, topic: "Durandal.Game.Universe" <> _} = msg, socket) do
     socket
-    |> noreply()
+    |> redirect(to: ~p"/admin/universes")
+    |> noreply
+  end
+
+  # System updates
+  def handle_info(%{event: :created_system, topic: "Durandal.Game.Universe:" <> _} = msg, socket) do
+    socket
+    |> stream_insert(:systems, msg.system)
+    |> noreply
+  end
+
+  def handle_info(%{event: :updated_system, topic: "Durandal.Game.Universe:" <> _} = msg, socket) do
+    socket
+    |> stream_insert(:systems, msg.system)
+    |> noreply
+  end
+
+  def handle_info(%{event: :deleted_system, topic: "Durandal.Game.Universe" <> _} = msg, socket) do
+    socket
+    |> stream_delete(:systems, msg.system)
+    |> noreply
+  end
+
+  # Team updates
+  def handle_info(%{event: :created_team, topic: "Durandal.Game.Universe:" <> _} = msg, socket) do
+    socket
+    |> stream_insert(:teams, msg.team)
+    |> noreply
+  end
+
+  def handle_info(%{event: :updated_team, topic: "Durandal.Game.Universe:" <> _} = msg, socket) do
+    socket
+    |> stream_insert(:teams, msg.team)
+    |> noreply
+  end
+
+  def handle_info(%{event: :deleted_team, topic: "Durandal.Game.Universe" <> _} = msg, socket) do
+    socket
+    |> stream_delete(:teams, msg.team)
+    |> noreply
   end
 
   def handle_info(
@@ -81,10 +120,10 @@ defmodule DurandalWeb.Admin.Game.Universe.ShowLive do
 
   @spec get_universe(Phoenix.Socket.t()) :: Phoenix.Socket.t()
   defp get_universe(%{assigns: %{universe_id: universe_id}} = socket) do
-    universe = Durandal.Game.get_universe!(universe_id)
+    universe = Game.get_universe!(universe_id)
 
-    teams = Durandal.Player.list_teams(where: [universe_id: universe_id], order_by: ["Name (A-Z)"])
-    systems = Durandal.Space.list_systems(where: [universe_id: universe_id], order_by: ["Name (A-Z)"])
+    teams = Player.list_teams(where: [universe_id: universe_id], order_by: ["Name (A-Z)"])
+    systems = Space.list_systems(where: [universe_id: universe_id], order_by: ["Name (A-Z)"])
 
     socket
     |> assign(:universe, universe)
