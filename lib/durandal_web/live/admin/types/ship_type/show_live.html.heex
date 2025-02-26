@@ -1,0 +1,61 @@
+<% selected =
+  cond do
+    assigns[:edit_mode] != true -> "show"
+    assigns[:edit_mode] == true and @ship_type != nil and @ship_type.id != nil -> "edit"
+    true -> "new"
+  end %>
+<DurandalWeb.ShipTypeComponents.filter_bar selected={selected} />
+
+<div :if={assigns[:edit_mode] != true}>
+  <div class="row my-4">
+    <div class="col">
+      <.card :if={@ship_type}>
+        <div class="float-end">
+          <a class="btn btn-danger" href={~p"/admin/ship_types/delete/#{@ship_type.id}"}>
+            <Fontawesome.icon icon={StylingHelper.icon(:delete)} style="solid" /> Delete
+          </a>
+
+          <a class="btn btn-info" href={~p"/admin/ship_types/edit/#{@ship_type.id}"}>
+            <Fontawesome.icon icon={StylingHelper.icon(:edit)} style="solid" /> Edit
+          </a>
+        </div>
+
+        <h4 class="d-inline-block">
+          {@ship_type.name}
+        </h4>
+
+        <table class="table table-sm">
+          <tbody>
+            <tr>
+              <td>Max health</td>
+              <td>{@ship_type.max_health}</td>
+            </tr>
+            <tr>
+              <td>Build time</td>
+              <td>{@ship_type.build_time}</td>
+            </tr>
+            <tr>
+              <td>Acceleration</td>
+              <td>{@ship_type.acceleration}</td>
+            </tr>
+            <tr>
+              <td>Damage</td>
+              <td>{@ship_type.damage}</td>
+            </tr>
+          </tbody>
+        </table>
+      </.card>
+    </div>
+  </div>
+</div>
+
+<div :if={assigns[:edit_mode] == true and @ship_type != nil} class="row mt-4">
+  <.live_component
+    module={DurandalWeb.Types.ShipTypeFormComponent}
+    id={:edit}
+    action={:edit}
+    ship_type={@ship_type}
+    patch={~p"/admin/ship_types/#{@ship_type.id}"}
+    title="Edit ship_type form"
+  />
+</div>

@@ -25,7 +25,6 @@ defmodule DurandalWeb.Admin.Space.Ship.ShowLive do
     |> assign(:site_menu_active, "game")
     |> assign(:ship_id, nil)
     |> assign(:ship, nil)
-    |> stream(:ships, [])
     |> ok
   end
 
@@ -99,44 +98,6 @@ defmodule DurandalWeb.Admin.Space.Ship.ShowLive do
     |> noreply
   end
 
-  # System updates
-  def handle_info(%{event: :created_system, topic: "Durandal.Space.Ship:" <> _} = msg, socket) do
-    socket
-    |> stream_insert(:systems, msg.system)
-    |> noreply
-  end
-
-  def handle_info(%{event: :updated_system, topic: "Durandal.Space.Ship:" <> _} = msg, socket) do
-    socket
-    |> stream_insert(:systems, msg.system)
-    |> noreply
-  end
-
-  def handle_info(%{event: :deleted_system, topic: "Durandal.Space.Ship" <> _} = msg, socket) do
-    socket
-    |> stream_delete(:systems, msg.system)
-    |> noreply
-  end
-
-  # Ship updates
-  def handle_info(%{event: :created_ship, topic: "Durandal.Space.Ship:" <> _} = msg, socket) do
-    socket
-    |> stream_insert(:ships, msg.ship)
-    |> noreply
-  end
-
-  def handle_info(%{event: :updated_ship, topic: "Durandal.Space.Ship:" <> _} = msg, socket) do
-    socket
-    |> stream_insert(:ships, msg.ship)
-    |> noreply
-  end
-
-  def handle_info(%{event: :deleted_ship, topic: "Durandal.Space.Ship" <> _} = msg, socket) do
-    socket
-    |> stream_delete(:ships, msg.ship)
-    |> noreply
-  end
-
   def handle_info(
         {DurandalWeb.Space.ShipFormComponent, {:updated_changeset, %{changes: _changes}}},
         socket
@@ -146,13 +107,11 @@ defmodule DurandalWeb.Admin.Space.Ship.ShowLive do
 
   @spec get_ship(Phoenix.Socket.t()) :: Phoenix.Socket.t()
   defp get_ship(%{assigns: %{ship_id: ship_id}} = socket) do
-    ship = Space.get_ship!(ship_id, preload: [:type, :system, :orbiting, :team])
-
-    # ships = Space.list_ships(where: [ship_id: ship_id], order_by: ["Name (A-Z)"])
-    ships = []
+    ship = Space.get_ship!(ship_id, preload: [:type, :system, :orbiting, :team, :universe])
 
     socket
     |> assign(:ship, ship)
-    |> stream(:ships, ships, reset: true)
+    |> assign(:team, ship.team)
+    |> assign(:universe, ship.universe)
   end
 end

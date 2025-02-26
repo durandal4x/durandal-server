@@ -1,7 +1,7 @@
 defmodule DurandalWeb.Admin.Space.System.ShowLive do
   @moduledoc false
   use DurandalWeb, :live_view
-  alias Durandal.{Space, Player}
+  alias Durandal.Space
 
   @impl true
   def mount(%{"system_id" => system_id}, _session, socket) when is_connected?(socket) do
@@ -52,7 +52,7 @@ defmodule DurandalWeb.Admin.Space.System.ShowLive do
     |> noreply
   end
 
-  def handle_info(%{event: :deleted_system, topic: "Durandal.Space.System" <> _} = msg, socket) do
+  def handle_info(%{event: :deleted_system, topic: "Durandal.Space.System" <> _} = _msg, socket) do
     socket
     |> redirect(to: ~p"/admin/systems")
     |> noreply

@@ -5,6 +5,9 @@ defmodule Durandal.Types.ShipTypeLib do
   use DurandalMacros, :library
   alias Durandal.Types.{ShipType, ShipTypeQueries}
 
+  @spec topic(Durandal.ship_type_id()) :: String.t()
+  def topic(ship_type_id), do: "Durandal.Types.ShipType:#{ship_type_id}"
+
   @doc """
   Returns the list of ship_types.
 

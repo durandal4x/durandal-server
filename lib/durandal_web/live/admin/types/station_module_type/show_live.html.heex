@@ -1,0 +1,68 @@
+<% selected =
+  cond do
+    assigns[:edit_mode] != true ->
+      "show"
+
+    assigns[:edit_mode] == true and @station_module_type != nil and @station_module_type.id != nil ->
+      "edit"
+
+    true ->
+      "new"
+  end %>
+<DurandalWeb.StationModuleTypeComponents.filter_bar selected={selected} />
+
+<div :if={assigns[:edit_mode] != true}>
+  <div class="row my-4">
+    <div class="col">
+      <.card :if={@station_module_type}>
+        <div class="float-end">
+          <a
+            class="btn btn-danger"
+            href={~p"/admin/station_module_types/delete/#{@station_module_type.id}"}
+          >
+            <Fontawesome.icon icon={StylingHelper.icon(:delete)} style="solid" /> Delete
+          </a>
+
+          <a
+            class="btn btn-info"
+            href={~p"/admin/station_module_types/edit/#{@station_module_type.id}"}
+          >
+            <Fontawesome.icon icon={StylingHelper.icon(:edit)} style="solid" /> Edit
+          </a>
+        </div>
+
+        <h4 class="d-inline-block">
+          {@station_module_type.name}
+        </h4>
+
+        <table class="table table-sm">
+          <tbody>
+            <tr>
+              <td>Max health</td>
+              <td>{@station_module_type.max_health}</td>
+            </tr>
+            <tr>
+              <td>Build time</td>
+              <td>{@station_module_type.build_time}</td>
+            </tr>
+            <tr>
+              <td>Damage</td>
+              <td>{@station_module_type.damage}</td>
+            </tr>
+          </tbody>
+        </table>
+      </.card>
+    </div>
+  </div>
+</div>
+
+<div :if={assigns[:edit_mode] == true and @station_module_type != nil} class="row mt-4">
+  <.live_component
+    module={DurandalWeb.Types.StationModuleTypeFormComponent}
+    id={:edit}
+    action={:edit}
+    station_module_type={@station_module_type}
+    patch={~p"/admin/station_module_types/#{@station_module_type.id}"}
+    title="Edit station_module_type form"
+  />
+</div>

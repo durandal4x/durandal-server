@@ -5,6 +5,9 @@ defmodule Durandal.Types.SystemObjectTypeLib do
   use DurandalMacros, :library
   alias Durandal.Types.{SystemObjectType, SystemObjectTypeQueries}
 
+  @spec topic(Durandal.system_object_type_id()) :: String.t()
+  def topic(system_object_type_id), do: "Durandal.Types.SystemObjectType:#{system_object_type_id}"
+
   @doc """
   Returns the list of system_object_types.
 

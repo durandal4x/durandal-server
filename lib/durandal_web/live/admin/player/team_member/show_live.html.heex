@@ -1,0 +1,52 @@
+<% selected =
+  cond do
+    assigns[:edit_mode] != true -> "show"
+    assigns[:edit_mode] == true and @team_member != nil and @team_member.id != nil -> "edit"
+    true -> "new"
+  end %>
+<DurandalWeb.TeamMemberComponents.filter_bar selected={selected} />
+
+<div :if={assigns[:edit_mode] != true}>
+  <div class="row my-4">
+    <div class="col">
+      <.card :if={@team_member}>
+        <div class="float-end">
+          <a
+            class="btn btn-danger"
+            href={~p"/admin/team_members/delete/#{@team_member.team_id}/#{@team_member.user_id}"}
+          >
+            <Fontawesome.icon icon={StylingHelper.icon(:delete)} style="solid" /> Delete
+          </a>
+
+          <a
+            class="btn btn-info"
+            href={~p"/admin/team_members/edit/#{@team_member.team_id}/#{@team_member.user_id}"}
+          >
+            <Fontawesome.icon icon={StylingHelper.icon(:edit)} style="solid" /> Edit
+          </a>
+        </div>
+
+        <h4 class="d-inline-block">
+          {@team_member.user.name}
+        </h4>
+
+        <table class="table table-sm">
+          <tbody></tbody>
+        </table>
+      </.card>
+    </div>
+  </div>
+
+  <div :if={@team_member} class="row"></div>
+</div>
+
+<div :if={assigns[:edit_mode] == true and @team_member != nil} class="row mt-4">
+  <.live_component
+    module={DurandalWeb.Player.TeamMemberFormComponent}
+    id={:edit}
+    action={:edit}
+    team_member={@team_member}
+    patch={~p"/admin/team_members/#{@team_member.team_id}/#{@team_member.user_id}"}
+    title="Edit team_member form"
+  />
+</div>

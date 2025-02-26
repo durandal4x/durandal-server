@@ -67,7 +67,10 @@ defmodule DurandalWeb.Admin.Game.Universe.ShowLive do
     |> noreply
   end
 
-  def handle_info(%{event: :deleted_universe, topic: "Durandal.Game.Universe" <> _} = msg, socket) do
+  def handle_info(
+        %{event: :deleted_universe, topic: "Durandal.Game.Universe" <> _} = _msg,
+        socket
+      ) do
     socket
     |> redirect(to: ~p"/admin/universes")
     |> noreply

@@ -252,14 +252,18 @@ defmodule DurandalWeb.CoreComponents do
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
-  attr :rest, :global, include: ~w(autocomplete cols disabled form max maxlength min minlength
-                                   pattern placeholder readonly required rows size step)
+
+  attr :rest, :global,
+    include:
+      ~w(autocomplete cols disabled form max maxlength min minlength
+                                   pattern placeholder readonly required rows size step show_valid valid_inset)
+
   slot :inner_block
 
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns
     |> assign(field: nil, id: assigns.id || field.id)
-    |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
+    |> assign(:errors, assigns[:errors] ++ Enum.map(field.errors, &translate_error(&1)))
     |> assign_new(:name, fn -> if assigns.multiple, do: field.name <> "[]", else: field.name end)
     |> assign_new(:value, fn -> field.value end)
     |> input()
@@ -346,21 +350,56 @@ defmodule DurandalWeb.CoreComponents do
     """
   end
 
+  def input(%{type: "hidden"} = assigns) do
+    ~H"""
+    <input
+      type="hidden"
+      name={@name}
+      id={@id || @name}
+      value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+      {@rest}
+    />
+    """
+  end
+
   def input(assigns) do
+    show_valid = assigns[:errors] == [] && assigns[:rest][:show_valid] && assigns[:value] != nil
+
+    assigns =
+      assigns
+      |> assign(:show_valid, show_valid)
+
     ~H"""
     <div phx-feedback-for={@name}>
       <.label :if={@label} for={@id}>{@label}</.label>
-      <input
-        type={@type}
-        name={@name}
-        id={@id || @name}
-        value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        class={[
-          "form-control",
-          @errors != [] && "border-danger"
-        ]}
-        {@rest}
-      />
+      <div class="input-group">
+        <input
+          type={@type}
+          name={@name}
+          id={@id || @name}
+          value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+          class={[
+            "form-control",
+            @show_valid && "border-success",
+            @errors != [] && "border-danger"
+          ]}
+          {@rest}
+        />
+        <span
+          :if={assigns[:rest][:valid_inset]}
+          class={[
+            "input-group-text text-white",
+            @show_valid && "bg-success border-success2",
+            @errors != [] && "bg-danger border-danger2"
+          ]}
+        >
+          <Fontawesome.icon :if={@show_valid} icon="check-circle" />
+          <Fontawesome.icon :if={@errors != []} icon="times-circle" />
+          <span :if={!@show_valid && @errors == []}>
+            <Fontawesome.icon icon="square" style="regular" class="opacity-0" />
+          </span>
+        </span>
+      </div>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """

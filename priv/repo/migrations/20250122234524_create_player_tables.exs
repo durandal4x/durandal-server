@@ -18,8 +18,16 @@ defmodule Durandal.Repo.Migrations.CreatePlayerTeamsTable do
 
     create_if_not_exists table(:player_team_members, primary_key: false) do
       add(:roles, {:array, :string})
-      add(:team_id, references(:player_teams, on_delete: :nothing, type: :uuid), type: :uuid)
-      add(:user_id, references(:account_users, on_delete: :nothing, type: :uuid), type: :uuid)
+
+      add(:team_id, references(:player_teams, on_delete: :nothing, type: :uuid),
+        type: :uuid,
+        primary_key: true
+      )
+
+      add(:user_id, references(:account_users, on_delete: :nothing, type: :uuid),
+        type: :uuid,
+        primary_key: true
+      )
 
       timestamps(type: :utc_datetime_usec)
     end

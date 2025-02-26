@@ -14,11 +14,13 @@
     </div>
   </DurandalWeb.TeamComponents.filter_bar>
 
-  <div class="alert alert-danger">No live reload yet</div>
+  <.table id="teams" rows={@streams.teams} table_class="table-sm table-hover">
+    <:col :let={{_id, team}} label="Name">{team.name}</:col>
 
-  <.live_component
-    module={DurandalWeb.Player.TeamTableComponent}
-    query_opts={@query_opts}
-    id="live-component-id"
-  />
+    <:action :let={{_id, team}}>
+      <.link navigate={~p"/admin/teams/#{team}"} class="btn btn-secondary btn-sm">
+        Show
+      </.link>
+    </:action>
+  </.table>
 </div>

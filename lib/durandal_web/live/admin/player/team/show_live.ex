@@ -64,7 +64,7 @@ defmodule DurandalWeb.Admin.Player.Team.ShowLive do
     |> noreply
   end
 
-  def handle_info(%{event: :deleted_team, topic: "Durandal.Player.Team" <> _} = msg, socket) do
+  def handle_info(%{event: :deleted_team, topic: "Durandal.Player.Team" <> _} = _msg, socket) do
     socket
     |> redirect(to: ~p"/admin/teams")
     |> noreply
@@ -115,6 +115,14 @@ defmodule DurandalWeb.Admin.Player.Team.ShowLive do
     {:noreply, socket}
   end
 
+  def handle_info(
+        {DurandalWeb.Player.TeamMemberQuickAddComponent,
+         {:updated_changeset, %{changes: _changes}}},
+        socket
+      ) do
+    {:noreply, socket}
+  end
+
   @spec get_team(Phoenix.Socket.t()) :: Phoenix.Socket.t()
   defp get_team(%{assigns: %{team_id: team_id}} = socket) do
     team = Player.get_team!(team_id, preload: [:universe])
@@ -125,6 +133,7 @@ defmodule DurandalWeb.Admin.Player.Team.ShowLive do
         preload: [:user],
         oorder_by: ["Name (A-Z)"]
       )
+      |> Enum.map(fn tm -> Map.put(tm, :id, tm.user_id) end)
 
     stations = Space.list_stations(where: [team_id: team_id], order_by: ["Name (A-Z)"])
     ships = Space.list_ships(where: [team_id: team_id], order_by: ["Name (A-Z)"])

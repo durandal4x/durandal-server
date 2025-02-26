@@ -1,0 +1,33 @@
+<div id="index-live-wrapper">
+  <DurandalWeb.SystemObjectTypeComponents.filter_bar selected="list">
+    <div class="col">
+      <input
+        type="text"
+        name="search-term"
+        id="search-term-input"
+        value=""
+        placeholder="Search"
+        class="form-control"
+        phx-keyup="update-search"
+        phx-debounce="500"
+      />
+    </div>
+  </DurandalWeb.SystemObjectTypeComponents.filter_bar>
+
+  <.table
+    id="system_object_types"
+    rows={@streams.system_object_types}
+    table_class="table-sm table-hover"
+  >
+    <:col :let={{_id, system_object_type}} label="Name">{system_object_type.name}</:col>
+
+    <:action :let={{_id, system_object_type}}>
+      <.link
+        navigate={~p"/admin/system_object_types/#{system_object_type}"}
+        class="btn btn-secondary btn-sm"
+      >
+        Show
+      </.link>
+    </:action>
+  </.table>
+</div>

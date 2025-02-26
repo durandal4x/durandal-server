@@ -49,7 +49,7 @@ defmodule Durandal.StationModuleTypeQueriesTest do
             "Name (A-Z)",
             "Name (Z-A)"
           ],
-          preload: []
+          preload: [:universe]
         )
 
       assert all_values != @empty_query

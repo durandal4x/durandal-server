@@ -5,6 +5,10 @@ defmodule Durandal.Types.StationModuleTypeLib do
   use DurandalMacros, :library
   alias Durandal.Types.{StationModuleType, StationModuleTypeQueries}
 
+  @spec topic(Durandal.station_module_type_id()) :: String.t()
+  def topic(station_module_type_id),
+    do: "Durandal.Types.StationModuleType:#{station_module_type_id}"
+
   @doc """
   Returns the list of station_module_types.
 

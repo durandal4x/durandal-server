@@ -76,6 +76,7 @@
       - python3
       - cron
       - acl
+      - btop
     state: latest
 
 - name: Check if a reboot is needed for Debian-based systems

@@ -7,6 +7,10 @@ defmodule Durandal.Types do
   alias Durandal.Types.{SystemObjectType, SystemObjectTypeLib, SystemObjectTypeQueries}
 
   @doc false
+  @spec system_object_type_topic(Durandal.system_object_type_id()) :: String.t()
+  defdelegate system_object_type_topic(system_object_type_id), to: SystemObjectTypeLib, as: :topic
+
+  @doc false
   @spec system_object_type_query(Durandal.query_args()) :: Ecto.Query.t()
   defdelegate system_object_type_query(args), to: SystemObjectTypeQueries
 
@@ -47,6 +51,12 @@ defmodule Durandal.Types do
 
   # StationModuleTypes
   alias Durandal.Types.{StationModuleType, StationModuleTypeLib, StationModuleTypeQueries}
+
+  @doc false
+  @spec station_module_type_topic(Durandal.station_module_type_id()) :: String.t()
+  defdelegate station_module_type_topic(station_module_type_id),
+    to: StationModuleTypeLib,
+    as: :topic
 
   @doc false
   @spec station_module_type_query(Durandal.query_args()) :: Ecto.Query.t()
@@ -90,6 +100,10 @@ defmodule Durandal.Types do
 
   # ShipTypes
   alias Durandal.Types.{ShipType, ShipTypeLib, ShipTypeQueries}
+
+  @doc false
+  @spec ship_type_topic(Durandal.ship_type_id()) :: String.t()
+  defdelegate ship_type_topic(ship_type_id), to: ShipTypeLib, as: :topic
 
   @doc false
   @spec ship_type_query(Durandal.query_args()) :: Ecto.Query.t()

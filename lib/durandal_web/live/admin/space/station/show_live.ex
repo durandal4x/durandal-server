@@ -84,7 +84,7 @@ defmodule DurandalWeb.Admin.Space.Station.ShowLive do
     |> noreply
   end
 
-  def handle_info(%{event: :deleted_station, topic: "Durandal.Space.Station" <> _} = msg, socket) do
+  def handle_info(%{event: :deleted_station, topic: "Durandal.Space.Station" <> _} = _msg, socket) do
     socket
     |> redirect(to: ~p"/admin/stations")
     |> noreply
@@ -128,7 +128,7 @@ defmodule DurandalWeb.Admin.Space.Station.ShowLive do
   @spec get_station(Phoenix.Socket.t()) :: Phoenix.Socket.t()
   defp get_station(%{assigns: %{station_id: station_id}} = socket) do
     station =
-      Space.get_station!(station_id, preload: [:team, :system, :orbiting])
+      Space.get_station!(station_id, preload: [:team, :system, :orbiting, :universe])
 
     station_modules =
       Durandal.Space.list_station_modules(
@@ -139,6 +139,7 @@ defmodule DurandalWeb.Admin.Space.Station.ShowLive do
 
     socket
     |> assign(:station, station)
+    |> assign(:universe, station.universe)
     |> assign(:team, station.team)
     |> stream(:station_modules, station_modules, reset: true)
   end

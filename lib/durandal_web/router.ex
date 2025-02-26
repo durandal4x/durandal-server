@@ -110,6 +110,54 @@ defmodule DurandalWeb.Router do
     end
   end
 
+  scope "/admin/system_object_types", DurandalWeb.Admin.Types.SystemObjectType do
+    pipe_through [:browser]
+
+    live_session :admin_system_object_types,
+      on_mount: [
+        {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
+      ] do
+      live "/", IndexLive
+      live "/new", NewLive
+      live "/edit/:system_object_type_id", ShowLive, :edit
+      live "/delete/:system_object_type_id", ShowLive, :delete
+      live "/:system_object_type_id", ShowLive
+    end
+  end
+
+  scope "/admin/station_module_types", DurandalWeb.Admin.Types.StationModuleType do
+    pipe_through [:browser]
+
+    live_session :admin_station_module_types,
+      on_mount: [
+        {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
+      ] do
+      live "/", IndexLive
+      live "/new", NewLive
+      live "/edit/:station_module_type_id", ShowLive, :edit
+      live "/delete/:station_module_type_id", ShowLive, :delete
+      live "/:station_module_type_id", ShowLive
+    end
+  end
+
+  scope "/admin/ship_types", DurandalWeb.Admin.Types.ShipType do
+    pipe_through [:browser]
+
+    live_session :admin_ship_types,
+      on_mount: [
+        {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
+      ] do
+      live "/", IndexLive
+      live "/new", NewLive
+      live "/edit/:ship_type_id", ShowLive, :edit
+      live "/delete/:ship_type_id", ShowLive, :delete
+      live "/:ship_type_id", ShowLive
+    end
+  end
+
   scope "/admin/teams", DurandalWeb.Admin.Player.Team do
     pipe_through [:browser]
 
@@ -123,6 +171,22 @@ defmodule DurandalWeb.Router do
       live "/edit/:team_id", ShowLive, :edit
       live "/delete/:team_id", ShowLive, :delete
       live "/:team_id", ShowLive
+    end
+  end
+
+  scope "/admin/team_members", DurandalWeb.Admin.Player.TeamMember do
+    pipe_through [:browser]
+
+    live_session :admin_team_members,
+      on_mount: [
+        {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
+      ] do
+      live "/", IndexLive
+      live "/new", NewLive
+      live "/edit/:team_id/:user_id", ShowLive, :edit
+      live "/delete/:team_id/:user_id", ShowLive, :delete
+      live "/:team_id/:user_id", ShowLive
     end
   end
 

@@ -40,8 +40,9 @@ defmodule Durandal.Game.ScenarioLib do
 
   @spec get_path(String.t()) :: String.t()
   defp get_path(name) do
-    base_path = Application.get_env(:durandal, :scenario_path)
-    "#{base_path}/#{name}.json"
+    scenario_folder = Application.get_env(:durandal, :scenario_path)
+    file_name = "#{name}.json"
+    Application.app_dir(:durandal, Path.join(scenario_folder, file_name))
   end
 
   @spec load_from_file(String.t(), list()) :: :ok
@@ -71,16 +72,6 @@ defmodule Durandal.Game.ScenarioLib do
       build_station_module_types(data["station_module_types"], ids)
 
       build_systems(data["systems"], ids)
-
-      # IO.puts ""
-      # IO.inspect ids, label: "#{__MODULE__}:#{__ENV__.line}"
-      # IO.puts ""
-
-      # IO.puts ""
-      # IO.inspect Durandal.Types.list_ship_types(
-      #   where: [universe_id: universe.id]
-      # ), label: "#{__MODULE__}:#{__ENV__.line}"
-      # IO.puts ""
 
       universe
     end)
@@ -190,6 +181,7 @@ defmodule Durandal.Game.ScenarioLib do
           id: ids[system_object["id"]],
           name: system_object["name"],
           type_id: ids[system_object["type"]],
+          universe_id: ids["$universe"],
           system_id: system_id,
           position: system_object["position"],
           velocity: system_object["velocity"],
@@ -214,6 +206,7 @@ defmodule Durandal.Game.ScenarioLib do
           name: ship["name"],
           team_id: ids[ship["team"]],
           type_id: ids[ship["type"]],
+          universe_id: ids["$universe"],
           system_id: system_id,
           position: ship["position"],
           velocity: ship["velocity"],
@@ -239,6 +232,7 @@ defmodule Durandal.Game.ScenarioLib do
           id: ids[station["id"]],
           name: station["name"],
           team_id: ids[station["team"]],
+          universe_id: ids["$universe"],
           system_id: system_id,
           position: station["position"],
           velocity: station["velocity"],
@@ -268,6 +262,7 @@ defmodule Durandal.Game.ScenarioLib do
         %{
           id: ids[module["id"]] || uuid(),
           type_id: ids[module["type"]],
+          universe_id: ids["$universe"],
           station_id: station_id,
           build_progress: module["build_progress"],
           health: module["health"],

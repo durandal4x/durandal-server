@@ -105,26 +105,17 @@ defmodule Durandal.Types.SystemObjectTypeQueries do
   @spec do_preload(Ecto.Query.t(), List.t() | nil) :: Ecto.Query.t()
   defp do_preload(query, nil), do: query
 
-  defp do_preload(query, _), do: query
-  # defp do_preload(query, preloads) do
-  #   preloads
-  #   |> List.wrap
-  #   |> Enum.reduce(query, fn key, query_acc ->
-  #     _preload(query_acc, key)
-  #   end)
-  # end
+  defp do_preload(query, preloads) do
+    preloads
+    |> List.wrap()
+    |> Enum.reduce(query, fn key, query_acc ->
+      _preload(query_acc, key)
+    end)
+  end
 
-  # @spec _preload(Ecto.Query.t(), any) :: Ecto.Query.t()
-  # def _preload(query, :relation) do
-  #   from system_object_type in query,
-  #     left_join: relations in assoc(system_object_type, :relation),
-  #     preload: [relation: relations]
-  # end
-
-  # def _preload(query, {:relation, join_query}) do
-  #   from system_object_type in query,
-  #     left_join: relations in subquery(join_query),
-  #       on: relations.id == query.relation_id,
-  #     preload: [relation: relations]
-  # end
+  def _preload(query, :universe) do
+    from system_object_types in query,
+      left_join: game_universes in assoc(system_object_types, :universe),
+      preload: [universe: game_universes]
+  end
 end

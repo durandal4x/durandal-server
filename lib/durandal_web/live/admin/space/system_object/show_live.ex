@@ -35,19 +35,31 @@ defmodule DurandalWeb.Admin.Space.SystemObject.ShowLive do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :edit, _params) do
-    type_list =
-      Types.list_system_object_types(order_by: ["Name (A-Z)"], select: ~w(name id)a)
-      |> Enum.map(fn t -> {t.name, t.id} end)
+  defp apply_action(%{assigns: %{system_object: system_object}} = socket, :edit, _params) do
+    if system_object do
+      type_list =
+        Types.list_system_object_types(
+          where: [universe_id: system_object.universe_id],
+          order_by: ["Name (A-Z)"],
+          select: ~w(name id)a
+        )
+        |> Enum.map(fn t -> {t.name, t.id} end)
 
-    system_list =
-      Space.list_systems(order_by: ["Name (A-Z)"], select: ~w(name id)a)
-      |> Enum.map(fn t -> {t.name, t.id} end)
+      system_list =
+        Space.list_systems(
+          where: [universe_id: system_object.universe_id],
+          order_by: ["Name (A-Z)"],
+          select: ~w(name id)a
+        )
+        |> Enum.map(fn t -> {t.name, t.id} end)
 
-    socket
+      socket
+      |> assign(:type_list, type_list)
+      |> assign(:system_list, system_list)
+    else
+      socket
+    end
     |> assign(:edit_mode, true)
-    |> assign(:type_list, type_list)
-    |> assign(:system_list, system_list)
   end
 
   defp apply_action(socket, _, _params) do
@@ -77,67 +89,11 @@ defmodule DurandalWeb.Admin.Space.SystemObject.ShowLive do
   end
 
   def handle_info(
-        %{event: :deleted_system_object, topic: "Durandal.Space.SystemObject" <> _} = msg,
+        %{event: :deleted_system_object, topic: "Durandal.Space.SystemObject" <> _} = _msg,
         socket
       ) do
     socket
     |> redirect(to: ~p"/admin/system_objects")
-    |> noreply
-  end
-
-  # System updates
-  def handle_info(
-        %{event: :created_system, topic: "Durandal.Space.SystemObject:" <> _} = msg,
-        socket
-      ) do
-    socket
-    |> stream_insert(:systems, msg.system)
-    |> noreply
-  end
-
-  def handle_info(
-        %{event: :updated_system, topic: "Durandal.Space.SystemObject:" <> _} = msg,
-        socket
-      ) do
-    socket
-    |> stream_insert(:systems, msg.system)
-    |> noreply
-  end
-
-  def handle_info(
-        %{event: :deleted_system, topic: "Durandal.Space.SystemObject" <> _} = msg,
-        socket
-      ) do
-    socket
-    |> stream_delete(:systems, msg.system)
-    |> noreply
-  end
-
-  # SystemObject updates
-  def handle_info(
-        %{event: :created_system_object, topic: "Durandal.Space.SystemObject:" <> _} = msg,
-        socket
-      ) do
-    socket
-    |> stream_insert(:system_objects, msg.system_object)
-    |> noreply
-  end
-
-  def handle_info(
-        %{event: :updated_system_object, topic: "Durandal.Space.SystemObject:" <> _} = msg,
-        socket
-      ) do
-    socket
-    |> stream_insert(:system_objects, msg.system_object)
-    |> noreply
-  end
-
-  def handle_info(
-        %{event: :deleted_system_object, topic: "Durandal.Space.SystemObject" <> _} = msg,
-        socket
-      ) do
-    socket
-    |> stream_delete(:system_objects, msg.system_object)
     |> noreply
   end
 
@@ -151,12 +107,13 @@ defmodule DurandalWeb.Admin.Space.SystemObject.ShowLive do
   @spec get_system_object(Phoenix.Socket.t()) :: Phoenix.Socket.t()
   defp get_system_object(%{assigns: %{system_object_id: system_object_id}} = socket) do
     system_object =
-      Space.get_system_object!(system_object_id, preload: [:type, :system, :orbiting])
+      Space.get_system_object!(system_object_id, preload: [:type, :system, :orbiting, :universe])
 
     # ships = Space.list_ships(where: [system_object_id: system_object_id], order_by: ["Name (A-Z)"])
     ships = []
 
     socket
+    |> assign(:universe, system_object.universe)
     |> assign(:system_object, system_object)
     |> stream(:ships, ships, reset: true)
   end

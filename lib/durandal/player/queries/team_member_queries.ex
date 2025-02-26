@@ -33,11 +33,6 @@ defmodule Durandal.Player.TeamMemberQueries do
   def _where(query, _, ""), do: query
   def _where(query, _, nil), do: query
 
-  def _where(query, :id, id) do
-    from team_members in query,
-      where: team_members.id in ^List.wrap(id)
-  end
-
   def _where(query, :has_roles, roles) do
     from(team_members in query,
       where: ^roles in team_members.roles

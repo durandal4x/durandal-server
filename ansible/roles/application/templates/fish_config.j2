@@ -1,0 +1,18 @@
+if status is-interactive
+    # Commands to run in interactive sessions can go here
+    atuin init fish | source
+    set -U fish_greeting
+end
+
+abbr nginxlog 'sudo grc tail /var/log/nginx/error.log -n 60 -f'
+abbr sitelog 'grc --config=elixir.log tail -f /var/log/durandal/error.log -n 60'
+abbr siteinfo 'grc --config=elixir.log tail -f /var/log/durandal/info.log -n 60'
+
+abbr catsiteinfo 'cat /var/log/durandal/info.log'
+abbr durandalapp 'sh /apps/durandal/bin/durandal'
+
+abbr stable_deploy 'sudo sh /home/deploy/scripts/stable_deploy.sh'
+abbr preparedeploy 'sudo sh /home/deploy/scripts/prepare_deploy.sh'
+abbr quickrestart 'sudo sh /home/deploy/scripts/quick_restart.sh'
+
+abbr postgreslog 'sudo cat /var/log/postgresql/postgresql-17-main.log'

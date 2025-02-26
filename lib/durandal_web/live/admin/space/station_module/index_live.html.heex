@@ -14,8 +14,6 @@
     </div>
   </DurandalWeb.StationModuleComponents.filter_bar>
 
-  <div class="alert alert-danger">No live reload yet</div>
-
   <.table id="station_modules" rows={@streams.station_modules} table_class="table-sm table-hover">
     <:col :let={{_id, station_module}} label="Name">{station_module.type.name}</:col>
 

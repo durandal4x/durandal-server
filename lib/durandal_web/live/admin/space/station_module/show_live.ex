@@ -107,9 +107,11 @@ defmodule DurandalWeb.Admin.Space.StationModule.ShowLive do
 
   @spec get_station_module(Phoenix.Socket.t()) :: Phoenix.Socket.t()
   defp get_station_module(%{assigns: %{station_module_id: station_module_id}} = socket) do
-    station_module = Space.get_station_module!(station_module_id, preload: [:station, :type])
+    station_module =
+      Space.get_station_module!(station_module_id, preload: [:station, :type, :universe])
 
     socket
+    |> assign(:universe, station_module.universe)
     |> assign(:station_module, station_module)
   end
 end

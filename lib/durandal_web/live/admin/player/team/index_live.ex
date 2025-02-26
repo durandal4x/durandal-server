@@ -11,14 +11,14 @@ defmodule DurandalWeb.Admin.Player.Team.IndexLive do
     socket
     |> assign(:site_menu_active, "game")
     |> assign(:search_term, "")
-    |> get_query_opts
+    |> get_teams
     |> ok
   end
 
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(:query_opts, nil)
+     |> stream(:teams, [])
      |> assign(:site_menu_active, "game")}
   end
 
@@ -26,7 +26,6 @@ defmodule DurandalWeb.Admin.Player.Team.IndexLive do
   def handle_event("update-search", %{"value" => search_term}, socket) do
     socket
     |> assign(:search_term, search_term)
-    |> get_query_opts
     |> noreply
   end
 
@@ -54,8 +53,8 @@ defmodule DurandalWeb.Admin.Player.Team.IndexLive do
     {:noreply, socket}
   end
 
-  @spec get_query_opts(Phoenix.Socket.t()) :: Phoenix.Socket.t()
-  defp get_query_opts(%{assigns: assigns} = socket) do
+  @spec get_teams(Phoenix.Socket.t()) :: Phoenix.Socket.t()
+  defp get_teams(%{assigns: assigns} = socket) do
     order_by =
       if assigns.search_term != "" do
         "Name (A-Z)"
@@ -63,25 +62,14 @@ defmodule DurandalWeb.Admin.Player.Team.IndexLive do
         "Newest first"
       end
 
-    query_opts = [
-      where: [name_like: assigns.search_term],
-      order_by: order_by,
-      limit: assigns[:limit] || 50
-    ]
+    teams =
+      Player.list_teams(
+        where: [name_like: assigns.search_term],
+        order_by: order_by,
+        limit: assigns[:limit] || 50
+      )
 
     socket
-    |> assign(:query_opts, query_opts)
+    |> stream(:teams, teams, reset: true)
   end
-
-  # @spec get_teams(Phoenix.Socket.t()) :: Phoenix.Socket.t()
-  # defp get_teams(%{assigns: assigns} = socket) do
-  #   query_opts =
-
-  #   teams =
-  #     Player.list_teams(query_opts)
-
-  #   socket
-  #   |> assign(:query_opts, query_opts)
-  #   |> stream(:teams, teams, reset: true)
-  # end
 end
