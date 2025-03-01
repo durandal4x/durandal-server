@@ -2,6 +2,8 @@
   <DurandalWeb.NavComponents.top_navbar
     active={assigns[:site_menu_active]}
     current_user={@current_user}
+    universe={assigns[:universe]}
+    team={assigns[:team]}
   />
 
   <.flash_group flash={@flash} />

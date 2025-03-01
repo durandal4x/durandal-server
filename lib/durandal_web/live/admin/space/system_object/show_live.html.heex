@@ -1,0 +1,111 @@
+<% selected =
+  cond do
+    assigns[:edit_mode] != true -> "show"
+    assigns[:edit_mode] == true and @system_object != nil and @system_object.id != nil -> "edit"
+    true -> "new"
+  end %>
+<DurandalWeb.SystemObjectComponents.filter_bar selected={selected} />
+
+<div :if={assigns[:edit_mode] != true}>
+  <div class="row my-4">
+    <div class="col">
+      <.card :if={@system_object}>
+        <div class="float-end">
+          <a class="btn btn-danger" href={~p"/admin/system_objects/delete/#{@system_object.id}"}>
+            <Fontawesome.icon icon={StylingHelper.icon(:delete)} style="solid" /> Delete
+          </a>
+
+          <a class="btn btn-info" href={~p"/admin/system_objects/edit/#{@system_object.id}"}>
+            <Fontawesome.icon icon={StylingHelper.icon(:edit)} style="solid" /> Edit
+          </a>
+        </div>
+
+        <h4 class="d-inline-block">
+          {@system_object.name}
+        </h4>
+
+        <div class="row">
+          <div class="col">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>System</td>
+                  <td>{@system_object.system.name}</td>
+                  <td>
+                    <a href={~p"/admin/systems/#{@system_object.system_id}"}>
+                      <Fontawesome.icon icon="link" style="regular" />
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Type</td>
+                  <td>{@system_object.type.name}</td>
+                  <td>
+                    <a href={~p"/admin/system_object_types/#{@system_object.type_id}"}>
+                      <Fontawesome.icon icon="link" style="regular" />
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>Position</td>
+                  <td>{format_vector(@system_object.position)}</td>
+                </tr>
+                <tr>
+                  <td>Type</td>
+                  <td>{format_vector(@system_object.velocity)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div :if={@system_object.orbiting} class="col">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>Orbiting</td>
+                  <td>{@system_object.orbiting.name}</td>
+                </tr>
+                <tr>
+                  <td>Distance</td>
+                  <td>{@system_object.orbit_distance}</td>
+                </tr>
+                <tr>
+                  <td>Clockwise?</td>
+                  <td>{@system_object.orbit_clockwise}</td>
+                </tr>
+                <tr>
+                  <td>Period</td>
+                  <td>{@system_object.orbit_period}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </.card>
+    </div>
+  </div>
+
+  <div :if={@system_object} class="row">
+    <div class="col"></div>
+  </div>
+</div>
+
+<div :if={assigns[:edit_mode] == true and @system_object != nil} class="row mt-4">
+  <.live_component
+    module={DurandalWeb.Space.SystemObjectFormComponent}
+    id={:edit}
+    action={:edit}
+    system_object={@system_object}
+    patch={~p"/admin/system_objects/#{@system_object.id}"}
+    title={"Edit #{@system_object.name} (System object)"}
+    system_list={@system_list}
+    type_list={@type_list}
+  />
+</div>

@@ -69,6 +69,14 @@ defmodule DurandalWeb.Admin.Account.ShowLive do
     {:noreply, socket}
   end
 
+  def handle_info(
+        {DurandalWeb.Account.AdminPasswordFormComponent,
+         {:updated_changeset, %{changes: _changes}}},
+        socket
+      ) do
+    {:noreply, socket}
+  end
+
   @impl true
   @spec handle_event(String.t(), map(), Phoenix.Socket.t()) :: {:noreply, Phoenix.Socket.t()}
   def handle_event("delete-user-token", %{"token_id" => token_id}, socket) do

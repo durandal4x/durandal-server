@@ -1,0 +1,15 @@
+<DurandalWeb.StationModuleTypeComponents.filter_bar selected="new" />
+
+<div class="row mt-4">
+  <div class="col">
+    <.live_component
+      module={DurandalWeb.Types.StationModuleTypeFormComponent}
+      id={:new}
+      action={:new}
+      station_module_type={%Durandal.Types.StationModuleType{}}
+      patch={~p"/admin/station_module_types"}
+      title="New station_module_type form"
+      current_user={@current_user}
+    />
+  </div>
+</div>

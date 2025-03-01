@@ -1,0 +1,83 @@
+<% selected =
+  cond do
+    assigns[:edit_mode] != true -> "show"
+    assigns[:edit_mode] == true and @system != nil and @system.id != nil -> "edit"
+    true -> "new"
+  end %>
+<DurandalWeb.SystemComponents.filter_bar selected={selected} />
+
+<div :if={assigns[:edit_mode] != true}>
+  <div class="row my-4">
+    <div class="col">
+      <.card :if={@system}>
+        <div class="float-end">
+          <a class="btn btn-info" href={~p"/admin/systems/edit/#{@system.id}"}>
+            <Fontawesome.icon icon={StylingHelper.icon(:edit)} style="solid" /> Edit
+          </a>
+        </div>
+
+        <h4 class="d-inline-block">
+          {@system.name}
+        </h4>
+
+        <table class="table table-sm">
+          <tbody></tbody>
+        </table>
+      </.card>
+    </div>
+  </div>
+
+  <div :if={@system} class="row">
+    <div class="col">
+      <.card>
+        <h4>System objects</h4>
+        <.table id="objects" rows={@streams.system_objects} table_class="table-sm table-hover">
+          <:col :let={{_id, object}} label="Name">{object.name}</:col>
+          <:action :let={{_id, object}}>
+            <.link navigate={~p"/admin/system_objects/#{object}"} class="btn btn-sm btn-secondary">
+              Show
+            </.link>
+          </:action>
+        </.table>
+      </.card>
+    </div>
+    <div class="col">
+      <.card>
+        <h4>Stations</h4>
+        <.table id="stations" rows={@streams.stations} table_class="table-sm table-hover">
+          <:col :let={{_id, station}} label="Name">{station.name}</:col>
+          <:action :let={{_id, station}}>
+            <.link navigate={~p"/admin/stations/#{station}"} class="btn btn-sm btn-secondary">
+              Show
+            </.link>
+          </:action>
+        </.table>
+      </.card>
+    </div>
+
+    <div class="col">
+      <.card>
+        <h4>Ships</h4>
+        <.table id="ships" rows={@streams.ships} table_class="table-sm table-hover">
+          <:col :let={{_id, ship}} label="Name">{ship.name}</:col>
+          <:action :let={{_id, ship}}>
+            <.link navigate={~p"/admin/ships/#{ship}"} class="btn btn-sm btn-secondary">
+              Show
+            </.link>
+          </:action>
+        </.table>
+      </.card>
+    </div>
+  </div>
+</div>
+
+<div :if={assigns[:edit_mode] == true and @system != nil} class="row mt-4">
+  <.live_component
+    module={DurandalWeb.Space.SystemFormComponent}
+    id={:edit}
+    action={:edit}
+    system={@system}
+    patch={~p"/admin/systems/#{@system.id}"}
+    title="Edit system form"
+  />
+</div>

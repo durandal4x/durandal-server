@@ -1,0 +1,12 @@
+# /apps/durandal.vars
+
+ERL_MAX_PORTS=65536
+
+POSTGRES_USERNAME="durandal_prod"
+POSTGRES_PASSWORD="{{ db_password }}"
+POSTGRES_HOSTNAME="{{ database_hostname }}"
+POSTGRES_DB_NAME="durandal_prod"
+SECRET_KEY_BASE="{{ secret_key_base }}"
+DOMAIN_NAME="{{ ansible_host }}"
+RELEASE_NODE="durandal@{{ ansible_host }}"
+NODE_NAME="{{ inventory_hostname }}"

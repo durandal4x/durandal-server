@@ -104,7 +104,6 @@ defmodule Durandal.Game.UniverseQueries do
 
   @spec do_preload(Ecto.Query.t(), List.t() | nil) :: Ecto.Query.t()
   defp do_preload(query, nil), do: query
-
   defp do_preload(query, _), do: query
   # defp do_preload(query, preloads) do
   #   preloads
@@ -118,13 +117,6 @@ defmodule Durandal.Game.UniverseQueries do
   # def _preload(query, :relation) do
   #   from universe in query,
   #     left_join: relations in assoc(universe, :relation),
-  #     preload: [relation: relations]
-  # end
-
-  # def _preload(query, {:relation, join_query}) do
-  #   from universe in query,
-  #     left_join: relations in subquery(join_query),
-  #       on: relations.id == query.relation_id,
   #     preload: [relation: relations]
   # end
 end

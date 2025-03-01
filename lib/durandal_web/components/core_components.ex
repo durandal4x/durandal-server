@@ -242,7 +242,7 @@ defmodule DurandalWeb.CoreComponents do
   attr :type, :string,
     default: "text",
     values: ~w(checkbox color date datetime-local email file hidden month number password
-               range radio search select tel text textarea time url week)
+               range radio search select tel text textarea time url week 3dvector)
 
   attr :field, Phoenix.HTML.FormField,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
@@ -252,14 +252,18 @@ defmodule DurandalWeb.CoreComponents do
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
-  attr :rest, :global, include: ~w(autocomplete cols disabled form max maxlength min minlength
-                                   pattern placeholder readonly required rows size step)
+
+  attr :rest, :global,
+    include:
+      ~w(autocomplete cols disabled form max maxlength min minlength
+                                   pattern placeholder readonly required rows size step show_valid valid_inset)
+
   slot :inner_block
 
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns
     |> assign(field: nil, id: assigns.id || field.id)
-    |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
+    |> assign(:errors, assigns[:errors] ++ Enum.map(field.errors, &translate_error(&1)))
     |> assign_new(:name, fn -> if assigns.multiple, do: field.name <> "[]", else: field.name end)
     |> assign_new(:value, fn -> field.value end)
     |> input()
@@ -324,21 +328,78 @@ defmodule DurandalWeb.CoreComponents do
     """
   end
 
-  def input(assigns) do
+  def input(%{type: "3dvector"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
       <.label :if={@label} for={@id}>{@label}</.label>
       <input
+        :for={{v, idx} <- Enum.with_index(@value || assigns[:value])}
         type={@type}
-        name={@name}
-        id={@id || @name}
-        value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+        name={"#{@name}[]"}
+        id={@id || "#{@name}_#{idx}"}
+        value={v}
+        style="width: 80px;"
         class={[
-          "form-control",
+          "form-control d-inline-block",
           @errors != [] && "border-danger"
         ]}
         {@rest}
       />
+      <.error :for={msg <- @errors}>{msg}</.error>
+    </div>
+    """
+  end
+
+  def input(%{type: "hidden"} = assigns) do
+    ~H"""
+    <input
+      type="hidden"
+      name={@name}
+      id={@id || @name}
+      value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+      {@rest}
+    />
+    """
+  end
+
+  def input(assigns) do
+    show_valid = assigns[:errors] == [] && assigns[:rest][:show_valid] && assigns[:value] != nil
+
+    assigns =
+      assigns
+      |> assign(:show_valid, show_valid)
+
+    ~H"""
+    <div phx-feedback-for={@name}>
+      <.label :if={@label} for={@id}>{@label}</.label>
+      <div class="input-group">
+        <input
+          type={@type}
+          name={@name}
+          id={@id || @name}
+          value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+          class={[
+            "form-control",
+            @show_valid && "border-success",
+            @errors != [] && "border-danger"
+          ]}
+          {@rest}
+        />
+        <span
+          :if={assigns[:rest][:valid_inset]}
+          class={[
+            "input-group-text text-white",
+            @show_valid && "bg-success border-success2",
+            @errors != [] && "bg-danger border-danger2"
+          ]}
+        >
+          <Fontawesome.icon :if={@show_valid} icon="check-circle" />
+          <Fontawesome.icon :if={@errors != []} icon="times-circle" />
+          <span :if={!@show_valid && @errors == []}>
+            <Fontawesome.icon icon="square" style="regular" class="opacity-0" />
+          </span>
+        </span>
+      </div>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
@@ -627,9 +688,9 @@ defmodule DurandalWeb.CoreComponents do
     # should be written to the errors.po file. The :count option is
     # set by Ecto and indicates we should also apply plural rules.
     if count = opts[:count] do
-      Gettext.dngettext(DurandalWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(Durandal.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(DurandalWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(Durandal.Gettext, "errors", msg, opts)
     end
   end
 

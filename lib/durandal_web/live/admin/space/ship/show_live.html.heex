@@ -1,0 +1,152 @@
+<% selected =
+  cond do
+    assigns[:edit_mode] != true -> "show"
+    assigns[:edit_mode] == true and @ship != nil and @ship.id != nil -> "edit"
+    true -> "new"
+  end %>
+<DurandalWeb.ShipComponents.filter_bar selected={selected} />
+
+<div :if={assigns[:edit_mode] != true}>
+  <div class="row my-4">
+    <div class="col">
+      <.card :if={@ship}>
+        <div class="float-end">
+          <a class="btn btn-danger" href={~p"/admin/ships/delete/#{@ship.id}"}>
+            <Fontawesome.icon icon={StylingHelper.icon(:delete)} style="solid" /> Delete
+          </a>
+
+          <a class="btn btn-info" href={~p"/admin/ships/edit/#{@ship.id}"}>
+            <Fontawesome.icon icon={StylingHelper.icon(:edit)} style="solid" /> Edit
+          </a>
+        </div>
+
+        <h4 class="d-inline-block">
+          {@ship.name}
+        </h4>
+
+        <div class="row">
+          <div class="col">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>Team</td>
+                  <td>{@ship.team.name}</td>
+                  <td>
+                    <a href={~p"/admin/teams/#{@ship.team_id}"}>
+                      <Fontawesome.icon icon="link" style="regular" />
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>System</td>
+                  <td>{@ship.system.name}</td>
+                  <td>
+                    <a href={~p"/admin/systems/#{@ship.system_id}"}>
+                      <Fontawesome.icon icon="link" style="regular" />
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Type</td>
+                  <td>{@ship.type.name}</td>
+                  <td>
+                    <a href={~p"/admin/ship_types/#{@ship.type_id}"}>
+                      <Fontawesome.icon icon="link" style="regular" />
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>Position</td>
+                  <td>{format_vector(@ship.position)}</td>
+                </tr>
+                <tr>
+                  <td>Velocity</td>
+                  <td>{format_vector(@ship.velocity)}</td>
+                </tr>
+                <tr>
+                  <td>Health</td>
+                  <td>{@ship.health}</td>
+                </tr>
+                <tr>
+                  <td>Build progress</td>
+                  <td>{@ship.build_progress}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div :if={@ship.orbiting} class="col">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>Orbiting</td>
+                  <td>{@ship.orbiting.name}</td>
+                </tr>
+                <tr>
+                  <td>Distance</td>
+                  <td>{@ship.orbit_distance}</td>
+                </tr>
+                <tr>
+                  <td>Clockwise?</td>
+                  <td>{@ship.orbit_clockwise}</td>
+                </tr>
+                <tr>
+                  <td>Period</td>
+                  <td>{@ship.orbit_period}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>Build time</td>
+                  <td>{format_number(@ship.type.build_time)}</td>
+                </tr>
+                <tr>
+                  <td>Max health</td>
+                  <td>{format_number(@ship.type.max_health)}</td>
+                </tr>
+                <tr>
+                  <td>Damage</td>
+                  <td>{format_number(@ship.type.damage)}</td>
+                </tr>
+                <tr>
+                  <td>Acceleration</td>
+                  <td>{format_number(@ship.type.acceleration)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </.card>
+    </div>
+  </div>
+
+  <div :if={@ship} class="row">
+    <div class="col"></div>
+  </div>
+</div>
+
+<div :if={assigns[:edit_mode] == true and @ship != nil} class="row mt-4">
+  <.live_component
+    module={DurandalWeb.Space.ShipFormComponent}
+    id={:edit}
+    action={:edit}
+    ship={@ship}
+    type_list={@type_list}
+    system_list={@system_list}
+    team_list={@team_list}
+    patch={~p"/admin/ships/#{@ship.id}"}
+    title="Edit ship form"
+  />
+</div>

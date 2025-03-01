@@ -1,0 +1,29 @@
+<div id="index-live-wrapper">
+  <DurandalWeb.TeamMemberComponents.filter_bar selected="list">
+    <div class="col">
+      <input
+        type="text"
+        name="search-term"
+        id="search-term-input"
+        value=""
+        placeholder="Search"
+        class="form-control"
+        phx-keyup="update-search"
+        phx-debounce="500"
+      />
+    </div>
+  </DurandalWeb.TeamMemberComponents.filter_bar>
+
+  <.table id="team_members" rows={@streams.team_members} table_class="table-sm table-hover">
+    <:col :let={{_id, team_member}} label="Name">{team_member.user.name}</:col>
+
+    <:action :let={{_id, team_member}}>
+      <.link
+        navigate={~p"/admin/team_members/#{team_member.team_id}/#{team_member.user_id}"}
+        class="btn btn-secondary btn-sm"
+      >
+        Show
+      </.link>
+    </:action>
+  </.table>
+</div>

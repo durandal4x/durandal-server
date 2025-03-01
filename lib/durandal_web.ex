@@ -96,7 +96,7 @@ defmodule DurandalWeb do
       import DurandalWeb.CoreComponents
 
       alias Durandal.Helper.StylingHelper
-      import Durandal.Helper.StringHelper, only: [format_number: 1]
+      # import Durandal.Helper.StringHelper, only: [format_number: 1, format_vector: 1]
       unquote(html_helpers())
     end
   end
@@ -105,9 +105,20 @@ defmodule DurandalWeb do
     quote do
       use Phoenix.LiveComponent
 
-      alias Durandal.Helper.StylingHelper
-      import Durandal.Helper.StringHelper, only: [format_number: 1]
+      import Durandal.Account.AuthLib,
+        only: [
+          allow?: 2,
+          allow_any?: 2,
+          allow_all?: 2,
+          mount_require_all: 2,
+          mount_require_any: 2
+        ]
 
+      alias Durandal.Helper.StylingHelper
+
+      defguard is_connected?(socket) when socket.transport_pid != nil
+      def ok(socket), do: {:ok, socket}
+      def noreply(socket), do: {:noreply, socket}
       unquote(html_helpers())
     end
   end
@@ -135,6 +146,9 @@ defmodule DurandalWeb do
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
+
+      alias Durandal.Helper.StylingHelper
+      import Durandal.Helper.StringHelper, only: [format_number: 1, format_vector: 1]
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())

@@ -1,9 +1,9 @@
-defmodule Durandal.Context.Part1Part2Lib do
+defmodule Durandal.$Context.Part1Part2Lib do
   @moduledoc """
   TODO: Library of part1_part2 related functions.
   """
   use DurandalMacros, :library
-  alias Durandal.Context.{Part1Part2, Part1Part2Queries}
+  alias Durandal.$Context.{Part1Part2, Part1Part2Queries}
 
   @doc """
   Returns the list of part1_part2s.

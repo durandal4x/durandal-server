@@ -1,0 +1,89 @@
+<% selected =
+  cond do
+    assigns[:edit_mode] != true -> "show"
+    assigns[:edit_mode] == true and @universe != nil and @universe.id != nil -> "edit"
+    true -> "new"
+  end %>
+<DurandalWeb.UniverseComponents.filter_bar selected={selected} />
+
+<div :if={assigns[:edit_mode] != true}>
+  <div class="row my-4">
+    <div class="col">
+      <.card :if={@universe}>
+        <div class="float-end">
+          <a
+            class="btn btn-danger"
+            phx-click="delete"
+            hhref={~p"/admin/universes/delete/#{@universe.id}"}
+          >
+            <Fontawesome.icon icon={StylingHelper.icon(:delete)} style="solid" /> Delete
+          </a>
+
+          <a class="btn btn-info" href={~p"/admin/universes/edit/#{@universe.id}"}>
+            <Fontawesome.icon icon={StylingHelper.icon(:edit)} style="solid" /> Edit
+          </a>
+        </div>
+
+        <h4 class="d-inline-block">
+          {@universe.name}
+        </h4>
+
+        <table class="table table-sm">
+          <tbody>
+            <tr>
+              <td>Active?</td>
+              <td>
+                <.boolean_icon
+                  value={@universe.active?}
+                  true="check"
+                  false="times"
+                  coloured={true}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </.card>
+    </div>
+  </div>
+
+  <div :if={@universe} class="row">
+    <div class="col">
+      <.card>
+        <h4>Systems</h4>
+        <.table id="systems" rows={@streams.systems} table_class="table-sm table-hover">
+          <:col :let={{_id, system}} label="Name">{system.name}</:col>
+          <:action :let={{_id, system}}>
+            <.link navigate={~p"/admin/systems/#{system}"} class="btn btn-sm btn-secondary">
+              Show
+            </.link>
+          </:action>
+        </.table>
+      </.card>
+    </div>
+    <div class="col">
+      <.card>
+        <h4>Teams</h4>
+        <.table id="teams" rows={@streams.teams} table_class="table-sm table-hover">
+          <:col :let={{_id, team}} label="Name">{team.name}</:col>
+          <:action :let={{_id, team}}>
+            <.link navigate={~p"/admin/teams/#{team}"} class="btn btn-sm btn-secondary">
+              Show
+            </.link>
+          </:action>
+        </.table>
+      </.card>
+    </div>
+  </div>
+</div>
+
+<div :if={assigns[:edit_mode] == true and @universe != nil} class="row mt-4">
+  <.live_component
+    module={DurandalWeb.Game.UniverseFormComponent}
+    id={:edit}
+    action={:edit}
+    universe={@universe}
+    patch={~p"/admin/universes/#{@universe.id}"}
+    title="Edit universe form"
+  />
+</div>

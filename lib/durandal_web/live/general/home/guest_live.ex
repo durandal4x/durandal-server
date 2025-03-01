@@ -15,25 +15,26 @@ defmodule DurandalWeb.General.HomeLive.Guest do
     end
   end
 
-  @impl true
-  def handle_event("guest-account", _, socket) do
-    name = Durandal.Account.generate_guest_name()
+  # Guest accounts disabled right now
+  # @impl true
+  # def handle_event("guest-account", _, socket) do
+  #   name = Durandal.Account.generate_guest_name()
 
-    {:ok, user} =
-      Durandal.Account.create_user(%{
-        "name" => name,
-        "email" => "#{String.replace(name, " ", "")}@somedomain",
-        "password" => Durandal.Account.generate_password()
-      })
+  #   {:ok, user} =
+  #     Durandal.Account.create_user(%{
+  #       "name" => name,
+  #       "email" => "#{String.replace(name, " ", "")}@somedomain",
+  #       "password" => Durandal.Account.generate_password()
+  #     })
 
-    user_agent = socket.assigns.user_agent
-    ip = socket.assigns.address |> Tuple.to_list() |> Enum.join(".")
+  #   user_agent = socket.assigns.user_agent
+  #   ip = socket.assigns.address |> Tuple.to_list() |> Enum.join(".")
 
-    {:ok, token} = Durandal.Account.create_user_token(user.id, "web", user_agent, ip)
+  #   {:ok, token} = Durandal.Account.create_user_token(user.id, "web", user_agent, ip)
 
-    code = Ecto.UUID.generate()
-    Cachex.put(:one_time_login_code, code, token.id)
+  #   code = Ecto.UUID.generate()
+  #   Cachex.put(:one_time_login_code, code, token.id)
 
-    {:noreply, redirect(socket, to: ~p"/login/#{code}")}
-  end
+  #   {:noreply, redirect(socket, to: ~p"/login/#{code}")}
+  # end
 end

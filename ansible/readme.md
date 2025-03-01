@@ -22,12 +22,12 @@ The servers are divided into two groups, database and web. A server can be both 
 ### Installation
 To install you just need to run two commands, the first does a setup for all combined hosts and the second sets up the purely Durandal hosts.
 ```bash
-ansible-playbook "playbooks/durandal-combo.yml" --extra-vars '@vault.txt'
-ansible-playbook "playbooks/durandal-web.yml" --extra-vars '@vault.txt'
+ansible-playbook "playbooks/application-combo.yml" --extra-vars '@vault.txt'
+ansible-playbook "playbooks/application-web.yml" --extra-vars '@vault.txt'
 ```
 
 ### Deployment
 When you build and upload your Durandal release you can install it on the relevant nodes with.
 ```bash
-ansible-playbook "playbooks/durandal-deploy.yml" --extra-vars '@vault.txt'
+ansible-playbook "playbooks/application-deploy.yml" --extra-vars '@vault.txt'
 ```

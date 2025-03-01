@@ -1,0 +1,26 @@
+<div id="index-live-wrapper">
+  <DurandalWeb.SystemComponents.filter_bar selected="list">
+    <div class="col">
+      <input
+        type="text"
+        name="search-term"
+        id="search-term-input"
+        value=""
+        placeholder="Search"
+        class="form-control"
+        phx-keyup="update-search"
+        phx-debounce="500"
+      />
+    </div>
+  </DurandalWeb.SystemComponents.filter_bar>
+
+  <.table id="systems" rows={@systems} table_class="table-sm table-hover">
+    <:col :let={system} label="Name">{system.name}</:col>
+
+    <:action :let={system}>
+      <.link navigate={~p"/admin/systems/#{system}"} class="btn btn-secondary btn-sm">
+        Show
+      </.link>
+    </:action>
+  </.table>
+</div>

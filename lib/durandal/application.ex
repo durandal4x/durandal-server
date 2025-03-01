@@ -9,14 +9,14 @@ defmodule Durandal.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {Ecto.Migrator,
-       repos: Application.fetch_env!(:durandal, :ecto_repos),
-       skip: System.get_env("SKIP_MIGRATIONS") == "true"},
-
       # Start the Telemetry supervisor
       Durandal.TelemetrySupervisor,
       # Start the Ecto repository
       Durandal.Repo,
+      {Ecto.Migrator,
+       repos: Application.fetch_env!(:durandal, :ecto_repos),
+       skip: System.get_env("SKIP_MIGRATIONS") == "true"},
+
       # Start the PubSub system
       {Phoenix.PubSub, name: Durandal.PubSub},
       # Start Finch
@@ -26,7 +26,15 @@ defmodule Durandal.Application do
       # Start a worker by calling: Durandal.Worker.start_link(arg)
       # {Durandal.Worker, arg}
 
+      Durandal.System.CacheClusterServer,
+
       # Caches
+      Durandal.Caches.UserSettingCache,
+      Durandal.Caches.ServerSettingCache,
+      Durandal.Caches.LoginCountCache,
+      Durandal.Caches.TypeLookupCache,
+
+      # Cachex caches
       add_cache(:user_token_identifier_cache, ttl: :timer.minutes(5)),
       add_cache(:durandal_metadata),
       add_cache(:one_time_login_code, ttl: :timer.seconds(30)),
@@ -52,6 +60,7 @@ defmodule Durandal.Application do
   end
 
   defp startup() do
+    Durandal.System.StartupLib.perform()
     :ok
   end
 

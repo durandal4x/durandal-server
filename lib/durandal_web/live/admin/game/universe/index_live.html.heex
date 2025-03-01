@@ -1,0 +1,29 @@
+<div id="index-live-wrapper">
+  <DurandalWeb.UniverseComponents.filter_bar selected="list">
+    <div class="col">
+      <input
+        type="text"
+        name="search-term"
+        id="search-term-input"
+        value=""
+        placeholder="Search"
+        class="form-control"
+        phx-keyup="update-search"
+        phx-debounce="500"
+      />
+    </div>
+  </DurandalWeb.UniverseComponents.filter_bar>
+
+  <.table id="universes" rows={@streams.universes} table_class="table-sm table-hover">
+    <:col :let={{_id, universe}} label="Name">{universe.name}</:col>
+    <:col :let={{_id, universe}} label="Active?">
+      <.boolean_icon value={universe.active?} true="check" false="times" coloured={true} />
+    </:col>
+
+    <:action :let={{_id, universe}}>
+      <.link navigate={~p"/admin/universes/#{universe}"} class="btn btn-secondary btn-sm">
+        Show
+      </.link>
+    </:action>
+  </.table>
+</div>

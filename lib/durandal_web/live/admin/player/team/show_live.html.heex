@@ -1,0 +1,103 @@
+<% selected =
+  cond do
+    assigns[:edit_mode] != true -> "show"
+    assigns[:edit_mode] == true and @team != nil and @team.id != nil -> "edit"
+    true -> "new"
+  end %>
+<DurandalWeb.TeamComponents.filter_bar selected={selected} />
+
+<div :if={assigns[:edit_mode] != true}>
+  <div class="row my-4">
+    <div class="col">
+      <.card :if={@team}>
+        <div class="float-end">
+          <a class="btn btn-danger" href={~p"/admin/teams/delete/#{@team.id}"}>
+            <Fontawesome.icon icon={StylingHelper.icon(:delete)} style="solid" /> Delete
+          </a>
+
+          <a class="btn btn-info" href={~p"/admin/teams/edit/#{@team.id}"}>
+            <Fontawesome.icon icon={StylingHelper.icon(:edit)} style="solid" /> Edit
+          </a>
+        </div>
+
+        <h4 class="d-inline-block">
+          {@team.name}
+        </h4>
+
+        <table class="table table-sm">
+          <tbody></tbody>
+        </table>
+      </.card>
+    </div>
+  </div>
+
+  <div :if={@team} class="row">
+    <div class="col">
+      <.card>
+        <div class="alert alert-danger">Not live reload</div>
+
+        <h4>Members</h4>
+        <.table id="team_members" rows={@streams.team_members} table_class="table-sm table-hover">
+          <:col :let={{_id, member}} label="Name">{member.user.name}</:col>
+          <:action :let={{_id, member}}>
+            <.link
+              navigate={~p"/admin/team_members/#{member.team_id}/#{member.user_id}"}
+              class="btn btn-sm btn-secondary"
+            >
+              Show
+            </.link>
+          </:action>
+        </.table>
+        <.live_component
+          module={DurandalWeb.Player.TeamMemberQuickAddComponent}
+          id={:new_team_member}
+          team={@team}
+          team_member={%Durandal.Player.TeamMember{team_id: @team.id}}
+          patch={~p"/admin/teams/#{@team}"}
+          current_user={@current_user}
+        />
+      </.card>
+    </div>
+
+    <div class="col">
+      <.card>
+        <h4>Ships</h4>
+        <.table id="ships" rows={@streams.ships} table_class="table-sm table-hover">
+          <:col :let={{_id, ship}} label="Name">{ship.name}</:col>
+          <:col :let={{_id, ship}} label="Health">{ship.health}</:col>
+          <:action :let={{_id, ship}}>
+            <.link navigate={~p"/admin/ships/#{ship}"} class="btn btn-sm btn-secondary">
+              Show
+            </.link>
+          </:action>
+        </.table>
+      </.card>
+    </div>
+
+    <div class="col">
+      <.card>
+        <h4>Stations</h4>
+        <.table id="stations" rows={@streams.stations} table_class="table-sm table-hover">
+          <:col :let={{_id, station}} label="Name">{station.name}</:col>
+          <:col :let={{_id, station}} label="Position">{format_vector(station.position)}</:col>
+          <:action :let={{_id, station}}>
+            <.link navigate={~p"/admin/stations/#{station}"} class="btn btn-sm btn-secondary">
+              Show
+            </.link>
+          </:action>
+        </.table>
+      </.card>
+    </div>
+  </div>
+</div>
+
+<div :if={assigns[:edit_mode] == true and @team != nil} class="row mt-4">
+  <.live_component
+    module={DurandalWeb.Player.TeamFormComponent}
+    id={:edit}
+    action={:edit}
+    team={@team}
+    patch={~p"/admin/teams/#{@team.id}"}
+    title="Edit team form"
+  />
+</div>

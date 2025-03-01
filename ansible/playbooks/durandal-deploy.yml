@@ -1,6 +1,0 @@
-- name: "Run the Durandal deploy scripts"
-  hosts:
-    - web
-  roles:
-    - durandal_deploy
-  

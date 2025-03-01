@@ -1,0 +1,103 @@
+<% selected =
+  cond do
+    assigns[:edit_mode] != true -> "show"
+    assigns[:edit_mode] == true and @station_module != nil and @station_module.id != nil -> "edit"
+    true -> "new"
+  end %>
+<DurandalWeb.StationModuleComponents.filter_bar selected={selected} />
+
+<div :if={assigns[:edit_mode] != true}>
+  <div class="row my-4">
+    <div class="col">
+      <.card :if={@station_module}>
+        <div class="float-end">
+          <a class="btn btn-danger" href={~p"/admin/station_modules/delete/#{@station_module.id}"}>
+            <Fontawesome.icon icon={StylingHelper.icon(:delete)} style="solid" /> Delete
+          </a>
+
+          <a class="btn btn-info" href={~p"/admin/station_modules/edit/#{@station_module.id}"}>
+            <Fontawesome.icon icon={StylingHelper.icon(:edit)} style="solid" /> Edit
+          </a>
+        </div>
+
+        <h4 class="d-inline-block">
+          {@station_module.type.name}
+        </h4>
+
+        <div class="row">
+          <div class="col">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>Station</td>
+                  <td>{@station_module.station.name}</td>
+                  <td>
+                    <a href={~p"/admin/stations/#{@station_module.station_id}"}>
+                      <Fontawesome.icon icon="link" style="regular" />
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Type</td>
+                  <td>{@station_module.type.name}</td>
+                  <td>
+                    <a href={~p"/admin/station_module_types/#{@station_module.type_id}"}>
+                      <Fontawesome.icon icon="link" style="regular" />
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>Health</td>
+                  <td>{format_number(@station_module.health)}</td>
+                </tr>
+                <tr>
+                  <td>Build progress</td>
+                  <td>{format_number(@station_module.build_progress)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>Build time</td>
+                  <td>{format_number(@station_module.type.build_time)}</td>
+                </tr>
+                <tr>
+                  <td>Max health</td>
+                  <td>{format_number(@station_module.type.max_health)}</td>
+                </tr>
+                <tr>
+                  <td>Damage</td>
+                  <td>{format_number(@station_module.type.damage)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </.card>
+    </div>
+  </div>
+</div>
+
+<div :if={assigns[:edit_mode] == true and @station_module != nil} class="row mt-4">
+  <.live_component
+    module={DurandalWeb.Space.StationModuleFormComponent}
+    id={:edit}
+    action={:edit}
+    station_module={@station_module}
+    type_list={@type_list}
+    station_list={@station_list}
+    patch={~p"/admin/station_modules/#{@station_module.id}"}
+    title="Edit station_module form"
+  />
+</div>

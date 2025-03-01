@@ -1,9 +1,0 @@
-- name: "Full setup for an Durandal instance"
-  hosts:
-    - web
-  roles:
-    - debian
-    - letsencrypt
-    - nginx
-    - durandal
-  

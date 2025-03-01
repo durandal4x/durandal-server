@@ -1,0 +1,33 @@
+<div id="index-live-wrapper">
+  <DurandalWeb.StationModuleTypeComponents.filter_bar selected="list">
+    <div class="col">
+      <input
+        type="text"
+        name="search-term"
+        id="search-term-input"
+        value=""
+        placeholder="Search"
+        class="form-control"
+        phx-keyup="update-search"
+        phx-debounce="500"
+      />
+    </div>
+  </DurandalWeb.StationModuleTypeComponents.filter_bar>
+
+  <.table
+    id="station_module_types"
+    rows={@streams.station_module_types}
+    table_class="table-sm table-hover"
+  >
+    <:col :let={{_id, station_module_type}} label="Name">{station_module_type.name}</:col>
+
+    <:action :let={{_id, station_module_type}}>
+      <.link
+        navigate={~p"/admin/station_module_types/#{station_module_type}"}
+        class="btn btn-secondary btn-sm"
+      >
+        Show
+      </.link>
+    </:action>
+  </.table>
+</div>

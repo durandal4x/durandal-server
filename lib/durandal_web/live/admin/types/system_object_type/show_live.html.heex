@@ -1,0 +1,55 @@
+<% selected =
+  cond do
+    assigns[:edit_mode] != true ->
+      "show"
+
+    assigns[:edit_mode] == true and @system_object_type != nil and @system_object_type.id != nil ->
+      "edit"
+
+    true ->
+      "new"
+  end %>
+<DurandalWeb.SystemObjectTypeComponents.filter_bar selected={selected} />
+
+<div :if={assigns[:edit_mode] != true}>
+  <div class="row my-4">
+    <div class="col">
+      <.card :if={@system_object_type}>
+        <div class="float-end">
+          <a
+            class="btn btn-danger"
+            href={~p"/admin/system_object_types/delete/#{@system_object_type.id}"}
+          >
+            <Fontawesome.icon icon={StylingHelper.icon(:delete)} style="solid" /> Delete
+          </a>
+
+          <a
+            class="btn btn-info"
+            href={~p"/admin/system_object_types/edit/#{@system_object_type.id}"}
+          >
+            <Fontawesome.icon icon={StylingHelper.icon(:edit)} style="solid" /> Edit
+          </a>
+        </div>
+
+        <h4 class="d-inline-block">
+          {@system_object_type.name}
+        </h4>
+
+        <table class="table table-sm">
+          <tbody></tbody>
+        </table>
+      </.card>
+    </div>
+  </div>
+</div>
+
+<div :if={assigns[:edit_mode] == true and @system_object_type != nil} class="row mt-4">
+  <.live_component
+    module={DurandalWeb.Types.SystemObjectTypeFormComponent}
+    id={:edit}
+    action={:edit}
+    system_object_type={@system_object_type}
+    patch={~p"/admin/system_object_types/#{@system_object_type.id}"}
+    title="Edit system_object_type form"
+  />
+</div>
