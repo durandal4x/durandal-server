@@ -56,7 +56,7 @@ defmodule DurandalWeb.NavComponents do
           <a class="navbar-brand mt-2 mt-lg-0" href="/">
             <img
               src={~p"/images/favicon.png"}
-              height="38"
+              height="32"
               style="margin-right: 5px;"
               class="d-inline align-top"
             />
