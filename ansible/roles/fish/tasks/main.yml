@@ -1,0 +1,50 @@
+- name: Get sources list
+  ansible.builtin.shell: ls /etc/apt/sources.list.d/
+  register: apt_sources
+
+- name: Add repository
+  apt_repository:
+    repo: "ppa:fish-shell/release-3"
+    state: present
+  when: apt_sources.stdout.find('fish-shell') != -1
+
+- name: Install fish
+  apt:
+    pkg:
+      - fish
+    state: latest
+    
+- name: Set shell to fish
+  ansible.builtin.shell: chsh -s /usr/bin/fish deploy
+
+- name: Install atuin
+  ansible.builtin.shell: curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
+  args:
+    executable: /usr/bin/fish
+
+- name: Install fisher
+  ansible.builtin.shell: curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
+  args:
+    executable: /usr/bin/fish
+
+- name: Install plugins
+  ansible.builtin.shell: fisher install meaningful-ooo/sponge jethrokuan/z IlanCosman/tide@v6 
+  args:
+    executable: /usr/bin/fish
+
+- name: Fish config directory
+  ansible.builtin.file:
+    path: /home/deploy/.config/fish
+    state: directory
+
+- name: Fish config
+  ansible.builtin.template:
+    src: files/fish.config.j2
+    dest: /home/deploy/.config/fish/config.fish
+
+# Run this?
+# curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
+# fisher install meaningful-ooo/sponge jethrokuan/z IlanCosman/tide@v6
+# tide configure --auto --style=Rainbow --prompt_colors='True color' --show_time=No --rainbow_prompt_separators=Angled --powerline_prompt_heads=Sharp --powerline_prompt_tails=Flat --powerline_prompt_style='Two lines, character' --prompt_connection=Disconnected --powerline_right_prompt_frame=No --prompt_spacing=Compact --icons='Many icons' --transient=Yes
+# curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
+

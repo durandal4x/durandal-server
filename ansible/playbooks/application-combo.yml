@@ -6,5 +6,6 @@
     - postgres
     - letsencrypt
     - nginx
+    - fish
     - application
   

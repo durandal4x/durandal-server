@@ -1,0 +1,6 @@
+- name: "Adding fish to a server"
+  hosts:
+    - combo
+  roles:
+    - fish
+  

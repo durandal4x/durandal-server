@@ -77,6 +77,8 @@
       - cron
       - acl
       - btop
+      - eza
+      - zsh
     state: latest
 
 - name: Check if a reboot is needed for Debian-based systems
