@@ -44,13 +44,13 @@ defmodule Durandal.MixProject do
   defp deps do
     [
       # These came with Phoenix
-      {:phoenix, "~> 1.7.14"},
-      {:phoenix_ecto, "~> 4.5"},
+      {:phoenix, "~> 1.7"},
+      {:phoenix_ecto, "~> 4.6"},
       {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 4.0"},
-      {:phoenix_live_reload, "~> 1.4", only: :dev},
-      {:phoenix_live_view, "~> 1.0.0-rc.1", override: true},
+      {:phoenix_html, "~> 4.2"},
+      {:phoenix_live_reload, "~> 1.5", only: :dev},
+      {:phoenix_live_view, "~> 1.0.0"},
       {:floki, ">= 0.34.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
@@ -59,8 +59,7 @@ defmodule Durandal.MixProject do
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
-      {:jason, "~> 1.2"},
-      {:bandit, "~> 1.5"},
+      {:bandit, "~> 1.6"},
 
       # Extra deps
       {:typedstruct, "~> 0.5.2", runtime: false},
