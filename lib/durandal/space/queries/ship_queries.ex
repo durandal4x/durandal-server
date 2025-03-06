@@ -86,16 +86,20 @@ defmodule Durandal.Space.ShipQueries do
     )
   end
 
+  def _where(query, :orbiting_id, :not_nil) do
+    from ships in query,
+      where: not is_nil(ships.orbiting_id)
+  end
+
+  def _where(query, :orbiting_id, :is_nil) do
+    from ships in query,
+      where: is_nil(ships.orbiting_id)
+  end
+
   def _where(query, :orbiting_id, orbiting_id) do
     from ships in query,
       where: ships.orbiting_id in ^List.wrap(orbiting_id)
   end
-
-  def _where(query, :orbit_distance, orbit_distance) do
-    from ships in query,
-      where: ships.orbit_distance in ^List.wrap(orbit_distance)
-  end
-
   def _where(query, :orbit_clockwise, orbit_clockwise) do
     from ships in query,
       where: ships.orbit_clockwise in ^List.wrap(orbit_clockwise)

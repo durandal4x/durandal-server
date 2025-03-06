@@ -17,7 +17,6 @@ defmodule Durandal.SystemObjectLibTest do
       position: [123, 456],
       velocity: [123, 456],
       orbiting_id: nil,
-      orbit_distance: 123,
       orbit_clockwise: true,
       orbit_period: 123
     }
@@ -32,7 +31,6 @@ defmodule Durandal.SystemObjectLibTest do
       position: [123, 456, 789],
       velocity: [123, 456, 789],
       orbiting_id: nil,
-      orbit_distance: 456,
       orbit_clockwise: false,
       orbit_period: 456
     }
@@ -47,7 +45,6 @@ defmodule Durandal.SystemObjectLibTest do
       position: nil,
       velocity: nil,
       orbiting_id: nil,
-      orbit_distance: nil,
       orbit_clockwise: nil,
       orbit_period: nil
     }
@@ -83,7 +80,6 @@ defmodule Durandal.SystemObjectLibTest do
       assert system_object.name == "some name"
       assert system_object.position == [123, 456]
       assert system_object.velocity == [123, 456]
-      assert system_object.orbit_distance == 123
       assert system_object.orbit_period == 123
     end
 
@@ -100,7 +96,6 @@ defmodule Durandal.SystemObjectLibTest do
       assert system_object.name == "some updated name"
       assert system_object.position == [123, 456, 789]
       assert system_object.velocity == [123, 456, 789]
-      assert system_object.orbit_distance == 456
       assert system_object.orbit_period == 456
     end
 

@@ -17,8 +17,18 @@
   <.table id="universes" rows={@streams.universes} table_class="table-sm table-hover">
     <:col :let={{_id, universe}} label="Name">{universe.name}</:col>
     <:col :let={{_id, universe}} label="Active?">
-      <.boolean_icon value={universe.active?} true="check" false="times" coloured={true} />
+      <.boolean_icon value={universe.active?} true="database" false="database" coloured={true} />
+
+      <%= if universe.active? do %>
+        <.boolean_icon value={universe.supervisor_pid} true="sitemap" false="sitemap" coloured={true} />
+        <.boolean_icon value={universe.supervisor_pid} true="server" false="server" coloured={true} />
+      <% end %>
     </:col>
+    
+    <:col :let={{_id, universe}} label="Schedule">{universe.tick_schedule}</:col>
+    
+    <:col :let={{_id, universe}} label="Last tick">{Calendar.strftime(universe.last_tick, "%Y-%m-%d %H:%M%S")}</:col>
+    <:col :let={{_id, universe}} label="Next tick">{Calendar.strftime(universe.next_tick, "%Y-%m-%d %H:%M%S")}</:col>
 
     <:action :let={{_id, universe}}>
       <.link navigate={~p"/admin/universes/#{universe}"} class="btn btn-secondary btn-sm">

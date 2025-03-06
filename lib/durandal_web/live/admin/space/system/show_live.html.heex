@@ -33,6 +33,7 @@
         <h4>System objects</h4>
         <.table id="objects" rows={@streams.system_objects} table_class="table-sm table-hover">
           <:col :let={{_id, object}} label="Name">{object.name}</:col>
+          <:col :let={{_id, object}} label="Pos">{format_vector(object.position)}</:col>
           <:action :let={{_id, object}}>
             <.link navigate={~p"/admin/system_objects/#{object}"} class="btn btn-sm btn-secondary">
               Show
@@ -46,6 +47,7 @@
         <h4>Stations</h4>
         <.table id="stations" rows={@streams.stations} table_class="table-sm table-hover">
           <:col :let={{_id, station}} label="Name">{station.name}</:col>
+          <:col :let={{_id, station}} label="Pos">{format_vector(station.position)}</:col>
           <:action :let={{_id, station}}>
             <.link navigate={~p"/admin/stations/#{station}"} class="btn btn-sm btn-secondary">
               Show
@@ -60,6 +62,7 @@
         <h4>Ships</h4>
         <.table id="ships" rows={@streams.ships} table_class="table-sm table-hover">
           <:col :let={{_id, ship}} label="Name">{ship.name}</:col>
+          <:col :let={{_id, ship}} label="Pos">{format_vector(ship.position)}</:col>
           <:action :let={{_id, ship}}>
             <.link navigate={~p"/admin/ships/#{ship}"} class="btn btn-sm btn-secondary">
               Show

@@ -19,7 +19,6 @@ defmodule Durandal.ShipLibTest do
       position: [123, 456],
       velocity: [123, 456],
       orbiting_id: nil,
-      orbit_distance: 123,
       orbit_clockwise: true,
       orbit_period: 123,
       build_progress: 123,
@@ -37,7 +36,6 @@ defmodule Durandal.ShipLibTest do
       position: [123, 456, 789],
       velocity: [123, 456, 789],
       orbiting_id: nil,
-      orbit_distance: 456,
       orbit_clockwise: false,
       orbit_period: 456,
       build_progress: 456,
@@ -55,7 +53,6 @@ defmodule Durandal.ShipLibTest do
       position: nil,
       velocity: nil,
       orbiting_id: nil,
-      orbit_distance: nil,
       orbit_clockwise: nil,
       orbit_period: nil,
       build_progress: nil,
@@ -93,7 +90,6 @@ defmodule Durandal.ShipLibTest do
       assert ship.name == "some name"
       assert ship.position == [123, 456]
       assert ship.velocity == [123, 456]
-      assert ship.orbit_distance == 123
       assert ship.orbit_period == 123
       assert ship.build_progress == 123
       assert ship.health == 123
@@ -112,7 +108,6 @@ defmodule Durandal.ShipLibTest do
       assert ship.name == "some updated name"
       assert ship.position == [123, 456, 789]
       assert ship.velocity == [123, 456, 789]
-      assert ship.orbit_distance == 456
       assert ship.orbit_period == 456
       assert ship.build_progress == 456
       assert ship.health == 456
