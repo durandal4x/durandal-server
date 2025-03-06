@@ -1,16 +1,17 @@
 defmodule Ship.Geometry do
-  @pi :math.pi
-  @pi2 :math.pi*2
+  @pi :math.pi()
+  @pi2 :math.pi() * 2
 
   def deg2rad({a, b}), do: {deg2rad(a), deg2rad(b)}
-  def deg2rad(d), do: d * (@pi/180)
+  def deg2rad(d), do: d * (@pi / 180)
 
   def rad2deg({a, b}), do: {rad2deg(a), rad2deg(b)}
-  def rad2deg(r), do: r * (180/@pi)
+  def rad2deg(r), do: r * (180 / @pi)
 
   # Easy method for limiting a number between two points
   # call with parameter to limit plus or minus
   def limit(v, b), do: limit(v, -b, b)
+
   def limit(v, lb, ub) do
     cond do
       v < lb -> lb
@@ -30,7 +31,7 @@ defmodule Ship.Geometry do
   def distance({x1, y1}, {x2, y2}) do
     a = x1 - x2
     b = y1 - y2
-    :math.sqrt((a*a) + (b*b))
+    :math.sqrt(a * a + b * b)
   end
 
   @doc """
@@ -42,11 +43,9 @@ defmodule Ship.Geometry do
     cond do
       # Both the same?
       a1 == a2 -> :equal
-
       # Standard closer/further
       a1 > a2 and a1 - a2 < @pi -> :left
       a2 > a1 and a2 - a1 < @pi -> :right
-
       # These cover when you need to cross 0 degrees
       a1 > a2 and a1 - a2 > @pi -> :right
       a2 > a1 and a2 - a1 > @pi -> :left
@@ -64,11 +63,9 @@ defmodule Ship.Geometry do
     cond do
       # Same direction already?
       direction == :equal -> 0
-
       # Standard closer/further
       direction == :left and a1 > a2 -> a1 - a2
       direction == :right and a2 > a1 -> a2 - a1
-
       # These cover when you need to cross 0 degrees
       direction == :left and a1 < a2 -> @pi2 - (a2 - a1)
       direction == :right and a2 < a1 -> @pi2 - (a1 - a2)
@@ -87,7 +84,6 @@ defmodule Ship.Geometry do
     end
   end
 
-
   @doc """
   Calculates the angle between two points in a 2D or 3D space, if 2D then one angle is returned, if 3D then a pair are returned for XY and YZ
   """
@@ -97,18 +93,27 @@ defmodule Ship.Geometry do
     dy = y2 - y1
 
     # Get 2D angle first
-    sides = cond do
-      dx == 0 and dy == 0 -> 0 # No angle, you are there already?
-      dx == 0 and dy < 0 -> 0 # Go up
-      dx == 0 and dy > 0 -> deg2rad(180) # Go down
-      dx < 0 and dy == 0 -> deg2rad(270) # Go left
-      dx > 0 and dy == 0 -> deg2rad(90) # Go right
-
-      dx > 0 and dy < 0 -> {abs(dx), abs(dy), 0} # Right, up
-      dx > 0 and dy > 0 -> {abs(dy), abs(dx), deg2rad(90)} # Right, down
-      dx < 0 and dy > 0 -> {abs(dx), abs(dy), deg2rad(180)} # Left, down
-      dx < 0 and dy < 0 -> {abs(dy), abs(dx), deg2rad(270)} # Left, up
-    end
+    sides =
+      cond do
+        # No angle, you are there already?
+        dx == 0 and dy == 0 -> 0
+        # Go up
+        dx == 0 and dy < 0 -> 0
+        # Go down
+        dx == 0 and dy > 0 -> deg2rad(180)
+        # Go left
+        dx < 0 and dy == 0 -> deg2rad(270)
+        # Go right
+        dx > 0 and dy == 0 -> deg2rad(90)
+        # Right, up
+        dx > 0 and dy < 0 -> {abs(dx), abs(dy), 0}
+        # Right, down
+        dx > 0 and dy > 0 -> {abs(dy), abs(dx), deg2rad(90)}
+        # Left, down
+        dx < 0 and dy > 0 -> {abs(dx), abs(dy), deg2rad(180)}
+        # Left, up
+        dx < 0 and dy < 0 -> {abs(dy), abs(dx), deg2rad(270)}
+      end
 
     case sides do
       {opp, adj, add} -> :math.atan(opp / adj) + add

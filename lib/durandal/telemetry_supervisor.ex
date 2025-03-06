@@ -98,7 +98,7 @@ defmodule Durandal.TelemetrySupervisor do
     [
       summary("durandal.engine.tick.stop.duration", description: "Ticks duration"),
       summary("durandal.engine.stage.stop.duration", description: "Stages"),
-      summary("durandal.engine.system.stop.duration", description: "Systems"),
+      summary("durandal.engine.system.stop.duration", description: "Systems")
     ]
   end
 

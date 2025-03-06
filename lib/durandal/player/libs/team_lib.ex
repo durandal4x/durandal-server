@@ -67,6 +67,38 @@ defmodule Durandal.Player.TeamLib do
   end
 
   @doc """
+  Gets a single team by its id. If no team is found, returns `nil`.
+
+  Makes use of a Cache
+
+  ## Examples
+
+      iex> get_team_by_id("09f4e0d9-13d1-4a32-8121-d52423dd8e7c")
+      %User{}
+
+      iex> get_team_by_id("310dcab9-e7c2-4fc0-acd6-98035376a7be")
+      nil
+  """
+  @spec get_team_by_id(Durandal.team_id()) :: Team.t() | nil
+  def get_team_by_id(team_id) do
+    case Cachex.get(:team_by_team_id_cache, team_id) do
+      {:ok, nil} ->
+        team = do_get_team_by_id(team_id)
+        Cachex.put(:team_by_team_id_cache, team_id, team)
+        team
+
+      {:ok, value} ->
+        value
+    end
+  end
+
+  @spec do_get_team_by_id(Durandal.team_id()) :: Team.t() | nil
+  defp do_get_team_by_id(team_id) do
+    TeamQueries.team_query(id: team_id, limit: 1)
+    |> Repo.one()
+  end
+
+  @doc """
   Creates a team.
 
   ## Examples
@@ -110,6 +142,7 @@ defmodule Durandal.Player.TeamLib do
     |> Durandal.broadcast_on_ok({&Durandal.Game.universe_topic/1, :universe_id}, :team, %{
       event: :updated_team
     })
+    |> Durandal.invalidate_cache_on_ok(:player_team_by_team_id_cache)
   end
 
   @doc """
@@ -131,6 +164,7 @@ defmodule Durandal.Player.TeamLib do
     |> Durandal.broadcast_on_ok({&Durandal.Game.universe_topic/1, :universe_id}, :team, %{
       event: :deleted_team
     })
+    |> Durandal.invalidate_cache_on_ok(:player_team_by_team_id_cache)
   end
 
   @doc """
@@ -145,5 +179,14 @@ defmodule Durandal.Player.TeamLib do
   @spec change_team(Team.t(), map) :: Ecto.Changeset.t()
   def change_team(%Team{} = team, attrs \\ %{}) do
     Team.changeset(team, attrs)
+  end
+
+  def recalculate_member_count(team_id) do
+    team = get_team!(team_id)
+    new_count = Durandal.Player.TeamMemberQueries.count_team_members(team_id, where: [enabled?: true])
+
+    if team.member_count != new_count do
+      update_team(team, %{member_count: new_count})
+    end
   end
 end

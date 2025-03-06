@@ -27,7 +27,7 @@ config :durandal, DurandalWeb.Endpoint,
     layout: false
   ],
   pubsub_server: Durandal.PubSub,
-  live_view: [signing_salt: "51GUT9iP"]
+  live_view: [signing_salt: "51gUT92P"]
 
 config :db_cluster,
   repo: Durandal.Repo

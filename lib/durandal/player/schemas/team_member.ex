@@ -14,6 +14,7 @@ defmodule Durandal.Player.TeamMember do
   @primary_key false
   schema "player_team_members" do
     field(:roles, {:array, :string})
+    field(:enabled?, :boolean, default: true)
     belongs_to(:team, Durandal.Player.Team, type: Ecto.UUID, primary_key: true)
     belongs_to(:user, Durandal.Account.User, type: Ecto.UUID, primary_key: true)
 
@@ -29,7 +30,7 @@ defmodule Durandal.Player.TeamMember do
   #      }
 
   @required_fields ~w(roles team_id user_id)a
-  @optional_fields ~w()a
+  @optional_fields ~w(enabled?)a
 
   @doc false
   @spec changeset(map(), map()) :: Ecto.Changeset.t()

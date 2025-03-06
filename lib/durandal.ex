@@ -56,4 +56,10 @@ defmodule Durandal do
   # Cluster cache delegation
   @spec invalidate_cache(atom, any) :: :ok
   defdelegate invalidate_cache(table, key_or_keys), to: Durandal.CacheClusterServer
+
+  @spec invalidate_cache_on_ok(any, atom) :: any
+  defdelegate invalidate_cache_on_ok(value, table), to: Durandal.CacheClusterServer
+
+  @spec invalidate_cache_on_ok(any, atom, atom) :: any
+  defdelegate invalidate_cache_on_ok(value, table, id_field), to: Durandal.CacheClusterServer
 end

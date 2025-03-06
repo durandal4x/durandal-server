@@ -24,7 +24,6 @@ defmodule DurandalWeb.Player.TeamMemberQuickAddComponent do
             <.input
               field={@form[:name]}
               type="text"
-              autofocus="autofocus"
               phx-debounce="200"
               placeholder="User name"
               show_valid={true}
@@ -64,8 +63,6 @@ defmodule DurandalWeb.Player.TeamMemberQuickAddComponent do
       convert_params(team_member_params)
       |> maybe_lookup_user_name(socket.assigns.last_name_lookup)
 
-    # socket = maybe_lookup_user_name(socket, team_member_params)
-
     changeset =
       socket.assigns.team_member
       |> Player.change_team_member(team_member_params)
@@ -82,17 +79,25 @@ defmodule DurandalWeb.Player.TeamMemberQuickAddComponent do
   def handle_event("save", %{"team_member" => team_member_params}, socket) do
     team_member_params = convert_params(team_member_params)
 
-    case Player.create_team_member(team_member_params) do
-      {:ok, team_member} ->
-        notify_parent({:saved, team_member})
+    if socket.assigns.form.source.valid? do
+      case Player.create_team_member(team_member_params) do
+        {:ok, team_member} ->
+          notify_parent({:saved, team_member})
 
-        {:noreply,
-         socket
-         |> put_flash(:info, "TeamMember created successfully")
-         |> redirect(to: socket.assigns.patch)}
+          socket
+          |> put_flash(:info, "TeamMember created successfully")
+          |> redirect(to: socket.assigns.patch)
+          |> noreply
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:error, %Ecto.Changeset{} = changeset} ->
+          changeset = changeset
+          |> maybe_error_name(socket.assigns.existing_members)
+
+          {:noreply, assign_form(socket, changeset)}
+      end
+    else
+      socket
+      |> noreply
     end
   end
 

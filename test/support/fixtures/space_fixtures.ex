@@ -40,7 +40,6 @@ defmodule Durandal.SpaceFixtures do
         position: data["position"] || [r, r + 1, r + 2],
         velocity: data["velocity"] || [r, r + 1, r + 2],
         orbiting_id: data["orbiting_id"] || nil,
-        orbit_distance: data["orbit_distance"] || r,
         orbit_clockwise: data["orbit_clockwise"] || true,
         orbit_period: data["orbit_period"] || r
       }
@@ -65,7 +64,6 @@ defmodule Durandal.SpaceFixtures do
         position: data["position"] || [r, r + 1, r + 2],
         velocity: data["velocity"] || [r, r + 1, r + 2],
         orbiting_id: data["orbiting_id"] || nil,
-        orbit_distance: data["orbit_distance"] || r,
         orbit_clockwise: data["orbit_clockwise"] || true,
         orbit_period: data["orbit_period"] || r
       }
@@ -112,7 +110,6 @@ defmodule Durandal.SpaceFixtures do
         position: data["position"] || [r, r + 1, r + 2],
         velocity: data["velocity"] || [r, r + 1, r + 2],
         orbiting_id: data["orbiting_id"] || nil,
-        orbit_distance: data["orbit_distance"] || r,
         orbit_clockwise: data["orbit_clockwise"] || true,
         orbit_period: data["orbit_period"] || r,
         build_progress: data["build_progress"] || r,

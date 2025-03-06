@@ -81,14 +81,19 @@ defmodule Durandal.Space.StationQueries do
     )
   end
 
+  def _where(query, :orbiting_id, :not_nil) do
+    from stations in query,
+      where: not is_nil(stations.orbiting_id)
+  end
+
+  def _where(query, :orbiting_id, :is_nil) do
+    from stations in query,
+      where: is_nil(stations.orbiting_id)
+  end
+
   def _where(query, :orbiting_id, orbiting_id) do
     from stations in query,
       where: stations.orbiting_id in ^List.wrap(orbiting_id)
-  end
-
-  def _where(query, :orbit_distance, orbit_distance) do
-    from stations in query,
-      where: stations.orbit_distance in ^List.wrap(orbit_distance)
   end
 
   def _where(query, :orbit_clockwise, orbit_clockwise) do
@@ -190,6 +195,14 @@ defmodule Durandal.Space.StationQueries do
       left_join: modules in assoc(stations, :modules),
       left_join: types in assoc(modules, :type),
       preload: [modules: {modules, type: types}]
+    )
+  end
+
+  def _preload(query, :docked_ships_with_types) do
+    from(stations in query,
+      left_join: docked_ships in assoc(stations, :docked_ships),
+      left_join: types in assoc(docked_ships, :type),
+      preload: [docked_ships: {docked_ships, type: types}]
     )
   end
 

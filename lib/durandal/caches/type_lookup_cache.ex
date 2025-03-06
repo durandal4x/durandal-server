@@ -4,7 +4,7 @@ defmodule Durandal.Caches.TypeLookupCache do
   """
 
   use Supervisor
-  # import Durandal.Helpers.CacheHelper, only: [add_cache: 2]
+  # import Durandal.CacheClusterServer, only: [add_cache: 2]
 
   def start_link(opts) do
     Supervisor.start_link(__MODULE__, :ok, opts)

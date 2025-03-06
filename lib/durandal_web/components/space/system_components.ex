@@ -11,17 +11,18 @@ defmodule DurandalWeb.SystemComponents do
   </DurandalWeb.SystemComponents.filter_bar>
   """
   attr :selected, :string, default: "list"
+  attr :universe_id, :string
   slot :inner_block, required: false
 
   def filter_bar(assigns) do
     ~H"""
-    <div class="row section-menu">
+    <div class="row section-menu" :if={@universe_id}>
       <div class="col">
         <.section_menu_button_url
           colour="info"
           icon={StylingHelper.icon(:list)}
           active={@selected == "list"}
-          url={~p"/admin/systems"}
+          url={~p"/admin/systems?universe_id=#{@universe_id}"}
         >
           List
         </.section_menu_button_url>
@@ -30,7 +31,7 @@ defmodule DurandalWeb.SystemComponents do
           colour="info"
           icon={StylingHelper.icon(:new)}
           active={@selected == "new"}
-          url={~p"/admin/systems/new"}
+          url={~p"/admin/systems/new/#{@universe_id}"}
         >
           New
         </.section_menu_button_url>

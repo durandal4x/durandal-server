@@ -11,6 +11,7 @@ defmodule DurandalWeb.TeamMemberComponents do
   </DurandalWeb.TeamMemberComponents.filter_bar>
   """
   attr :selected, :string, default: "list"
+  attr :team_id, :string, required: true
   slot :inner_block, required: false
 
   def filter_bar(assigns) do
@@ -21,18 +22,9 @@ defmodule DurandalWeb.TeamMemberComponents do
           colour="info"
           icon={StylingHelper.icon(:list)}
           active={@selected == "list"}
-          url={~p"/admin/team_members"}
+          url={~p"/admin/team_members?team_id=#{@team_id}"}
         >
           List
-        </.section_menu_button_url>
-
-        <.section_menu_button_url
-          colour="info"
-          icon={StylingHelper.icon(:new)}
-          active={@selected == "new"}
-          url={~p"/admin/team_members/new"}
-        >
-          New
         </.section_menu_button_url>
 
         <.section_menu_button_url
