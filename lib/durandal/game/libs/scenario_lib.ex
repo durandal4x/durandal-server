@@ -59,7 +59,8 @@ defmodule Durandal.Game.ScenarioLib do
     Repo.transaction(fn ->
       {:ok, universe} =
         Game.create_universe(%{
-          name: opts[:name] || Ecto.UUID.generate()
+          name: opts[:name] || Ecto.UUID.generate(),
+          active?: opts[:active?]
         })
 
       ids =
@@ -85,6 +86,7 @@ defmodule Durandal.Game.ScenarioLib do
           id: ids[team["id"]],
           universe_id: ids["$universe"],
           name: team["name"],
+          member_count: 0,
           inserted_at: DateTime.utc_now(),
           updated_at: DateTime.utc_now()
         }
@@ -168,8 +170,8 @@ defmodule Durandal.Game.ScenarioLib do
       system_id = ids[system["id"]]
 
       build_system_objects(system["objects"], system_id, ids)
-      build_ships(system["ships"], system_id, ids)
       build_stations(system["stations"], system_id, ids)
+      build_ships(system["ships"], system_id, ids)
     end)
   end
 
@@ -186,7 +188,6 @@ defmodule Durandal.Game.ScenarioLib do
           position: system_object["position"],
           velocity: system_object["velocity"],
           orbiting_id: ids[system_object["orbiting"]],
-          orbit_distance: system_object["orbit_distance"],
           orbit_clockwise: system_object["orbit_clockwise"],
           orbit_period: system_object["orbit_period"],
           inserted_at: DateTime.utc_now(),
@@ -211,11 +212,11 @@ defmodule Durandal.Game.ScenarioLib do
           position: ship["position"],
           velocity: ship["velocity"],
           orbiting_id: ids[ship["orbiting"]],
-          orbit_distance: ship["orbit_distance"],
           orbit_clockwise: ship["orbit_clockwise"],
           orbit_period: ship["orbit_period"],
           build_progress: ship["build_progress"],
           health: ship["health"],
+          docked_with_id: ids[ship["docked_with"]],
           inserted_at: DateTime.utc_now(),
           updated_at: DateTime.utc_now()
         }
@@ -237,7 +238,6 @@ defmodule Durandal.Game.ScenarioLib do
           position: station["position"],
           velocity: station["velocity"],
           orbiting_id: ids[station["orbiting"]],
-          orbit_distance: station["orbit_distance"],
           orbit_clockwise: station["orbit_clockwise"],
           orbit_period: station["orbit_period"],
           inserted_at: DateTime.utc_now(),

@@ -14,12 +14,12 @@ defmodule Durandal.Engine.VelocitySystem do
   def execute(universe_id) do
     # For all objects needing to move, move them
     update_ships(universe_id)
-    update_systems(universe_id)
+    update_stations(universe_id)
     update_system_objects(universe_id)
   end
 
   defp update_ships(universe_id) do
-    Space.list_ships(where: [universe_id: universe_id])
+    Space.list_ships(where: [universe_id: universe_id, orbiting_id: :is_nil, docked_with_id: :is_nil])
     |> Enum.each(fn ship ->
       new_position = Maths.sum_vectors(ship.position, ship.velocity)
 
@@ -30,7 +30,7 @@ defmodule Durandal.Engine.VelocitySystem do
   end
 
   defp update_system_objects(universe_id) do
-    Space.list_system_objects(where: [universe_id: universe_id])
+    Space.list_system_objects(where: [universe_id: universe_id, orbiting_id: :is_nil])
     |> Enum.each(fn system_object ->
       new_position = Maths.sum_vectors(system_object.position, system_object.velocity)
 
@@ -40,13 +40,13 @@ defmodule Durandal.Engine.VelocitySystem do
     end)
   end
 
-  defp update_systems(universe_id) do
-    Space.list_systems(where: [universe_id: universe_id])
-    |> Enum.each(fn system ->
-      new_position = Maths.sum_vectors(system.position, system.velocity)
+  defp update_stations(universe_id) do
+    Space.list_stations(where: [universe_id: universe_id, orbiting_id: :is_nil])
+    |> Enum.each(fn station ->
+      new_position = Maths.sum_vectors(station.position, station.velocity)
 
-      if new_position != system.position do
-        Space.update_system(system, %{position: new_position})
+      if new_position != station.position do
+        Space.update_station(station, %{position: new_position})
       end
     end)
   end

@@ -19,11 +19,7 @@ defmodule DurandalWeb.Space.SystemFormComponent do
           <div class="col-md-12 col-lg-6">
             <label for="system_name" class="control-label">Name:</label>
             <.input field={@form[:name]} type="text" autofocus="autofocus" phx-debounce="100" />
-            <br />
 
-            <label for="system_active?" class="control-label">Active?:</label>
-            <.input field={@form[:active?]} type="checkbox" phx-debounce="100" />
-            <br />
           </div>
         </div>
 
@@ -41,7 +37,7 @@ defmodule DurandalWeb.Space.SystemFormComponent do
         <% else %>
           <div class="row">
             <div class="col">
-              <a href={~p"/admin/games"} class="btn btn-secondary btn-block">
+              <a href={~p"/admin/systems/#{@universe_id}"} class="btn btn-secondary btn-block">
                 Cancel
               </a>
             </div>
@@ -68,6 +64,7 @@ defmodule DurandalWeb.Space.SystemFormComponent do
   @impl true
   def handle_event("validate", %{"system" => system_params}, socket) do
     system_params = convert_params(system_params)
+      |> Map.put("universe_id", socket.assigns.universe_id)
 
     changeset =
       socket.assigns.system
@@ -83,6 +80,7 @@ defmodule DurandalWeb.Space.SystemFormComponent do
 
   def handle_event("save", %{"system" => system_params}, socket) do
     system_params = convert_params(system_params)
+      |> Map.put("universe_id", socket.assigns.universe_id)
 
     save_system(socket, socket.assigns.action, system_params)
   end

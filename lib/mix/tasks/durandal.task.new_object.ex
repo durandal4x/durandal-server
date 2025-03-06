@@ -265,6 +265,16 @@ if Code.ensure_loaded?(Igniter) do
 
           [name, "references", _table] ->
             """
+            def _where(query, :#{name}_id, :not_nil) do
+              from $objects in query,
+                where: not is_nil($objects.#{name}_id)
+            end
+
+            def _where(query, :#{name}_id, :is_nil) do
+              from $objects in query,
+                where: is_nil($objects.#{name}_id)
+            end
+
             def _where(query, :#{name}_id, #{name}_id) do
               from $objects in query,
                 where: $objects.#{name}_id in ^List.wrap(#{name}_id)
@@ -554,7 +564,9 @@ if Code.ensure_loaded?(Igniter) do
           [name, "references", _] ->
             [
               "#{name}_id: [\"92a26447-572e-4e3e-893c-42008287a9aa\", \"5bed6cfe-0ffd-40bf-ad49-4e82ca65c9be\"]",
-              "#{name}_id: \"fc7cd2d5-004a-4799-8cec-0d198016e292\""
+              "#{name}_id: \"fc7cd2d5-004a-4799-8cec-0d198016e292\"",
+              "#{name}_id: :is_nil",
+              "#{name}_id: :not_nil"
             ]
 
           [name, "array", "string"] ->

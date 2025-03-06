@@ -35,6 +35,8 @@ defmodule Durandal.TeamMemberQueriesTest do
             updated_before: DateTime.utc_now(),
             has_roles: "Some string",
             not_has_roles: "Some string",
+            enabled?: true,
+            enabled?: false,
             team_id: [
               "92a26447-572e-4e3e-893c-42008287a9aa",
               "5bed6cfe-0ffd-40bf-ad49-4e82ca65c9be"
@@ -47,6 +49,8 @@ defmodule Durandal.TeamMemberQueriesTest do
             user_id: "fc7cd2d5-004a-4799-8cec-0d198016e292"
           ],
           order_by: [
+            "Enabled",
+            "Disabled",
             "Newest first",
             "Oldest first"
           ],

@@ -1,0 +1,63 @@
+{
+  "systems": [
+    {
+      "id": "$solar-system",
+      "name": "Solar System",
+      "type": "system",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "size": 1000,
+      "objects": [
+        {
+          "id": "$star",
+          "name": "star",
+          "type": "$so-star",
+          
+          "position": [0, 0, 0],
+          "velocity": [0, 0, 0],
+          
+          "orbiting": null,
+          "orbit_clockwise": true,
+          "orbit_period": 0
+        },
+        {
+          "id": "$planet1",
+          "name": "planet1",
+          "type": "$so-planet",
+          "position": [1000000, 0, 0],
+          "velocity": [0, 0, 0],
+          "orbiting": "$star",
+          "orbit_clockwise": true,
+          "orbit_period": 3600
+        },
+        {
+          "id": "$planet2",
+          "name": "planet2",
+          "type": "$so-planet",
+          "position": [1000000, 0, 0],
+          "velocity": [0, 0, 0],
+          "orbiting": "$star",
+          "orbit_clockwise": true,
+          "orbit_period": 360
+        }
+      ],
+      "stations": [],
+      "ships": []
+    }
+  ],
+  "ship_types": [],
+  "station_module_types": [],
+  "system_object_types": [
+    {
+      "id": "$so-star",
+      "name": "Star"
+    },
+    {
+      "id": "$so-planet",
+      "name": "Planet"
+    }
+  ],
+  "teams": []
+}

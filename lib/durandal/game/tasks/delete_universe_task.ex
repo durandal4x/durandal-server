@@ -7,19 +7,20 @@ defmodule Durandal.Game.DeleteUniverseTask do
 
   @spec perform(Durandal.Game.Universe.id()) :: :ok | {:error, String.t()}
   def perform(universe_id) do
+    Game.UniverseLib.stop_universe_supervisor(universe_id)
     universe = Game.get_universe!(universe_id)
 
     Repo.transaction(fn ->
-      # team_query = "SELECT id FROM player_teams WHERE universe_id = $1"
+      team_query = "SELECT id FROM player_teams WHERE universe_id = $1"
       system_query = "SELECT id FROM space_systems WHERE universe_id = $1"
       station_query = "SELECT id FROM space_stations WHERE system_id IN (#{system_query})"
 
-      # Ships
-      query = "DELETE FROM space_ships WHERE system_id IN (#{system_query})"
+      # Commands
+      query = "DELETE FROM player_commands WHERE universe_id = $1"
       {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])
 
-      # Station modules
-      query = "DELETE FROM space_system_objects WHERE system_id IN (#{system_query})"
+      # Ships
+      query = "DELETE FROM space_ships WHERE system_id IN (#{system_query})"
       {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])
 
       # Stations
@@ -27,6 +28,10 @@ defmodule Durandal.Game.DeleteUniverseTask do
       {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])
 
       query = "DELETE FROM space_stations WHERE system_id IN (#{system_query})"
+      {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])
+
+      # System objects
+      query = "DELETE FROM space_system_objects WHERE system_id IN (#{system_query})"
       {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])
 
       # Systems
@@ -44,6 +49,9 @@ defmodule Durandal.Game.DeleteUniverseTask do
       {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])
 
       # Teams
+      query = "DELETE FROM player_team_members WHERE team_id IN (#{team_query})"
+      {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])
+
       query = "DELETE FROM player_teams WHERE universe_id = $1"
       {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])
 

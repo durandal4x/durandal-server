@@ -38,67 +38,72 @@ defmodule Durandal.Space.SystemObjectQueries do
   end
 
   def _where(query, :name, name) do
-    from objects in query,
-      where: objects.name in ^List.wrap(name)
+    from system_objects in query,
+      where: system_objects.name in ^List.wrap(name)
   end
 
   def _where(query, :type_id, type_id) do
-    from objects in query,
-      where: objects.type_id in ^List.wrap(type_id)
+    from system_objects in query,
+      where: system_objects.type_id in ^List.wrap(type_id)
   end
 
   def _where(query, :universe_id, universe_id) do
-    from objects in query,
-      where: objects.universe_id in ^List.wrap(universe_id)
+    from system_objects in query,
+      where: system_objects.universe_id in ^List.wrap(universe_id)
   end
 
   def _where(query, :system_id, system_id) do
-    from objects in query,
-      where: objects.system_id in ^List.wrap(system_id)
+    from system_objects in query,
+      where: system_objects.system_id in ^List.wrap(system_id)
   end
 
   def _where(query, :has_position, position) do
-    from(objects in query,
-      where: ^position in objects.position
+    from(system_objects in query,
+      where: ^position in system_objects.position
     )
   end
 
   def _where(query, :not_has_position, position) do
-    from(objects in query,
-      where: ^position not in objects.position
+    from(system_objects in query,
+      where: ^position not in system_objects.position
     )
   end
 
   def _where(query, :has_velocity, velocity) do
-    from(objects in query,
-      where: ^velocity in objects.velocity
+    from(system_objects in query,
+      where: ^velocity in system_objects.velocity
     )
   end
 
   def _where(query, :not_has_velocity, velocity) do
-    from(objects in query,
-      where: ^velocity not in objects.velocity
+    from(system_objects in query,
+      where: ^velocity not in system_objects.velocity
     )
   end
 
-  def _where(query, :orbiting_id, orbiting_id) do
-    from objects in query,
-      where: objects.orbiting_id in ^List.wrap(orbiting_id)
+  def _where(query, :orbiting_id, :not_nil) do
+    from system_objects in query,
+      where: not is_nil(system_objects.orbiting_id)
   end
 
-  def _where(query, :orbit_distance, orbit_distance) do
-    from objects in query,
-      where: objects.orbit_distance in ^List.wrap(orbit_distance)
+  def _where(query, :orbiting_id, :is_nil) do
+    from system_objects in query,
+      where: is_nil(system_objects.orbiting_id)
+  end
+
+  def _where(query, :orbiting_id, orbiting_id) do
+    from system_objects in query,
+      where: system_objects.orbiting_id in ^List.wrap(orbiting_id)
   end
 
   def _where(query, :orbit_clockwise, orbit_clockwise) do
-    from objects in query,
-      where: objects.orbit_clockwise in ^List.wrap(orbit_clockwise)
+    from system_objects in query,
+      where: system_objects.orbit_clockwise in ^List.wrap(orbit_clockwise)
   end
 
   def _where(query, :orbit_period, orbit_period) do
-    from objects in query,
-      where: objects.orbit_period in ^List.wrap(orbit_period)
+    from system_objects in query,
+      where: system_objects.orbit_period in ^List.wrap(orbit_period)
   end
 
   def _where(query, :inserted_after, timestamp) do
@@ -168,20 +173,20 @@ defmodule Durandal.Space.SystemObjectQueries do
   end
 
   def _preload(query, :type) do
-    from objects in query,
-      left_join: system_object_types in assoc(objects, :type),
+    from system_objects in query,
+      left_join: system_object_types in assoc(system_objects, :type),
       preload: [type: system_object_types]
   end
 
   def _preload(query, :system) do
-    from objects in query,
-      left_join: space_systems in assoc(objects, :system),
+    from system_objects in query,
+      left_join: space_systems in assoc(system_objects, :system),
       preload: [system: space_systems]
   end
 
   def _preload(query, :orbiting) do
-    from objects in query,
-      left_join: space_system_objects in assoc(objects, :orbiting),
+    from system_objects in query,
+      left_join: space_system_objects in assoc(system_objects, :orbiting),
       preload: [orbiting: space_system_objects]
   end
 

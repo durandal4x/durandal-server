@@ -6,6 +6,8 @@ defmodule Durandal.System.StartupLib do
 
   @spec perform() :: any()
   def perform do
+    user_settings()
+
     Settings.add_server_setting_type(%{
       key: "login.ip_rate_limit",
       label: "Login rate limit per IP",
@@ -27,7 +29,9 @@ defmodule Durandal.System.StartupLib do
       description:
         "The upper bound on how many failed attempts a given user can have before their logins are blocked."
     })
+  end
 
+  defp user_settings() do
     Settings.add_user_setting_type(%{
       key: "language",
       label: "Language",
@@ -51,6 +55,38 @@ defmodule Durandal.System.StartupLib do
         if -12 <= v and v <= 14,
           do: :ok,
           else: {:error, "Timezone must be within -12 and +14 hours of UTC"}
+      end
+    })
+
+    Settings.add_user_setting_type(%{
+      key: "current_universe",
+      label: "Universe",
+      section: "active_game",
+      type: "string",
+      permissions: ["admin"],
+      default: 0,
+      description: "The universe currently selected",
+      validator: fn v ->
+        case Ecto.UUID.cast(v) do
+          {:ok, _} -> :ok
+          _ -> {:error, "Invalid UUID"}
+        end
+      end
+    })
+
+    Settings.add_user_setting_type(%{
+      key: "current_team",
+      label: "Team",
+      section: "active_game",
+      type: "string",
+      permissions: ["admin"],
+      default: 0,
+      description: "The team currently selected",
+      validator: fn v ->
+        case Ecto.UUID.cast(v) do
+          {:ok, _} -> :ok
+          _ -> {:error, "Invalid UUID"}
+        end
       end
     })
   end

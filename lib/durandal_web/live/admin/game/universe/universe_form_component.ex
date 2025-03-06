@@ -4,7 +4,7 @@ defmodule DurandalWeb.Game.UniverseFormComponent do
   # import Durandal.Helper.ColourHelper, only: [rgba_css: 2]
 
   alias Durandal.Game
-  alias Durandal.Game.ScenarioLib
+  alias Durandal.Game.{ScenarioLib}
 
   @impl true
   def render(assigns) do
@@ -24,22 +24,69 @@ defmodule DurandalWeb.Game.UniverseFormComponent do
         <div class="row mb-4">
           <%!-- Core properties --%>
           <div class="col-md-12 col-lg-6">
-            <label for="universe_name" class="control-label">Name:</label>
-            <.input field={@form[:name]} type="text" autofocus="autofocus" phx-debounce="100" />
-            <br />
-
-            <label for="universe_active?" class="control-label">Active?:</label>
-            <.input field={@form[:active?]} type="checkbox" phx-debounce="100" />
-            <br />
-
-            <label for="universe_scenario" class="control-label">Scenario:</label>
             <.input
+              field={@form[:name]}
+              type="text"
+              autofocus="autofocus"
+              phx-debounce="100"
+              label="Name:"
+            />
+            <br />
+
+            <.input field={@form[:active?]} type="checkbox" phx-debounce="100" label="Active?" />
+            <br />
+
+            <.input
+              label="Scenario:"
               field={@form[:scenario]}
               type="select"
               phx-debounce="100"
               options={[{"Basic", "basic"}, {"Empty", "empty"}]}
             />
             <br />
+          </div>
+
+          <div class="col-md-12 col-lg-6">
+            <.input
+              field={@form[:tick_schedule]}
+              type="text"
+              phx-debounce="100"
+              label="Schedule:"
+              placeholder="5 minutes"
+            />
+            <br />
+
+            <.input
+              field={@form[:tick_seconds]}
+              type="text"
+              label="Tick duration in seconds:"
+              disabled="disabled"
+            />
+            <br />
+
+            <.input
+              field={@form[:last_tick]}
+              type="datetime-local"
+              label="Last tick:"
+              disabled="disabled"
+            />
+            <br />
+
+            <.input
+              field={@form[:next_tick]}
+              type="datetime-local"
+              label="Next tick:"
+              disabled="disabled"
+            />
+          </div>
+        </div>
+
+        <div :if={@show_schedule_warning} class="row">
+          <div class="col">
+            <div class="alert alert-warning">
+              <Fontawesome.icon icon="triangle-exclamation" style="solid" class="text-warning" />
+              Universe is active but has no tick schedule so will not run.
+            </div>
           </div>
         </div>
 
@@ -57,7 +104,7 @@ defmodule DurandalWeb.Game.UniverseFormComponent do
         <% else %>
           <div class="row">
             <div class="col">
-              <a href={~p"/admin/games"} class="btn btn-secondary btn-block">
+              <a href={~p"/admin/universes"} class="btn btn-secondary btn-block">
                 Cancel
               </a>
             </div>
@@ -78,7 +125,8 @@ defmodule DurandalWeb.Game.UniverseFormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_form(changeset)}
+     |> assign_form(changeset)
+     |> maybe_show_schedule_warning}
   end
 
   @impl true
@@ -94,7 +142,8 @@ defmodule DurandalWeb.Game.UniverseFormComponent do
 
     {:noreply,
      socket
-     |> assign_form(changeset)}
+     |> assign_form(changeset)
+     |> maybe_show_schedule_warning}
   end
 
   def handle_event("save", %{"universe" => universe_params}, socket) do
@@ -144,5 +193,19 @@ defmodule DurandalWeb.Game.UniverseFormComponent do
 
   defp convert_params(params) do
     params
+  end
+
+  defp maybe_show_schedule_warning(%{assigns: %{form: form}} = socket) do
+    active? = Ecto.Changeset.get_field(form.source, :active?)
+    tick_seconds = Ecto.Changeset.get_field(form.source, :tick_seconds)
+    show_schedule_warning = active? && (tick_seconds == nil || tick_seconds < 1)
+
+    socket
+    |> assign(:show_schedule_warning, show_schedule_warning)
+  end
+
+  defp maybe_show_schedule_warning(socket) do
+    socket
+    |> assign(:show_schedule_warning, false)
   end
 end

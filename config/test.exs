@@ -1,5 +1,9 @@
 import Config
 
+config :durandal,
+  test: true,
+  scenario_path: "priv/test_scenarios"
+
 # Configure your database
 #
 # The MIX_TEST_PARTITION environment variable can be used

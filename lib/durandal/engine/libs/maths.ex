@@ -5,24 +5,37 @@ defmodule Durandal.Engine.Maths do
   to convert from degree to radian as part of input sanitisation and convert to
   degree only when presenting a final value to the user.
   """
+  @type degree() :: number()
+  @type radian() :: number()
+  @type vector() :: [number()]
+  @type facing() :: [radian()]
 
   @pi :math.pi()
   @pi2 :math.pi() * 2
 
-  @spec deg2rad([Jam.degree()]) :: [Jam.radian()]
-  @spec deg2rad(Jam.degree()) :: Jam.radian()
+  @spec deg2rad([degree()]) :: [radian()]
+  @spec deg2rad(degree()) :: radian()
   def deg2rad(vals) when is_list(vals), do: Enum.map(vals, &deg2rad/1)
+  def deg2rad(360), do: @pi * 2
+  def deg2rad(180), do: @pi
+  def deg2rad(0), do: 0
   def deg2rad(d), do: d * (@pi / 180)
 
-  @spec rad2deg([Jam.radian()]) :: [Jam.degree()]
-  @spec rad2deg(Jam.radian()) :: Jam.degree()
+  @spec rad2deg([radian()]) :: [degree()]
+  @spec rad2deg(radian()) :: degree()
   def rad2deg(vals) when is_list(vals), do: Enum.map(vals, &rad2deg/1)
+  def rad2deg(0), do: 0
   def rad2deg(r), do: r * (180 / @pi)
 
   @doc """
   Given two vectors, sum them together
   """
-  def sum_vectors(a, b), do: Enum.zip(a, b) |> Enum.map(&(&1 + &2))
+  # def sum_vectors(a, b), do: Enum.zip(a, b) |> Enum.map(&(&1 + &2))
+  @spec sum_vectors(vector(), vector()) :: vector()
+  def sum_vectors(a, b) do
+    Enum.zip(a, b)
+    |> Enum.map(fn {aa, bb} -> aa + bb end)
+  end
 
   @doc """
   limit/2 uses limit/3 but with the limiting value as a positive and a negative:
@@ -69,7 +82,7 @@ defmodule Durandal.Engine.Maths do
   @doc """
   Given an angle, return the same angle but within 0 and 360 degrees
   """
-  @spec angle(Jam.radian()) :: Jam.radian()
+  @spec angle(radian()) :: radian()
   def angle(a) do
     cond do
       a < 0 -> angle(a + @pi2)
@@ -82,8 +95,8 @@ defmodule Durandal.Engine.Maths do
   Rotates an angle about half a rotation but ensures the result sits within
   standard angular bounds
   """
-  @spec invert_angle(Jam.radian()) :: Jam.radian()
-  @spec invert_angle(Jam.facing()) :: Jam.facing()
+  @spec invert_angle(radian()) :: radian()
+  @spec invert_angle(facing()) :: facing()
   def invert_angle([xy, yz]), do: [invert_angle(xy), invert_angle(yz)]
 
   def invert_angle(a) do
@@ -95,15 +108,10 @@ defmodule Durandal.Engine.Maths do
   Gets the distance between a pair of coordinates. If only one set is given then an origin of
   [0,0,0] is used.
   """
-  @spec distance(Jam.vector() | Jam.vector_map()) :: Jam.distance()
-  @spec distance(
-          Jam.vector() | Jam.vector_map(),
-          Jam.vector() | Jam.vector_map()
-        ) :: Jam.distance()
+  @spec distance(vector()) :: number()
+  @spec distance(vector(), vector()) :: number()
   def distance([x1, y1]), do: distance([0, 0], [x1, y1])
   def distance([x1, y1, z1]), do: distance([0, 0, 0], [x1, y1, z1])
-  def distance(%{x: x, y: y, z: z}, b), do: distance([x, y, z], b)
-  def distance(a, %{x: x, y: y, z: z}), do: distance(a, [x, y, z])
 
   def distance([x1, y1], [x2, y2]) do
     a = x1 - x2
@@ -124,7 +132,7 @@ defmodule Durandal.Engine.Maths do
   :left = counter-clockwise or decrement
   :right = clockwise or increment
   """
-  @spec shortest_angle(Jam.radian(), Jam.radian()) :: :equal | :left | :right
+  @spec shortest_angle(radian(), radian()) :: :equal | :left | :right
   def shortest_angle(a1, a2) do
     cond do
       # Both the same?
@@ -143,7 +151,7 @@ defmodule Durandal.Engine.Maths do
   @doc """
   Given two angles, returns the actual adjustment needed to go from angle1 to angle 2
   """
-  @spec angle_adjust(float, float) :: float
+  @spec angle_adjust(radian(), radian()) :: radian()
   def angle_adjust(a1, a2) do
     case shortest_angle(a1, a2) do
       :equal -> 0
@@ -158,8 +166,8 @@ defmodule Durandal.Engine.Maths do
 
   If given a list of angles you will get back a list of distances
   """
-  @spec angle_distance(Jam.radian(), Jam.radian()) :: Jam.radian()
-  @spec angle_distance(Jam.facing(), Jam.facing()) :: Jam.facing()
+  @spec angle_distance(radian(), radian()) :: radian()
+  @spec angle_distance(facing(), facing()) :: facing()
   def angle_distance([xy1, yz1], [xy2, yz2]),
     do: [angle_distance(xy1, xy2), angle_distance(yz1, yz2)]
 
@@ -181,7 +189,7 @@ defmodule Durandal.Engine.Maths do
   @doc """
   Given two angles, returns the actual adjustment needed to go from angle1 to angle 2
   """
-  @spec adjust_required(Jam.radian(), Jam.radian()) :: Jam.radian()
+  @spec adjust_required(radian(), radian()) :: radian()
   def adjust_required(a1, a2) do
     case shortest_angle(a1, a2) do
       :equal -> 0
@@ -193,7 +201,7 @@ defmodule Durandal.Engine.Maths do
   @doc """
   Calculates the angle between two points in a 2D or 3D space, if 2D then one angle is returned, if 3D then a pair are returned for XY and YZ
   """
-  @spec calculate_angle(Jam.vector(), Jam.vector()) :: Jam.radian() | Jam.facing()
+  @spec calculate_angle(vector(), vector()) :: radian() | facing()
   def calculate_angle([x1, y1]), do: calculate_angle([0, 0], [x1, y1])
   def calculate_angle([x1, y1, z1]), do: calculate_angle([0, 0, 0], [x1, y1, z1])
 
@@ -240,6 +248,30 @@ defmodule Durandal.Engine.Maths do
     [xy, yz]
   end
 
-  @spec add_vector(Jam.vector(), Jam.vector()) :: Jam.vector()
+  @doc """
+  Given two lists, add each value together and return a list of the summed values.
+  """
+  @spec add_vector(vector(), vector()) :: vector()
   def add_vector([x1, y1, z1], [x2, y2, z2]), do: [x1 + x2, y1 + y2, z1 + z2]
+
+  @doc """
+  Given two lists, subtract each value together and return a list of the values.
+  """
+  @spec sub_vector(vector(), vector()) :: vector()
+  def sub_vector([x1, y1, z1], [x2, y2, z2]), do: [x1 - x2, y1 - y2, z1 - z2]
+
+  @doc """
+  Rounds a number to p decimal places. `p=0` will result in no decimal places and is the same as calling `round/1`
+  """
+  @spec round(number | [number], integer) :: integer | [integer]
+  def round(vlist, p) when is_list(vlist), do: Enum.map(vlist, fn v -> round(v, p) end)
+  def round(0, _p), do: 0
+  def round(v, 0), do: round(v)
+  def round(v, p), do: Float.round(v, p)
+
+  @doc """
+  Applies `round/1` to each element in a list
+  """
+  @spec round_list([number]) :: [integer]
+  def round_list(vlist), do: Enum.map(vlist, &round/1)
 end

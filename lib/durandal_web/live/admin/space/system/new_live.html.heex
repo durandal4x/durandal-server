@@ -1,4 +1,4 @@
-<DurandalWeb.UserComponents.filter_bar selected="new" />
+<DurandalWeb.SystemComponents.filter_bar universe_id={@universe_id} selected="new" />
 
 <div class="row mt-4">
   <div class="col">
@@ -6,8 +6,9 @@
       module={DurandalWeb.Space.SystemFormComponent}
       id={:new}
       action={:new}
+      universe_id={@universe_id}
       system={%Durandal.Space.System{}}
-      patch={~p"/admin/systems"}
+      patch={~p"/admin/systems?universe_id=#{@universe_id}"}
       title="New system form"
       current_user={@current_user}
     />

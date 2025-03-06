@@ -26,6 +26,7 @@ defmodule DurandalWeb.Admin.Space.Station.ShowLive do
     |> assign(:station_id, nil)
     |> assign(:station, nil)
     |> stream(:station_modules, [])
+    |> stream(:docked_ships, [])
     |> ok
   end
 
@@ -78,9 +79,12 @@ defmodule DurandalWeb.Admin.Space.Station.ShowLive do
 
   @impl true
   # Station updates
-  def handle_info(%{event: :updated_station, topic: "Durandal.Space.Station:" <> _} = msg, socket) do
+  def handle_info(%{event: :updated_station, topic: "Durandal.Space.Station:" <> _} = _msg, socket) do
+    station =
+      Space.get_station!(socket.assigns.station_id, preload: [:team, :system, :orbiting, :universe])
+
     socket
-    |> assign(:station, msg.station)
+    |> assign(:station, station)
     |> noreply
   end
 
@@ -137,10 +141,18 @@ defmodule DurandalWeb.Admin.Space.Station.ShowLive do
         preload: [:type]
       )
 
+    docked_ships =
+      Durandal.Space.list_ships(
+        where: [docked_with_id: station_id],
+        oorder_by: ["Name (A-Z)"],
+        preload: [:type]
+      )
+
     socket
     |> assign(:station, station)
     |> assign(:universe, station.universe)
     |> assign(:team, station.team)
     |> stream(:station_modules, station_modules, reset: true)
+    |> stream(:docked_ships, docked_ships, reset: true)
   end
 end

@@ -183,7 +183,6 @@ defmodule DurandalWeb.Router do
         {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
       ] do
       live "/", IndexLive
-      live "/new", NewLive
       live "/edit/:team_id/:user_id", ShowLive, :edit
       live "/delete/:team_id/:user_id", ShowLive, :delete
       live "/:team_id/:user_id", ShowLive
@@ -199,7 +198,7 @@ defmodule DurandalWeb.Router do
         {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
       ] do
       live "/", IndexLive
-      live "/new", NewLive
+      live "/new/:universe_id", NewLive
       live "/edit/:system_id", ShowLive, :edit
       live "/delete/:system_id", ShowLive, :delete
       live "/:system_id", ShowLive

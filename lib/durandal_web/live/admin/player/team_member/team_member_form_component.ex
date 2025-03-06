@@ -23,24 +23,13 @@ defmodule DurandalWeb.Player.TeamMemberFormComponent do
         <div class="row mb-4">
           <%!-- Core properties --%>
           <div class="col-md-12 col-lg-6">
-            <label for="team_member_name" class="control-label">Name:</label>
-            <.input field={@form[:name]} type="text" autofocus="autofocus" phx-debounce="100" />
+            <.input field={@form[:enabled?]} type="checkbox" autofocus="autofocus" phx-debounce="100" label="Enabled?" />
             <br />
-          </div>
 
-          <div :if={Ecto.assoc_loaded?(@team_member.universe)} class="col-md-12 col-lg-6">
-            <label for="team_member_name" class="control-label">Universe:</label>
-            <.input
-              value={@team_member.universe.name}
-              name="team_member_universe"
-              type="text"
-              disabled="disabled"
-            />
-            <br />
           </div>
         </div>
 
-        <%= if @team_member.id do %>
+        <%= if @team_member.user_id do %>
           <div class="row">
             <div class="col">
               <a

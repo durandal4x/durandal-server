@@ -36,4 +36,6 @@ cat /var/log/durandal/info.log
 ```sh
 sudo systemctl stop durandal
 sudo systemctl start durandal
+
+sudo systemctl restart durandal
 ```

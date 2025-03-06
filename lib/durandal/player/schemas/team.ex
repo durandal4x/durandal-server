@@ -13,6 +13,7 @@ defmodule Durandal.Player.Team do
   @primary_key {:id, Ecto.UUID, autogenerate: true}
   schema "player_teams" do
     field(:name, :string)
+    field(:member_count, :integer, default: 0)
     belongs_to(:universe, Durandal.Game.Universe, type: Ecto.UUID)
 
     timestamps(type: :utc_datetime_usec)
@@ -29,7 +30,7 @@ defmodule Durandal.Player.Team do
   #       }
 
   @required_fields ~w(name universe_id)a
-  @optional_fields ~w()a
+  @optional_fields ~w(member_count)a
 
   @doc false
   @spec changeset(map(), map()) :: Ecto.Changeset.t()

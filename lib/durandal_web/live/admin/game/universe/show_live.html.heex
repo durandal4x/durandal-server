@@ -11,12 +11,16 @@
     <div class="col">
       <.card :if={@universe}>
         <div class="float-end">
-          <a
-            class="btn btn-danger"
-            phx-click="delete"
-            hhref={~p"/admin/universes/delete/#{@universe.id}"}
-          >
+          <a class="btn btn-danger" phx-click="delete" data-confirm="Are you sure?">
             <Fontawesome.icon icon={StylingHelper.icon(:delete)} style="solid" /> Delete
+          </a>
+
+          <a
+            id="restart-universe-button"
+            class={["btn btn-warning", !@universe.active? && "disabled"]}
+            phx-click="restart"
+          >
+            <Fontawesome.icon icon="sync" style="solid" /> Restart servers
           </a>
 
           <a class="btn btn-info" href={~p"/admin/universes/edit/#{@universe.id}"}>
@@ -28,21 +32,85 @@
           {@universe.name}
         </h4>
 
-        <table class="table table-sm">
-          <tbody>
-            <tr>
-              <td>Active?</td>
-              <td>
-                <.boolean_icon
-                  value={@universe.active?}
-                  true="check"
-                  false="times"
-                  coloured={true}
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div :if={@universe.active? && @universe.tick_seconds == nil} class="alert alert-warning">
+          <Fontawesome.icon icon="triangle-exclamation" style="solid" class="text-warning" />
+          Universe is active but has no tick schedule so will not run.
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>Active?</td>
+                  <td>
+                    <.boolean_icon
+                      value={@universe.active?}
+                      true="check"
+                      false="times"
+                      coloured={true}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>Supervisor</td>
+                  <td>
+                    <.boolean_icon
+                      value={@supervisor_pid}
+                      true="sitemap"
+                      false="sitemap"
+                      coloured={true}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>Server</td>
+                  <td>
+                    <.boolean_icon
+                      value={@server_pid}
+                      true="server"
+                      false="server"
+                      coloured={true}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col-md-6">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>Last tick</td>
+                  <td>
+                    {@universe.last_tick &&
+                      Calendar.strftime(@universe.last_tick, "%Y-%m-%d %H:%M:%S")}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Next tick</td>
+                  <td>
+                    {@universe.next_tick &&
+                      Calendar.strftime(@universe.next_tick, "%Y-%m-%d %H:%M:%S")}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Tick schedule</td>
+                  <td>{@universe.tick_schedule}</td>
+                </tr>
+                <tr>
+                  <td>Tick seconds</td>
+                  <td>{@universe.tick_seconds}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col-md-12">
+            <textarea name="" id="" rows="8" cols="40" class="form-control monospace">{inspect @universe_server_state}</textarea>
+          </div>
+        </div>
       </.card>
     </div>
   </div>
@@ -66,6 +134,7 @@
         <h4>Teams</h4>
         <.table id="teams" rows={@streams.teams} table_class="table-sm table-hover">
           <:col :let={{_id, team}} label="Name">{team.name}</:col>
+          <:col :let={{_id, team}} label="Size">{team.member_count}</:col>
           <:action :let={{_id, team}}>
             <.link navigate={~p"/admin/teams/#{team}"} class="btn btn-sm btn-secondary">
               Show
