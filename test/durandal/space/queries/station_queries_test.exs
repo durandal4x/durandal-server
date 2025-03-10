@@ -61,8 +61,6 @@ defmodule Durandal.StationQueriesTest do
               "5bed6cfe-0ffd-40bf-ad49-4e82ca65c9be"
             ],
             universe_id: "fc7cd2d5-004a-4799-8cec-0d198016e292",
-            orbit_distance: [123, 456],
-            orbit_distance: 789,
             orbit_clockwise: [true, false],
             orbit_clockwise: true,
             orbit_period: [123, 456],

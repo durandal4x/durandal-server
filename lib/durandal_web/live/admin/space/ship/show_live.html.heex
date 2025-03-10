@@ -91,7 +91,7 @@
                 </tr>
                 <tr>
                   <td>Distance</td>
-                  <td>{@ship.orbit_distance}</td>
+                  <td>{Durandal.Engine.Maths.distance(@ship.orbiting.position, @ship.position) |> abs}</td>
                 </tr>
                 <tr>
                   <td>Clockwise?</td>

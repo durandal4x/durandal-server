@@ -4,7 +4,7 @@ defmodule DurandalWeb.Game.UniverseFormComponent do
   # import Durandal.Helper.ColourHelper, only: [rgba_css: 2]
 
   alias Durandal.Game
-  alias Durandal.Game.ScenarioLib
+  alias Durandal.Game.{ScenarioLib}
 
   @impl true
   def render(assigns) do
@@ -24,22 +24,33 @@ defmodule DurandalWeb.Game.UniverseFormComponent do
         <div class="row mb-4">
           <%!-- Core properties --%>
           <div class="col-md-12 col-lg-6">
-            <label for="universe_name" class="control-label">Name:</label>
-            <.input field={@form[:name]} type="text" autofocus="autofocus" phx-debounce="100" />
+            <.input field={@form[:name]} type="text" autofocus="autofocus" phx-debounce="100" label="Name:" />
             <br />
 
-            <label for="universe_active?" class="control-label">Active?:</label>
-            <.input field={@form[:active?]} type="checkbox" phx-debounce="100" />
+            <.input field={@form[:active?]} type="checkbox" phx-debounce="100" label="Active?" />
             <br />
 
-            <label for="universe_scenario" class="control-label">Scenario:</label>
             <.input
+              label="Scenario:"
               field={@form[:scenario]}
               type="select"
               phx-debounce="100"
               options={[{"Basic", "basic"}, {"Empty", "empty"}]}
             />
             <br />
+          </div>
+
+          <div class="col-md-12 col-lg-6">
+            <.input field={@form[:tick_schedule]} type="text" phx-debounce="100" label="Schedule:" placeholder="5 minutes" />
+            <br />
+
+            <.input field={@form[:tick_seconds]} type="text" label="Tick duration in seconds:" disabled="disabled" />
+            <br />
+
+            <.input field={@form[:last_tick]} type="datetime-local" label="Last tick:" disabled="disabled" />
+            <br />
+
+            <.input field={@form[:next_tick]} type="datetime-local" label="Next tick:" disabled="disabled" />
           </div>
         </div>
 
@@ -57,7 +68,7 @@ defmodule DurandalWeb.Game.UniverseFormComponent do
         <% else %>
           <div class="row">
             <div class="col">
-              <a href={~p"/admin/games"} class="btn btn-secondary btn-block">
+              <a href={~p"/admin/universes"} class="btn btn-secondary btn-block">
                 Cancel
               </a>
             </div>
