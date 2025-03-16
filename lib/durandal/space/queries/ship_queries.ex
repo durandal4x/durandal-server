@@ -37,6 +37,11 @@ defmodule Durandal.Space.ShipQueries do
       where: ships.id in ^List.wrap(id)
   end
 
+  def _where(query, :id_not, id) do
+    from ships in query,
+      where: ships.id not in ^List.wrap(id)
+  end
+
   def _where(query, :name, name) do
     from ships in query,
       where: ships.name in ^List.wrap(name)
@@ -231,5 +236,13 @@ defmodule Durandal.Space.ShipQueries do
     from ships in query,
       left_join: game_universes in assoc(ships, :universe),
       preload: [universe: game_universes]
+  end
+
+  def _preload(query, :commands) do
+    from ships in query,
+      left_join: commands in assoc(ships, :commands),
+        on: commands.subject_id == ships.id,
+        on: commands.subject_type == "ship",
+      preload: [commands: commands]
   end
 end

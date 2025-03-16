@@ -5,6 +5,9 @@ defmodule Durandal.Player.CommandLib do
   use DurandalMacros, :library
   alias Durandal.Player.{Command, CommandQueries}
 
+  def command_types("ship"), do: [{"Move to position", "move_to_position"}, {"Move to object", "move_to_object"}, {"Orbit object", "orbit_object"}, {"Move to station", "move_to_station"}, {"Move to ship", "move_to_ship"}, {"Dock", "dock"}]
+  def command_types("station"), do: [{"Move to position", "move_to_position"}, {"Move to object", "move_to_object"}, {"Orbit object", "orbit_object"}, {"Move to station", "move_to_station"}, {"Move to ship", "move_to_ship"}]
+
   @doc """
   Returns the list of commands.
 

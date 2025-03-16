@@ -1,0 +1,57 @@
+<DurandalWeb.GameUIComponents.game_nav_bar
+  selected="dashboard"
+  current_universe={@current_universe}
+  current_team={@current_team}
+  current_user={@current_user}
+/>
+
+<div>
+  <div class="col">
+    <.card>
+      <h4>Ships</h4>
+      <.table id="ships" rows={@streams.ships} table_class="table-sm table-hover">
+        <:col :let={{_id, ship}} label="Name">{ship.name}</:col>
+        <:col :let={{_id, ship}} label="Type">{ship.type.name}</:col>
+        <:col :let={{_id, ship}} label="Status">
+          <%=
+            cond do
+              ship.docked_with_id -> "Docked"
+              ship.orbiting_id -> "Orbiting"
+              true -> "Loose"
+            end
+          %>
+        </:col>
+        <:col :let={{_id, ship}} label="Position">
+          <.vector_string value={ship.position} />
+        </:col>
+        <:col :let={{_id, ship}} label="Velocity">
+          <.vector_string value={ship.velocity} />
+        </:col>
+        <:col :let={{_id, ship}} label="Health">{ship.health}</:col>
+        <:action :let={{_id, ship}}>
+          <.link navigate={~p"/team/ship/#{ship}"} class="btn btn-sm btn-secondary">
+            Show
+          </.link>
+        </:action>
+      </.table>
+    </.card>
+  </div>
+
+  <div class="col">
+    <.card>
+      <h4>Stations</h4>
+      <.table id="stations" rows={@streams.stations} table_class="table-sm table-hover">
+        <:col :let={{_id, station}} label="Name">{station.name}</:col>
+        <:col :let={{_id, station}} label="Position"><.vector_string value={station.position} /></:col>
+        <:col :let={{_id, station}} label="Velocity"><.vector_string value={station.velocity} /></:col>
+        <:action :let={{_id, station}}>
+          <.link navigate={~p"/team/station/#{station}"} class="btn btn-sm btn-secondary">
+            Show
+          </.link>
+        </:action>
+      </.table>
+    </.card>
+  </div>
+</div>
+
+

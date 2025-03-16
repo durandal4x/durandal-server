@@ -29,10 +29,11 @@ defmodule DurandalWeb.Router do
 
     live_session :general_index,
       on_mount: [
-        {DurandalWeb.UserAuth, :mount_current_user}
+        {DurandalWeb.UserAuth, :mount_current_user},
+        {DurandalWeb.UserSettings, :load_user_configs},
       ] do
-      live "/", HomeLive.Index, :index
-      live "/guest", HomeLive.Guest, :index
+      live "/", IndexLive, :index
+      live "/guest", GuestLive, :index
     end
   end
 
@@ -47,11 +48,30 @@ defmodule DurandalWeb.Router do
 
     live_session :profile_index,
       on_mount: [
-        {DurandalWeb.UserAuth, :ensure_authenticated}
+        {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs}
       ] do
-      live "/", HomeLive.Index
+      live "/", IndexLive
       live "/password", PasswordLive
-      live "/account", AccountLive
+      # live "/account", AccountLive
+      live "/team_select", TeamSelectLive
+    end
+  end
+
+  scope "/team", DurandalWeb.Team do
+    pipe_through [:browser]
+
+    live_session :team_index,
+      layout: {DurandalWeb.Layouts, :empty},
+      on_mount: [
+        {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs}
+      ] do
+      live "/", IndexLive
+      live "/dashboard", DashboardLive
+
+      live "/ship/:ship_id", ShipLive
+      live "/station/:station_id", StationLive
     end
   end
 
@@ -61,6 +81,7 @@ defmodule DurandalWeb.Router do
     live_session :admin_index,
       on_mount: [
         {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs},
         {DurandalWeb.UserAuth, {:authorise, "admin"}}
       ] do
       live "/", HomeLive, :index
@@ -73,6 +94,7 @@ defmodule DurandalWeb.Router do
     live_session :admin_accounts,
       on_mount: [
         {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs},
         {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
       ] do
       live "/", IndexLive
@@ -88,6 +110,7 @@ defmodule DurandalWeb.Router do
     live_session :admin_game_index,
       on_mount: [
         {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs},
         {DurandalWeb.UserAuth, {:authorise, "admin"}}
       ] do
       live "/", HomeLive, :index
@@ -100,6 +123,7 @@ defmodule DurandalWeb.Router do
     live_session :admin_universes,
       on_mount: [
         {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs},
         {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
       ] do
       live "/", IndexLive
@@ -116,6 +140,7 @@ defmodule DurandalWeb.Router do
     live_session :admin_system_object_types,
       on_mount: [
         {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs},
         {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
       ] do
       live "/", IndexLive
@@ -132,6 +157,7 @@ defmodule DurandalWeb.Router do
     live_session :admin_station_module_types,
       on_mount: [
         {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs},
         {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
       ] do
       live "/", IndexLive
@@ -148,6 +174,7 @@ defmodule DurandalWeb.Router do
     live_session :admin_ship_types,
       on_mount: [
         {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs},
         {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
       ] do
       live "/", IndexLive
@@ -164,6 +191,7 @@ defmodule DurandalWeb.Router do
     live_session :admin_teams,
       on_mount: [
         {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs},
         {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
       ] do
       live "/", IndexLive
@@ -180,6 +208,7 @@ defmodule DurandalWeb.Router do
     live_session :admin_team_members,
       on_mount: [
         {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs},
         {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
       ] do
       live "/", IndexLive
@@ -195,6 +224,7 @@ defmodule DurandalWeb.Router do
     live_session :admin_systems,
       on_mount: [
         {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs},
         {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
       ] do
       live "/", IndexLive
@@ -211,6 +241,7 @@ defmodule DurandalWeb.Router do
     live_session :admin_system_objects,
       on_mount: [
         {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs},
         {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
       ] do
       live "/", IndexLive
@@ -227,6 +258,7 @@ defmodule DurandalWeb.Router do
     live_session :admin_stations,
       on_mount: [
         {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs},
         {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
       ] do
       live "/", IndexLive
@@ -243,6 +275,7 @@ defmodule DurandalWeb.Router do
     live_session :admin_station_modules,
       on_mount: [
         {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs},
         {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
       ] do
       live "/", IndexLive
@@ -259,6 +292,7 @@ defmodule DurandalWeb.Router do
     live_session :admin_ships,
       on_mount: [
         {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs},
         {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
       ] do
       live "/", IndexLive
@@ -315,7 +349,8 @@ defmodule DurandalWeb.Router do
 
   #   live_session :play_index,
   #     on_mount: [
-  #       {DurandalWeb.UserAuth, :ensure_authenticated}
+  #       {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs}
   #     ] do
   #     live "/new", NewLive.Index, :index
   #     live "/find", FindLive.Index, :index
@@ -324,7 +359,8 @@ defmodule DurandalWeb.Router do
 
   #   live_session :play_in_game,
   #     on_mount: [
-  #       {DurandalWeb.UserAuth, :ensure_authenticated}
+  #       {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs}
   #     ] do
   #     live "/ward/:game_id", WardLive.Index, :index
   #     live "/patients/:game_id", PatientsLive.Index, :index
@@ -370,6 +406,7 @@ defmodule DurandalWeb.Router do
       ecto_repos: [Durandal.Repo],
       on_mount: [
         {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserSettings, :load_user_configs},
         {DurandalWeb.UserAuth, {:authorise, "admin"}}
       ],
       additional_pages: [

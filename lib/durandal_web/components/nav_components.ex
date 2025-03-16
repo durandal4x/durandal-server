@@ -42,8 +42,12 @@ defmodule DurandalWeb.NavComponents do
   attr :current_user, :map, required: true
   attr :active, :string, required: true
 
+  # TODO: Convert this to be explicitly admin_universe and admin_team
   attr :universe, :map
   attr :team, :map
+
+  attr :current_universe, :map
+  attr :current_team, :map
 
   def top_navbar(assigns) do
     ~H"""
@@ -74,6 +78,8 @@ defmodule DurandalWeb.NavComponents do
 
             <.top_nav_item text="Blog" active={@active == "blog"} route={~p"/blog"} />
 
+            <.top_nav_item text="Team" active={@active == "team"} route={~p"/team"} />
+
             <%= if allow?(@current_user, ~w(admin)) do %>
               <.top_nav_item text="Admin" active={@active == "admin"} route={~p"/admin"} />
 
@@ -92,23 +98,46 @@ defmodule DurandalWeb.NavComponents do
 
         <!-- Right elements -->
         <div class="d-flex align-items-center">
-          <a
-            :if={@team}
-            class="badge rounded-pill text-bg-info p-2 mx-1"
-            href={~p"/admin/teams/#{@team}"}
-          >
-            <Fontawesome.icon icon="users" style="solid" />
-            {@team.name}
-          </a>
+          <%= if allow?(@current_user, ~w(admin)) do %>
+            <div class="d-inline-block pe-4 me-4" style="border-right: 1px solid #AAA;">
+              <a
+                :if={@universe}
+                class="badge rounded-pill text-bg-secondary p-2 mx-1"
+                href={~p"/admin/universes/#{@universe}"}
+              >
+                <Fontawesome.icon icon="galaxy" style="solid" />
+                {@universe.name}
+              </a>
 
-          <a
-            :if={@universe}
-            class="badge rounded-pill text-bg-info2 p-2 mx-1"
-            href={~p"/admin/universes/#{@universe}"}
-          >
-            <Fontawesome.icon icon="galaxy" style="solid" />
-            {@universe.name}
-          </a>
+
+              <a
+                :if={@team}
+                class="badge rounded-pill text-bg-secondary p-2 mx-1"
+                href={~p"/admin/teams/#{@team}"}
+              >
+                <Fontawesome.icon icon="users" style="solid" />
+                {@team.name}
+              </a>
+            </div>
+          <% end %>
+
+          <%= if assigns[:current_universe] do %>
+            <%= if assigns[:current_team] do %>
+              <span
+                class="badge rounded-pill text-bg-info p-2 mx-1"
+              >
+                <Fontawesome.icon icon="users" style="solid" />
+                {@current_team.name}
+              </span>
+            <% end %>
+
+            <span
+              class="badge rounded-pill text-bg-info2 p-2 mx-1"
+            >
+              <Fontawesome.icon icon="galaxy" style="solid" />
+              {@current_universe.name}
+            </span>
+          <% end %>
 
           <%= if @current_user do %>
             <DurandalWeb.NavComponents.recents_dropdown current_user={@current_user} />
@@ -392,7 +421,7 @@ defmodule DurandalWeb.NavComponents do
       |> assign(recents: recents)
 
     ~H"""
-    <div :if={not Enum.empty?(@recents)} class="nav-item dropdown mx-2">
+    <div :if={not Enum.empty?(@recents)} class="nav-item dropdown mx-2 d-inline-block">
       <a
         class="dropdown-toggle dropdown-toggle-icon-only"
         href="#"
@@ -434,7 +463,7 @@ defmodule DurandalWeb.NavComponents do
 
   def account_dropdown(assigns) do
     ~H"""
-    <div class="nav-item dropdown mx-2">
+    <div class="nav-item dropdown mx-2 d-inline-block">
       <a
         class="dropdown-toggle dropdown-toggle-icon-only"
         href="#"

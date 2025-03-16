@@ -242,7 +242,7 @@ defmodule DurandalWeb.CoreComponents do
   attr :type, :string,
     default: "text",
     values: ~w(checkbox color date datetime-local email file hidden month number password
-               range radio search select tel text textarea textarea-array time url week 3dvector)
+               range radio search select tel text textarea textarea-array time url week in_map 3dvector)
 
   attr :field, Phoenix.HTML.FormField,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
@@ -252,6 +252,9 @@ defmodule DurandalWeb.CoreComponents do
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
+
+  attr :key, :string, default: nil, doc: "used for the in_map type"
+  attr :actual_type, :string, default: nil, doc: "used for the in_map type"
 
   attr :rest, :global,
     include:
@@ -352,20 +355,22 @@ defmodule DurandalWeb.CoreComponents do
     ~H"""
     <div phx-feedback-for={@name}>
       <.label :if={@label} for={@id}>{@label}</.label>
-      <input
-        :for={{v, idx} <- Enum.with_index(@value || assigns[:value])}
-        type={@type}
-        name={"#{@name}[]"}
-        id={@id || "#{@name}_#{idx}"}
-        value={v}
-        style="width: 80px;"
-        class={[
-          "form-control d-inline-block",
-          @errors != [] && "border-danger"
-        ]}
-        {@rest}
-      />
-      <.error :for={msg <- @errors}>{msg}</.error>
+      <div class="input-group">
+        <input
+          :for={{v, idx} <- Enum.with_index(@value || assigns[:value] || ["", "", ""])}
+          type={@type}
+          name={"#{@name}[]"}
+          id={@id || "#{@name}_#{idx}"}
+          value={v}
+          style="width: 80px;"
+          class={[
+            "form-control d-inline-block",
+            @errors != [] && "border-danger"
+          ]}
+          {@rest}
+        />
+        <.error :for={msg <- @errors}>{msg}</.error>
+      </div>
     </div>
     """
   end
@@ -380,6 +385,16 @@ defmodule DurandalWeb.CoreComponents do
       {@rest}
     />
     """
+  end
+
+  def input(%{type: "in_map"} = assigns) do
+    assigns = Map.merge(assigns, %{
+      name: "#{assigns[:name]}[#{assigns[:key]}]",
+      type: assigns[:actual_type],
+      value: assigns[:value][assigns[:key]],
+    })
+
+    input(assigns)
   end
 
   def input(assigns) do

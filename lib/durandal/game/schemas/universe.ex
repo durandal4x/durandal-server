@@ -16,7 +16,15 @@ defmodule Durandal.Game.Universe do
     field(:active?, :boolean, default: true)
 
     has_many(:teams, Durandal.Player.Team)
+    has_many(:team_members, Durandal.Player.TeamMember)
     has_many(:systems, Durandal.Space.System)
+    has_many(:system_objects, Durandal.Space.SystemObject)
+    has_many(:ships, Durandal.Space.Ship)
+    has_many(:stations, Durandal.Space.Station)
+
+    has_many(:system_object_types, Durandal.Types.SystemObjectType)
+    has_many(:ship_types, Durandal.Types.ShipType)
+    has_many(:station_module_types, Durandal.Types.StationModuleType)
 
     field(:last_tick, :utc_datetime_usec)
     field(:next_tick, :utc_datetime_usec)

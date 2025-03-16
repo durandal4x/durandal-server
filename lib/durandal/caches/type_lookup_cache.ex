@@ -4,7 +4,7 @@ defmodule Durandal.Caches.TypeLookupCache do
   """
 
   use Supervisor
-  # import Durandal.CacheClusterServer, only: [add_cache: 2]
+  import Durandal.CacheClusterServer, only: [add_cache: 2]
 
   def start_link(opts) do
     Supervisor.start_link(__MODULE__, :ok, opts)
@@ -13,9 +13,9 @@ defmodule Durandal.Caches.TypeLookupCache do
   @impl true
   def init(:ok) do
     children = [
-      # add_cache(:ts_match_type_lookup, ttl: :timer.minutes(5)),
-      # add_cache(:ts_match_setting_type_lookup, ttl: :timer.minutes(5)),
-      # add_cache(:ts_user_choice_type_lookup, ttl: :timer.minutes(5))
+      add_cache(:ship_type_by_id_cache, ttl: :timer.minutes(5)),
+      add_cache(:system_object_type_by_id_cache, ttl: :timer.minutes(5)),
+      add_cache(:station_module_type_by_id_cache, ttl: :timer.minutes(5))
     ]
 
     Supervisor.init(children, strategy: :one_for_all)

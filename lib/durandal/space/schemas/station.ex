@@ -31,6 +31,8 @@ defmodule Durandal.Space.Station do
     has_many(:modules, Durandal.Space.StationModule)
     has_many(:docked_ships, Durandal.Space.Ship, foreign_key: :docked_with_id)
 
+    has_many(:commands, Durandal.Player.Command, foreign_key: :subject_id)
+
     timestamps(type: :utc_datetime_usec)
   end
 

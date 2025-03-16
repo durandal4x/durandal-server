@@ -1,7 +1,6 @@
 defmodule DurandalWeb.Player.TeamMemberQuickAddComponent do
   @moduledoc false
   use DurandalWeb, :live_component
-  # import Durandal.Helper.ColourHelper, only: [rgba_css: 2]
 
   alias Durandal.{Account, Player}
 
@@ -17,6 +16,7 @@ defmodule DurandalWeb.Player.TeamMemberQuickAddComponent do
         id="quick_add_team_member-form"
       >
         <div class="row mb-4">
+          <.input field={@form[:universe_id]} type="hidden" />
           <.input field={@form[:team_id]} type="hidden" />
 
           <div class="col-md-10">
@@ -46,7 +46,7 @@ defmodule DurandalWeb.Player.TeamMemberQuickAddComponent do
     changeset = Player.change_team_member(team_member)
 
     existing_members =
-      Player.list_team_members(where: [team_id: assigns[:team_id]], select: [:user_id])
+      Player.list_team_members(where: [team_id: team_member.team_id], select: [:user_id])
       |> Enum.map(& &1.user_id)
 
     {:ok,

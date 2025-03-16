@@ -83,6 +83,7 @@ defmodule Durandal.Game.UniverseLib do
       nil
   """
   @spec get_universe_by_id(Durandal.universe_id()) :: Universe.t() | nil
+  def get_universe_by_id(nil), do: nil
   def get_universe_by_id(universe_id) do
     case Cachex.get(:universe_by_universe_id_cache, universe_id) do
       {:ok, nil} ->
@@ -199,9 +200,13 @@ defmodule Durandal.Game.UniverseLib do
   def stop_universe_supervisor(universe_id) do
     pid = get_game_supervisor_pid(universe_id)
 
-    case Supervisor.stop(pid) do
-      :ok -> :ok
-      {:error, _reason} -> {:error, "Failed to stop supervisor"}
+    if pid do
+      case Supervisor.stop(pid) do
+        :ok -> :ok
+        {:error, _reason} -> {:error, "Failed to stop supervisor"}
+      end
+    else
+      :ok
     end
   end
 

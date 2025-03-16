@@ -16,6 +16,9 @@ defmodule Durandal.Player.Team do
     field(:member_count, :integer, default: 0)
     belongs_to(:universe, Durandal.Game.Universe, type: Ecto.UUID)
 
+    has_many(:team_members, Durandal.Player.TeamMember)
+    has_many(:commands, Durandal.Player.Command)
+
     timestamps(type: :utc_datetime_usec)
   end
 
