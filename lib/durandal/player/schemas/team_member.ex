@@ -17,6 +17,9 @@ defmodule Durandal.Player.TeamMember do
     field(:enabled?, :boolean, default: true)
     belongs_to(:team, Durandal.Player.Team, type: Ecto.UUID, primary_key: true)
     belongs_to(:user, Durandal.Account.User, type: Ecto.UUID, primary_key: true)
+    belongs_to(:universe, Durandal.Game.Universe, type: Ecto.UUID, primary_key: true)
+
+    field(:commands, {:array, :map}, virtual: true)
 
     timestamps(type: :utc_datetime_usec)
   end
@@ -29,7 +32,7 @@ defmodule Durandal.Player.TeamMember do
   #        updated_at: DateTime.t()
   #      }
 
-  @required_fields ~w(roles team_id user_id)a
+  @required_fields ~w(roles universe_id team_id user_id)a
   @optional_fields ~w(enabled?)a
 
   @doc false

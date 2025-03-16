@@ -38,8 +38,8 @@ defmodule Durandal.System.StartupLib do
       section: "interface",
       type: "string",
       permissions: nil,
-      choices: ["English", "American", "Spanish", "Lojban", "Bork bork"],
-      default: "English",
+      choices: [{"English", "en-gb"}, {"American", "eu-us"}, {"Spanish", "es"}, {"Lojban", "lojban"}, {"Bork bork", "bork"}],
+      default: "en",
       description: "The language used in the interface"
     })
 
@@ -49,7 +49,7 @@ defmodule Durandal.System.StartupLib do
       section: "interface",
       type: "integer",
       permissions: nil,
-      default: 0,
+      default: "0",
       description: "The timezone to convert all Times to.",
       validator: fn v ->
         if -12 <= v and v <= 14,
@@ -59,12 +59,12 @@ defmodule Durandal.System.StartupLib do
     })
 
     Settings.add_user_setting_type(%{
-      key: "current_universe",
+      key: "current_universe_id",
       label: "Universe",
       section: "active_game",
       type: "string",
       permissions: ["admin"],
-      default: 0,
+      default: nil,
       description: "The universe currently selected",
       validator: fn v ->
         case Ecto.UUID.cast(v) do
@@ -75,12 +75,12 @@ defmodule Durandal.System.StartupLib do
     })
 
     Settings.add_user_setting_type(%{
-      key: "current_team",
+      key: "current_team_id",
       label: "Team",
       section: "active_game",
       type: "string",
       permissions: ["admin"],
-      default: 0,
+      default: nil,
       description: "The team currently selected",
       validator: fn v ->
         case Ecto.UUID.cast(v) do

@@ -1,4 +1,4 @@
-defmodule DurandalWeb.General.HomeLive.Guest do
+defmodule DurandalWeb.General.GuestLive do
   use DurandalWeb, :live_view
 
   @impl true

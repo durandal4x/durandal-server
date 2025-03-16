@@ -26,6 +26,10 @@ defmodule Durandal.Game do
   defdelegate get_universe(universe_id, query_args \\ []), to: UniverseLib
 
   @doc section: :universe
+  @spec get_universe_by_id(Durandal.universe_id()) :: Universe.t() | nil
+  defdelegate get_universe_by_id(universe_id), to: UniverseLib
+
+  @doc section: :universe
   @spec create_universe(map) :: {:ok, Universe.t()} | {:error, Ecto.Changeset.t()}
   defdelegate create_universe(attrs), to: UniverseLib
 

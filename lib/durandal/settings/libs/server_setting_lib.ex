@@ -87,7 +87,7 @@ defmodule Durandal.Settings.ServerSettingLib do
   @spec get_server_setting_value(ServerSetting.key()) ::
           String.t() | non_neg_integer() | boolean() | nil
   def get_server_setting_value(key) do
-    case Cachex.get(:ts_server_setting_cache, key) do
+    case Cachex.get(:server_setting_cache, key) do
       {:ok, nil} ->
         setting = get_server_setting(key, limit: 1)
         type = ServerSettingTypeLib.get_server_setting_type(key)
@@ -106,7 +106,7 @@ defmodule Durandal.Settings.ServerSettingLib do
 
         value = convert_from_raw_value(value, type.type)
 
-        Cachex.put(:ts_server_setting_cache, key, value)
+        Cachex.put(:server_setting_cache, key, value)
         value
 
       {:ok, value} ->
@@ -138,12 +138,12 @@ defmodule Durandal.Settings.ServerSettingLib do
                 value: raw_value
               })
 
-            Durandal.invalidate_cache(:ts_server_setting_cache, key)
+            Durandal.invalidate_cache(:server_setting_cache, key)
             :ok
 
           server_setting ->
             {:ok, _} = update_server_setting(server_setting, %{"value" => raw_value})
-            Durandal.invalidate_cache(:ts_server_setting_cache, key)
+            Durandal.invalidate_cache(:server_setting_cache, key)
             :ok
         end
 

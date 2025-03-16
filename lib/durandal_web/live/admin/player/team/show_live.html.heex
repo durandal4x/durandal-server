@@ -66,7 +66,7 @@
           module={DurandalWeb.Player.TeamMemberQuickAddComponent}
           id={:new_team_member}
           team={@team}
-          team_member={%Durandal.Player.TeamMember{team_id: @team.id}}
+          team_member={%Durandal.Player.TeamMember{team_id: @team.id, universe_id: @team.universe_id}}
           patch={~p"/admin/teams/#{@team}"}
           current_user={@current_user}
         />

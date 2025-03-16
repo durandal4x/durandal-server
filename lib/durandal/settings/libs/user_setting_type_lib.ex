@@ -3,7 +3,7 @@ defmodule Durandal.Settings.UserSettingTypeLib do
   A library of functions for working with `Durandal.Settings.UserSettingType`
   """
 
-  @cache_table :ts_user_setting_type_store
+  @cache_table :user_setting_type_store
 
   alias Durandal.Settings.UserSettingType
 
@@ -58,6 +58,17 @@ defmodule Durandal.Settings.UserSettingTypeLib do
   def add_user_setting_type(args) do
     if not Enum.member?(~w(string integer boolean), args.type) do
       raise "Invalid type, must be one of `string`, `integer` or `boolean`"
+    end
+
+    cond do
+      args[:default] == nil ->
+        :ok
+
+      is_integer(args.default) ->
+        raise "Invalid default type for user_setting_type of #{args.key} / #{args.label}, you've used an integer but it should be typed as a string."
+
+      true ->
+        :ok
     end
 
     existing_keys = list_user_setting_type_keys()

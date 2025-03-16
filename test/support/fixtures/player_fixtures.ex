@@ -24,13 +24,15 @@ defmodule Durandal.PlayerFixtures do
   @spec team_member_fixture(map) :: TeamMember.t()
   def team_member_fixture(data \\ %{}) do
     r = :rand.uniform(999_999_999)
+    team = data["team_id"] || team_fixture()
 
     TeamMember.changeset(
       %TeamMember{},
       %{
         roles: data["roles"] || ["team_member_roles_#{r}_1", "team_member_roles_#{r}_2"],
-        team_id: data["team_id"] || team_fixture().id,
-        user_id: data["user_id"] || user_fixture().id
+        team_id: team.id,
+        user_id: data["user_id"] || user_fixture().id,
+        universe_id: team.universe_id
       }
     )
     |> Durandal.Repo.insert!()

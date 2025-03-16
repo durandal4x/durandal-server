@@ -80,6 +80,7 @@ defmodule Durandal.Player.TeamLib do
       nil
   """
   @spec get_team_by_id(Durandal.team_id()) :: Team.t() | nil
+  def get_team_by_id(nil), do: nil
   def get_team_by_id(team_id) do
     case Cachex.get(:team_by_team_id_cache, team_id) do
       {:ok, nil} ->

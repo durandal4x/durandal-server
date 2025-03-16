@@ -290,8 +290,8 @@ defmodule Durandal.Account.UserLib do
   def register_failed_login(nil, _, _), do: :ok
 
   def register_failed_login(user_id, ip, reason) do
-    Cachex.incr(:ts_login_count_ip, ip)
-    Cachex.incr(:ts_login_count_user, user_id)
+    Cachex.incr(:login_count_ip, ip)
+    Cachex.incr(:login_count_user, user_id)
 
     :telemetry.execute(
       [:durandal, :user, :failed_login],

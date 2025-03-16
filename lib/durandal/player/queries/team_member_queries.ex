@@ -140,4 +140,19 @@ defmodule Durandal.Player.TeamMemberQueries do
     query = team_member_query([team_id: team_id] ++ args)
     Repo.aggregate(query, :count)
   end
+
+
+
+  def list_all_enabled_team_memberships(nil), do: []
+  def list_all_enabled_team_memberships(user_id) do
+    query = from universes in Durandal.Game.Universe,
+      join: teams in assoc(universes, :teams),
+      join: team_members in assoc(teams, :team_members),
+        where: team_members.user_id == ^user_id,
+      where: team_members.enabled? == true,
+      preload: [teams: {teams, team_members: team_members}],
+      order_by: [asc: universes.name]
+
+    Repo.all(query)
+  end
 end

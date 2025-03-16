@@ -47,4 +47,13 @@ defmodule Durandal.Helper.StylingHelper do
 
   @spec icon(atom, String.t()) :: String.t()
   def icon(icon_atom, fa_type), do: "fa-#{fa_type} #{icon(icon_atom)}"
+
+  def globe_icon(timezone, _language) do
+    cond do
+      timezone <= -3 -> "fa-earth-americas"
+      timezone <= 3 -> "fa-earth-europe"
+      timezone <= 8 -> "fa-earth-asia"
+      true -> "fa-earth-oceania"
+    end
+  end
 end

@@ -13,8 +13,8 @@ defmodule Durandal.Caches.LoginCountCache do
   @impl true
   def init(:ok) do
     children = [
-      add_cache(:ts_login_count_ip, ttl: :timer.minutes(5)),
-      add_cache(:ts_login_count_user, ttl: :timer.minutes(5))
+      add_cache(:login_count_ip, ttl: :timer.minutes(5)),
+      add_cache(:login_count_user, ttl: :timer.minutes(5))
     ]
 
     Supervisor.init(children, strategy: :one_for_all)

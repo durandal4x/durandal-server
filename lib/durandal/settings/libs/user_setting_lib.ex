@@ -62,16 +62,55 @@ defmodule Durandal.Settings.UserSettingLib do
   end
 
   @doc """
-  Gets the value of a user_setting.
+  Returns a map of key => value for the user settings.
+  """
+  @spec get_multiple_user_setting_values(Durandal.user_id(), [UserSetting.key()]) :: map()
+  def get_multiple_user_setting_values(user_id, keys) do
+    key_string = keys
+      |> List.wrap()
+      |> Enum.sort()
+      |> Enum.join("$")
 
-  Returns nil if the UserSetting does not exist.
+    hash = :crypto.hash(:md5, key_string) |> Base.encode16()
+    lookup = cache_key(user_id, hash)
+
+    case Cachex.get(:user_setting_multi_cache, lookup) do
+      {:ok, nil} ->
+        result = keys
+          |> Map.new(fn key ->
+            {key, get_user_setting_value(user_id, key)}
+          end)
+
+        Cachex.put(:user_setting_multi_cache, lookup, result)
+        result
+
+      {:ok, result} ->
+        result
+    end
+  end
+
+  def invalidate_multi_cache(user_id, keys) do
+    key_string = keys
+      |> List.wrap()
+      |> Enum.sort()
+      |> Enum.join("$")
+
+    hash = :crypto.hash(:md5, key_string) |> Base.encode16()
+    lookup = cache_key(user_id, hash)
+    Durandal.invalidate_cache(:user_setting_multi_cache, lookup)
+  end
+
+  @doc """
+  Gets the value of a user_setting; does not care if the user doesn't exist.
+
+  Returns the default value if the setting is not set for this user (or indeed if the user doesn't exist).
 
   ## Examples
 
-      iex> get_user_setting_value("key123")
+      iex> get_user_setting_value("8e75f597-63d5-4876-ac48-09d22c0bf65e", "key123")
       "value"
 
-      iex> get_user_setting_value("key456")
+      iex> get_user_setting_value("8e75f597-63d5-4876-ac48-09d22c0bf65e", "key456")
       nil
 
   """
@@ -80,7 +119,7 @@ defmodule Durandal.Settings.UserSettingLib do
   def get_user_setting_value(user_id, key) do
     lookup = cache_key(user_id, key)
 
-    case Cachex.get(:ts_user_setting_cache, lookup) do
+    case Cachex.get(:user_setting_cache, lookup) do
       {:ok, nil} ->
         setting = get_user_setting(user_id, key)
         type = UserSettingTypeLib.get_user_setting_type(key)
@@ -99,7 +138,7 @@ defmodule Durandal.Settings.UserSettingLib do
 
         value = convert_from_raw_value(value, type.type)
 
-        Cachex.put(:ts_user_setting_cache, lookup, value)
+        Cachex.put(:user_setting_cache, lookup, value)
         value
 
       {:ok, value} ->
@@ -108,6 +147,7 @@ defmodule Durandal.Settings.UserSettingLib do
   end
 
   @spec convert_from_raw_value(String.t(), String.t()) :: String.t() | integer() | boolean() | nil
+  defp convert_from_raw_value({_label, value}, t), do: convert_from_raw_value(value, t)
   defp convert_from_raw_value(raw_value, "string"), do: raw_value
   defp convert_from_raw_value(raw_value, "integer"), do: String.to_integer(raw_value)
   defp convert_from_raw_value(raw_value, "boolean"), do: raw_value == "t"
@@ -119,8 +159,6 @@ defmodule Durandal.Settings.UserSettingLib do
           String.t() | non_neg_integer() | boolean() | nil
         ) :: :ok
   def set_user_setting_value(user_id, key, value) do
-    lookup = cache_key(user_id, key)
-
     type = UserSettingTypeLib.get_user_setting_type(key)
     raw_value = convert_to_raw_value(value, type.type)
 
@@ -135,11 +173,14 @@ defmodule Durandal.Settings.UserSettingLib do
                 value: raw_value
               })
 
+            # Without this, if the cache is already set (via a get) then it will persist
+            # with an incorrect value on the first setting, only updating it will fix it
+            invalidate_user_setting_cache(user_id, key)
             :ok
 
           user_setting ->
             {:ok, _} = update_user_setting(user_setting, %{"value" => raw_value})
-            Durandal.invalidate_cache(:ts_user_setting_cache, lookup)
+            invalidate_user_setting_cache(user_id, key)
             :ok
         end
 
@@ -234,6 +275,16 @@ defmodule Durandal.Settings.UserSettingLib do
   @spec change_user_setting(UserSetting.t(), map) :: Ecto.Changeset.t()
   def change_user_setting(%UserSetting{} = user_setting, attrs \\ %{}) do
     UserSetting.changeset(user_setting, attrs)
+  end
+
+  @doc """
+  Invalidates the cache lookup for this key
+  """
+  @spec invalidate_user_setting_cache(Durandal.user_id, String.t()) :: :ok
+  def invalidate_user_setting_cache(user_id, key) do
+    lookup = cache_key(user_id, key)
+    Durandal.invalidate_cache(:user_setting_cache, lookup)
+    DurandalWeb.UserSettings.maybe_invalidate_plug_cache(user_id, key)
   end
 
   defp cache_key(user_id, key) do

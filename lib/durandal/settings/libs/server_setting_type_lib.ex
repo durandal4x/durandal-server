@@ -3,7 +3,7 @@ defmodule Durandal.Settings.ServerSettingTypeLib do
   A library of functions for working with `Durandal.Settings.ServerSettingType`
   """
 
-  @cache_table :ts_server_setting_type_store
+  @cache_table :server_setting_type_store
 
   alias Durandal.Settings.ServerSettingType
 
