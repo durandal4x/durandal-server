@@ -6,23 +6,25 @@ defmodule DurandalWeb.Blog.BlogLive.Show do
   alias Phoenix.PubSub
 
   @impl true
-  def mount(%{"post_id" => post_id_str}, _session, socket) do
-    socket =
-      if is_connected?(socket) do
-        :ok = PubSub.subscribe(Durandal.PubSub, "blog_posts")
-        post = Blog.get_post!(post_id_str, preload: [:poster, :tags])
-        Blog.increment_post_view_count(post.id)
+  def mount(%{"post_id" => post_id_str}, _session, socket) when is_connected?(socket) do
+    :ok = PubSub.subscribe(Durandal.PubSub, "blog_posts")
+    post = Blog.get_post!(post_id_str, preload: [:poster, :tags])
+    Blog.increment_post_view_count(post.id)
 
-        socket
-        |> assign(:post, post)
-      else
-        socket
-        |> assign(:post, nil)
-      end
+    response = Blog.get_poll_response(socket.assigns.current_user.id, post.id)
 
-    {:ok,
-     socket
-     |> assign(:site_menu_active, "blog")}
+    socket
+    |> assign(:post, post)
+    |> assign(:response, response)
+    |> assign(:site_menu_active, "blog")
+    |> ok
+  end
+
+  def mount(_params, _session, socket) do
+    socket
+    |> assign(:post, nil)
+    |> assign(:site_menu_active, "blog")
+    |> ok
   end
 
   @impl true
@@ -36,8 +38,13 @@ defmodule DurandalWeb.Blog.BlogLive.Show do
       ) do
     socket =
       if post.id == new_post.id do
-        db_post = Blog.get_post!(post.id, preload: [:tags, :poster])
-        socket |> assign(:post, db_post)
+        new_post =
+          struct(new_post, %{
+            tags: post.tags,
+            poster: post.poster
+          })
+
+        socket |> assign(:post, new_post)
       else
         socket
       end
@@ -64,7 +71,7 @@ defmodule DurandalWeb.Blog.BlogLive.Show do
 
   @impl true
   def handle_event("delete-post", _, %{assigns: %{post: post} = assigns} = socket) do
-    if assigns.current_user.id == post.poster_id || allow?(assigns.current_user, "Moderator") do
+    if assigns.current_user.id == post.poster_id || allow?(assigns.current_user, "admin") do
       Blog.delete_post(post)
 
       {:noreply,
@@ -73,5 +80,28 @@ defmodule DurandalWeb.Blog.BlogLive.Show do
     else
       {:noreply, socket}
     end
+  end
+
+  def handle_event("poll-choice", %{"choice" => choice}, %{assigns: assigns} = socket) do
+    response =
+      if assigns[:response] do
+        {:ok, response} = Blog.update_poll_response(assigns.response, %{"response" => choice})
+        response
+      else
+        {:ok, response} =
+          Blog.create_poll_response(%{
+            "user_id" => assigns.current_user.id,
+            "post_id" => assigns.post.id,
+            "response" => choice
+          })
+
+        response
+      end
+
+    Durandal.Blog.PostLib.update_post_response_cache(assigns.post)
+
+    socket
+    |> assign(:response, response)
+    |> noreply
   end
 end

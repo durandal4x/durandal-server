@@ -85,6 +85,16 @@ defmodule DurandalWeb.Blog.PostFormComponent do
               <% end %>
             <% end %>
           </div>
+          <div class="col">
+            <h4>Poll</h4>
+            <.input
+              field={@form[:poll_choices]}
+              type="textarea-array"
+              phx-debounce="100"
+              label="Poll choices"
+              rows="12"
+            />
+          </div>
         </div>
 
         <% disabled = if not @form.source.valid? or Enum.empty?(@selected_tags), do: "disabled" %>
@@ -120,13 +130,13 @@ defmodule DurandalWeb.Blog.PostFormComponent do
 
     changeset = Blog.change_post(post)
 
-    {:ok,
-     socket
-     |> assign(:tags, tags)
-     |> assign(:selected_tags, assigns[:selected_tags] || [])
-     |> assign(:originally_selected_tags, assigns[:selected_tags] || [])
-     |> assign(assigns)
-     |> assign_form(changeset)}
+    socket
+    |> assign(:tags, tags)
+    |> assign(:selected_tags, assigns[:selected_tags] || [])
+    |> assign(:originally_selected_tags, assigns[:selected_tags] || [])
+    |> assign(assigns)
+    |> assign_form(changeset)
+    |> ok
   end
 
   @impl true
@@ -143,12 +153,17 @@ defmodule DurandalWeb.Blog.PostFormComponent do
 
     notify_parent({:updated_changeset, changeset})
 
-    {:noreply,
-     socket
-     |> assign_form(changeset)}
+    socket
+    |> assign_form(changeset)
+    |> noreply
   end
 
   def handle_event("save", %{"post" => post_params}, socket) do
+    post_params =
+      Map.merge(post_params, %{
+        "poster_id" => socket.assigns.current_user.id
+      })
+
     save_post(socket, socket.assigns.action, post_params)
   end
 

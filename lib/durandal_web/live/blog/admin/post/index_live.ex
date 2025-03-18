@@ -42,8 +42,8 @@ defmodule DurandalWeb.Admin.Blog.PostLive.Index do
         {DurandalWeb.Blog.PostFormComponent, {:updated_changeset, %{changes: post}}},
         socket
       ) do
-    {:noreply,
-     socket
-     |> assign(:post, post)}
+    socket
+    |> assign(:post, post)
+    |> noreply
   end
 end

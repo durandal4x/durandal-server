@@ -18,12 +18,12 @@ defmodule DurandalWeb.Admin.Blog.PostLive.Show do
         post = Blog.get_post!(id, preload: [:tags])
         selected_tags = post.tags |> Enum.map(fn t -> t.id end)
 
-        {:noreply,
-         socket
-         |> assign(:post, post)
-         |> assign(:selected_tags, selected_tags)
-         |> assign(:site_menu_active, "blog")
-         |> assign(:view_colour, Durandal.Blog.colours())}
+        socket
+        |> assign(:post, post)
+        |> assign(:selected_tags, selected_tags)
+        |> assign(:site_menu_active, "blog")
+        |> assign(:view_colour, Durandal.Blog.colours())
+        |> noreply
       else
         {:noreply, socket |> redirect(to: ~p"/admin/blog/posts")}
       end

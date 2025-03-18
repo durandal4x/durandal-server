@@ -1,7 +1,6 @@
 defmodule Durandal.BlogTest do
   @moduledoc false
   use Durandal.DataCase
-
   alias Durandal.Blog
 
   describe "tags" do

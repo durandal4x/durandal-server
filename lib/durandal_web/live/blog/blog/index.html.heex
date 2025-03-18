@@ -43,8 +43,11 @@
               <.tag_badge :for={tag <- post.tags} tag={tag} />
             </div>
             <h5>
-              {post.title} &nbsp;&nbsp;&nbsp;&nbsp;
-              <span>
+              <span :if={post.poll_choices && not Enum.empty?(post.poll_choices)} class="me-2">
+                <Fontawesome.icon icon="square-poll-horizontal" style="solid" />
+              </span>
+              {post.title}
+              <span class="ms-4">
                 {post.poster.name}
               </span>
             </h5>

@@ -181,6 +181,21 @@ defmodule Durandal.Blog.PostLib do
 
   defp broadcast_update_post(value), do: value
 
+  def update_post_response_cache(post) do
+    counts =
+      Durandal.Blog.PollResponseQueries.responses_by_choice(post.id)
+      |> Repo.all()
+      |> Map.new()
+
+    new_response_cache =
+      post.poll_choices
+      |> Map.new(fn c ->
+        {c, Map.get(counts, c, 0)}
+      end)
+
+    {:ok, _} = update_post(post, %{poll_result_cache: new_response_cache})
+  end
+
   @doc """
   Deletes a post.
 
@@ -195,6 +210,9 @@ defmodule Durandal.Blog.PostLib do
   """
   def delete_post(%Post{} = post) do
     query = "DELETE FROM blog_post_tags WHERE post_id = $1;"
+    {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [Ecto.UUID.dump!(post.id)])
+
+    query = "DELETE FROM blog_poll_responses WHERE post_id = $1;"
     {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [Ecto.UUID.dump!(post.id)])
 
     Repo.delete(post)
