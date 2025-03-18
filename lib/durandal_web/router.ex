@@ -270,6 +270,43 @@ defmodule DurandalWeb.Router do
     end
   end
 
+  scope "/blog", DurandalWeb.Blog do
+    pipe_through([:browser])
+
+    live_session :blog_root,
+      on_mount: [
+        {DurandalWeb.UserAuth, :mount_current_user}
+      ] do
+      live "/", BlogLive.Index, :index
+      live "/all", BlogLive.Index, :all
+      live "/show/:post_id", BlogLive.Show, :index
+    end
+
+    live_session :blog_user,
+      on_mount: [
+        {DurandalWeb.UserAuth, :mount_current_user}
+      ] do
+      live "/preferences", BlogLive.Preferences, :index
+    end
+  end
+
+  scope "/admin/blog", DurandalWeb.Admin.Blog do
+    pipe_through([:browser])
+
+    live_session :blog_admin,
+      on_mount: [
+        {DurandalWeb.UserAuth, :ensure_authenticated},
+        {DurandalWeb.UserAuth, {:authorise, ~w(admin)}}
+      ] do
+      live "/", PostLive.Index, :index
+      live "/posts", PostLive.Index, :index
+      live "/posts/:id", PostLive.Show, :show
+
+      live "/tags", TagLive.Index, :index
+      live "/tags/:id", TagLive.Show, :show
+    end
+  end
+
   # scope "/play", DurandalWeb.Play do
   #   pipe_through [:browser]
 

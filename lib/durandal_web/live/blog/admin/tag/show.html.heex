@@ -1,0 +1,10 @@
+<DurandalWeb.BlogComponents.sub_menu active="tags" current_user={@current_user} />
+
+<.live_component
+  module={DurandalWeb.Blog.TagFormComponent}
+  id={@tag.id}
+  title="Edit tag"
+  action={:edit}
+  tag={@tag}
+  patch={~p"/admin/blog/tags"}
+/>
