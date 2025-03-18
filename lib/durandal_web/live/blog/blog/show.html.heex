@@ -1,4 +1,10 @@
 <div class="row" style="padding-top: 5vh;" id="main-blog-div">
+  <style type="text/css">
+    #post-content img {
+      max-width: 100%;
+    }
+  </style>
+
   <div
     :if={@post}
     class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2 col-xl-6 offset-xl-3 col-xxl-4 offset-xxl-4"
@@ -16,7 +22,9 @@
       {@post.title} - {Calendar.strftime(@post.inserted_at, "%Y-%m-%d %H:%M:%S")}
     </h3>
 
-    {@post.contents |> Earmark.as_html!() |> raw}
+    <div id="post-content">
+      {@post.contents |> Earmark.as_html!() |> raw}
+    </div>
     <br /><br />
 
     <div :if={@post.poll_choices && not Enum.empty?(@post.poll_choices)} class="row mb-4">

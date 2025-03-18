@@ -273,6 +273,8 @@ defmodule DurandalWeb.Router do
   scope "/blog", DurandalWeb.Blog do
     pipe_through([:browser])
 
+    get "/upload/:upload_id", UploadController, :get_upload
+
     live_session :blog_root,
       on_mount: [
         {DurandalWeb.UserAuth, :mount_current_user}
@@ -301,6 +303,8 @@ defmodule DurandalWeb.Router do
       live "/", PostLive.Index, :index
       live "/posts", PostLive.Index, :index
       live "/posts/:id", PostLive.Show, :show
+
+      live "/uploads", UploadLive.Index
 
       live "/tags", TagLive.Index, :index
       live "/tags/:id", TagLive.Show, :show

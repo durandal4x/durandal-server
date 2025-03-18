@@ -56,6 +56,16 @@ defmodule DurandalWeb.BlogComponents do
         >
           Tags
         </.section_menu_button_url>
+
+        <.section_menu_button_url
+          :if={allow?(@current_user, ~w(admin))}
+          colour="primary"
+          icon="fa-upload"
+          active={@active == "uploads"}
+          url={~p"/admin/blog/uploads"}
+        >
+          Uploads
+        </.section_menu_button_url>
       </div>
     </div>
     """

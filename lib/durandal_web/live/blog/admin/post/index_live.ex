@@ -2,7 +2,6 @@ defmodule DurandalWeb.Admin.Blog.PostLive.Index do
   @moduledoc false
   use DurandalWeb, :live_view
   alias Durandal.Blog
-  import DurandalWeb.BlogComponents
 
   @impl true
   def mount(_params, _session, socket) do
@@ -13,12 +12,14 @@ defmodule DurandalWeb.Admin.Blog.PostLive.Index do
   def handle_params(params, _url, socket) do
     case allow?(socket.assigns[:current_user], "admin") do
       true ->
-        {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+        socket
+        |> apply_action(socket.assigns.live_action, params)
+        |> noreply
 
       false ->
-        {:noreply,
-         socket
-         |> redirect(to: ~p"/blog")}
+        socket
+        |> redirect(to: ~p"/blog")
+        |> noreply
     end
   end
 

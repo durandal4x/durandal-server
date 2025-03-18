@@ -6,9 +6,9 @@ defmodule Durandal.Repo.Migrations.CreateBlogPollsAndUploads do
       add(:id, :uuid, primary_key: true, null: false)
       add(:uploader_id, references(:account_users, on_delete: :nothing, type: :uuid))
 
-      add(:extension, :string)
+      add(:filename, :string)
+      add(:type, :string)
       add(:file_size, :integer)
-      add(:contents, :text)
 
       timestamps(type: :utc_datetime)
     end

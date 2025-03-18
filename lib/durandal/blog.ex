@@ -168,9 +168,6 @@ defmodule Durandal.Blog do
   @spec list_poll_responses(list) :: [PollResponse]
   defdelegate list_poll_responses(args), to: PollResponseLib
 
-  @spec list_poll_responses_using_preferences(UserPreference.t() | nil, list) :: [PollResponse]
-  defdelegate list_poll_responses_using_preferences(preference, args), to: PollResponseLib
-
   @spec get_poll_response(Durandal.user_id(), Post.id()) :: PollResponse.t() | nil
   defdelegate get_poll_response(user_id, post_id), to: PollResponseLib
 
@@ -191,4 +188,36 @@ defmodule Durandal.Blog do
 
   @spec change_poll_response(PollResponse, map) :: Ecto.Changeset
   defdelegate change_poll_response(poll_response, attrs), to: PollResponseLib
+
+  alias Durandal.Blog.{Upload, UploadLib}
+
+  @spec list_uploads() :: [Upload]
+  defdelegate list_uploads(), to: UploadLib
+
+  @spec list_uploads(list) :: [Upload]
+  defdelegate list_uploads(args), to: UploadLib
+
+  @spec get_upload(Upload.id()) :: Upload.t() | nil
+  defdelegate get_upload(upload_id), to: UploadLib
+
+  @spec get_upload!(Upload.id()) :: Upload.t() | nil
+  defdelegate get_upload!(upload_id), to: UploadLib
+
+  @spec create_upload() :: {:ok, Upload} | {:error, Ecto.Changeset}
+  defdelegate create_upload(), to: UploadLib
+
+  @spec create_upload(map) :: {:ok, Upload} | {:error, Ecto.Changeset}
+  defdelegate create_upload(attrs), to: UploadLib
+
+  @spec update_upload(Upload, map) :: {:ok, Upload} | {:error, Ecto.Changeset}
+  defdelegate update_upload(upload, attrs), to: UploadLib
+
+  @spec delete_upload(Upload) :: {:ok, Upload} | {:error, Ecto.Changeset}
+  defdelegate delete_upload(upload), to: UploadLib
+
+  @spec change_upload(Upload) :: Ecto.Changeset
+  defdelegate change_upload(upload), to: UploadLib
+
+  @spec change_upload(Upload, map) :: Ecto.Changeset
+  defdelegate change_upload(upload, attrs), to: UploadLib
 end

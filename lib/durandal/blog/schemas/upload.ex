@@ -3,17 +3,17 @@ defmodule Durandal.Blog.Upload do
   use DurandalWeb, :schema
 
   @primary_key {:id, Ecto.UUID, autogenerate: true}
-  schema "blog_poll_responses" do
+  schema "blog_uploads" do
     belongs_to :uploader, Durandal.Account.User, type: Ecto.UUID
 
-    field :extension, :string
+    field :filename, :string
+    field :type, :string
     field :file_size, :integer
-    field :contents, :string
 
     timestamps(type: :utc_datetime)
   end
 
-  @required_fields ~w(uploader_id extension file_size contents)a
+  @required_fields ~w(uploader_id filename type file_size)a
   @optional_fields ~w()a
 
   @doc """
