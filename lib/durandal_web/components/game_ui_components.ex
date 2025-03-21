@@ -2,6 +2,7 @@ defmodule DurandalWeb.GameUIComponents do
   @moduledoc false
   use DurandalWeb, :component
   # import DurandalWeb.{NavComponents}
+  import Durandal.Account.AuthLib, only: [allow?: 2]
 
   @doc """
   <DurandalWeb.GameUIComponents.game_nav_bar active="active" />
@@ -20,18 +21,34 @@ defmodule DurandalWeb.GameUIComponents do
     ~H"""
     <div class="row">
       <div class="col m-1">
+        <a class="" href="/">
+          <img src={~p"/images/favicon.png"} height="28" style="margin-right: 5px;" class="d-inline" />
+          <i
+            :if={false}
+            class={"fa-fw fa-duotone fa-#{Application.get_env(:durandal, :site_icon)}"}
+            style="margin: -4px 20px 0 0px;"
+          >
+          </i>
+          <span id="page-title"></span>
+        </a>
+
         <.nav_button_url
+          :if={allow?(@current_user, ~w(admin))}
           colour="secondary"
-          icon={"home"}
-          active={@selected == "home"}
-          url={~p"/team"}
+          icon="server"
+          active={@selected == "admin"}
+          url={~p"/admin"}
         >
+          Admin
+        </.nav_button_url>
+
+        <.nav_button_url colour="secondary" icon="home" active={@selected == "home"} url={~p"/team"}>
           Home
         </.nav_button_url>
 
         <.nav_button_url
           colour="secondary"
-          icon={"globe"}
+          icon="globe"
           active={@selected == "dashboard"}
           url={~p"/team/dashboard"}
         >
@@ -43,17 +60,13 @@ defmodule DurandalWeb.GameUIComponents do
         <div class="float-end">
           <%= if assigns[:current_universe] do %>
             <%= if assigns[:current_team] do %>
-              <span
-                class="badge rounded-pill text-bg-info p-2 mx-1"
-              >
+              <span class="badge rounded-pill text-bg-info p-2 mx-1">
                 <Fontawesome.icon icon="users" style="solid" />
                 {@current_team.name}
               </span>
             <% end %>
 
-            <span
-              class="badge rounded-pill text-bg-info2 p-2 mx-1"
-            >
+            <span class="badge rounded-pill text-bg-info2 p-2 mx-1">
               <Fontawesome.icon icon="galaxy" style="solid" />
               {@current_universe.name}
             </span>
@@ -66,7 +79,6 @@ defmodule DurandalWeb.GameUIComponents do
     </div>
     """
   end
-
 
   @doc """
   <.nav_button colour={colour} icon={lib} active={true/false} phx-action="do-something">

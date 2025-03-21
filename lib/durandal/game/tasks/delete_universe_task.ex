@@ -2,7 +2,7 @@ defmodule Durandal.Game.DeleteUniverseTask do
   @moduledoc """
   Deletes a universe and all entities within it
   """
-  alias Durandal.{Repo, Game}
+  alias Durandal.{Repo, Game, Player}
   import Ecto.UUID, only: [dump!: 1]
 
   @spec perform(Durandal.Game.Universe.id()) :: :ok | {:error, String.t()}
@@ -11,6 +11,14 @@ defmodule Durandal.Game.DeleteUniverseTask do
     universe = Game.get_universe!(universe_id)
 
     Repo.transaction(fn ->
+      team_ids =
+        Player.list_teams(where: [universe_id: universe_id], select: [:id])
+        |> Enum.map(& &1.id)
+
+      team_member_ids =
+        Player.list_team_members(where: [universe_id: universe_id], select: [:team_id, :user_id])
+        |> Enum.map(fn tm -> "#{tm.team_id}:#{tm.user_id}" end)
+
       team_query = "SELECT id FROM player_teams WHERE universe_id = $1"
       system_query = "SELECT id FROM space_systems WHERE universe_id = $1"
       station_query = "SELECT id FROM space_stations WHERE system_id IN (#{system_query})"
@@ -54,6 +62,10 @@ defmodule Durandal.Game.DeleteUniverseTask do
 
       query = "DELETE FROM player_teams WHERE universe_id = $1"
       {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])
+
+      # Clear caches
+      Durandal.invalidate_cache(:team_by_team_id_cache, team_ids)
+      Durandal.invalidate_cache(:team_member_by_id_cache, team_member_ids)
 
       # Now delete the actual universe
       Game.delete_universe(universe)

@@ -8,9 +8,7 @@
 <div class="row">
   <div class="col">
     <.card :if={@ship}>
-      <div class="float-end">
-        
-      </div>
+      <div class="float-end"></div>
 
       <h4 class="d-inline-block">
         {@ship.name}
@@ -28,7 +26,7 @@
                 <td>Docked with</td>
                 <td>
                   {@ship.docked_with.name}
-                  
+
                   <.link
                     navigate={~p"/team/station/#{@ship.docked_with_id}"}
                     class="btn btn-sm btn-secondary float-end"
@@ -119,33 +117,38 @@
         </div>
       </div>
     </.card>
-  </div>  
+  </div>
 </div>
 
 <div class="row mt-1">
   <div class="col">
     <.card :if={@ship}>
       <h4>Commands</h4>
- 
+
       <.live_component
         id={:commands}
-        module={DurandalWeb.Player.CommandListComponent}
+        module={DurandalWeb.Player.ShipCommandListComponent}
+        ship={@ship}
         commands={@ship.commands}
+        ship_lookup={@ship_lookup}
+        station_lookup={@station_lookup}
+        system_object_lookup={@system_object_lookup}
       >
         <.live_component
           module={DurandalWeb.Player.ShipCommandAddComponent}
           id={:command_add}
-
           subject={@ship}
-          command={%Durandal.Player.Command{
-            team_id: @current_team.id,
-            universe_id: @current_team.universe_id,
-            user_id: @current_user.id,
-            subject_id: @ship.id,
-            subject_type: "ship",
-            command_type: "move_to_position",
-            contents: %{}
-          }}
+          command={
+            %Durandal.Player.Command{
+              team_id: @current_team.id,
+              universe_id: @current_team.universe_id,
+              user_id: @current_user.id,
+              subject_id: @ship.id,
+              subject_type: "ship",
+              command_type: "move_to_position",
+              contents: %{}
+            }
+          }
         />
       </.live_component>
     </.card>

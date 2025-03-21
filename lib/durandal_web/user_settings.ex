@@ -18,6 +18,7 @@ defmodule DurandalWeb.UserSettings do
     |> assign(:current_universe, nil)
     |> assign(:current_team, nil)
   end
+
   defp load_user_configs(%{assigns: %{current_user: current_user}} = socket) do
     socket
     |> assign(:user_settings, Settings.get_multiple_user_setting_values(current_user.id, @keys))
@@ -30,6 +31,7 @@ defmodule DurandalWeb.UserSettings do
     |> assign(:current_universe, nil)
     |> assign(:current_team, nil)
   end
+
   defp maybe_load_universe(%{assigns: %{user_settings: settings}} = socket) do
     socket
     |> assign(:current_universe, Game.get_universe_by_id(settings["current_universe_id"]))
@@ -39,8 +41,10 @@ defmodule DurandalWeb.UserSettings do
     socket
     |> assign(:current_team, nil)
   end
+
   defp maybe_load_team(%{assigns: %{user_settings: settings}} = socket) do
-    team_member = Player.get_team_member_by_id(settings["current_team_id"], socket.assigns.current_user.id)
+    team_member =
+      Player.get_team_member_by_id(settings["current_team_id"], socket.assigns.current_user.id)
 
     socket
     |> assign(:current_team, Player.get_team_by_id(settings["current_team_id"]))

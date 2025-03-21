@@ -6,7 +6,11 @@
       module={DurandalWeb.Game.UniverseFormComponent}
       id={:new}
       action={:new}
-      universe={%Durandal.Game.Universe{}}
+      universe={
+        %Durandal.Game.Universe{
+          scenario: "basic"
+        }
+      }
       patch={~p"/admin/universes"}
       title="New universe form"
       current_user={@current_user}

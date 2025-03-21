@@ -5,7 +5,10 @@
     true -> "new"
   end %>
 
-<DurandalWeb.TeamMemberComponents.filter_bar selected={selected} team_id={assigns[:team_id] || @team_member.team_id} />
+<DurandalWeb.TeamMemberComponents.filter_bar
+  selected={selected}
+  team_id={assigns[:team_id] || @team_member.team_id}
+/>
 
 <div :if={assigns[:edit_mode] != true}>
   <div class="row my-4">
@@ -37,7 +40,14 @@
               <tbody>
                 <tr>
                   <td>Enabled</td>
-                  <td><.boolean_icon value={@team_member.enabled?} true="check" false="times" coloured={true} /></td>
+                  <td>
+                    <.boolean_icon
+                      value={@team_member.enabled?}
+                      true="check"
+                      false="times"
+                      coloured={true}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td>Roles</td>
@@ -46,10 +56,8 @@
               </tbody>
             </table>
           </div>
-          
-          <div class="col">
-          
-          </div>
+
+          <div class="col"></div>
         </div>
       </.card>
     </div>

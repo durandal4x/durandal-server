@@ -79,9 +79,14 @@ defmodule DurandalWeb.Admin.Space.Station.ShowLive do
 
   @impl true
   # Station updates
-  def handle_info(%{event: :updated_station, topic: "Durandal.Space.Station:" <> _} = _msg, socket) do
+  def handle_info(
+        %{event: :updated_station, topic: "Durandal.Space.Station:" <> _} = _msg,
+        socket
+      ) do
     station =
-      Space.get_station!(socket.assigns.station_id, preload: [:team, :system, :orbiting, :universe])
+      Space.get_station!(socket.assigns.station_id,
+        preload: [:team, :system, :orbiting, :universe]
+      )
 
     socket
     |> assign(:station, station)

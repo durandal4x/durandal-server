@@ -23,7 +23,9 @@ defmodule DurandalWeb.Team.DashboardLive do
 
   defp get_data(%{assigns: %{current_team: team}} = socket) do
     stations = Space.list_stations(where: [team_id: team.id], order_by: ["Name (A-Z)"])
-    ships = Space.list_ships(where: [team_id: team.id], order_by: ["Name (A-Z)"], preload: [:type])
+
+    ships =
+      Space.list_ships(where: [team_id: team.id], order_by: ["Name (A-Z)"], preload: [:type])
 
     socket
     |> stream(:ships, ships, reset: true)
@@ -52,7 +54,8 @@ defmodule DurandalWeb.Team.DashboardLive do
 
   # Ship updates
   def handle_info(%{event: :created_ship, topic: "Durandal.Player.Team:" <> _} = msg, socket) do
-    ship = msg.ship
+    ship =
+      msg.ship
       |> Map.put(:type, Durandal.Types.get_ship_type_by_id(msg.ship.type_id))
 
     socket

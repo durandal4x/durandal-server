@@ -32,6 +32,8 @@ defmodule Durandal.Game.Universe do
     field(:tick_seconds, :integer)
 
     field(:scenario, :string, virtual: true)
+    field(:team_data, :map, virtual: true)
+    field(:user_data, :map, virtual: true)
 
     timestamps(type: :utc_datetime_usec)
   end
@@ -47,7 +49,7 @@ defmodule Durandal.Game.Universe do
   #       }
 
   @required_fields ~w(name)a
-  @optional_fields ~w(active? scenario last_tick next_tick tick_schedule tick_seconds)a
+  @optional_fields ~w(active? scenario last_tick next_tick tick_schedule tick_seconds team_data user_data)a
 
   @doc false
   @spec changeset(map(), map()) :: Ecto.Changeset.t()

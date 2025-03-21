@@ -22,9 +22,14 @@ defmodule DurandalWeb.Player.TeamMemberFormComponent do
         <div class="row mb-4">
           <%!-- Core properties --%>
           <div class="col-md-12 col-lg-6">
-            <.input field={@form[:enabled?]} type="checkbox" autofocus="autofocus" phx-debounce="100" label="Enabled?" />
+            <.input
+              field={@form[:enabled?]}
+              type="checkbox"
+              autofocus="autofocus"
+              phx-debounce="100"
+              label="Enabled?"
+            />
             <br />
-
           </div>
         </div>
 

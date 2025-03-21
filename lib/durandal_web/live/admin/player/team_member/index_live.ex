@@ -12,7 +12,7 @@ defmodule DurandalWeb.Admin.Player.TeamMember.IndexLive do
     |> assign(:site_menu_active, "game")
     |> assign(:search_term, "")
     |> assign(:team_id, team_id)
-    |> stream_configure(:team_members, dom_id: &("team_members-#{&1.team_id}-#{&1.user_id}"))
+    |> stream_configure(:team_members, dom_id: &"team_members-#{&1.team_id}-#{&1.user_id}")
     |> get_team_members
     |> ok
   end
@@ -21,7 +21,7 @@ defmodule DurandalWeb.Admin.Player.TeamMember.IndexLive do
     {:ok,
      socket
      |> assign(:team_id, team_id)
-     |> stream_configure(:team_members, dom_id: &("team_members-#{&1.team_id}-#{&1.user_id}"))
+     |> stream_configure(:team_members, dom_id: &"team_members-#{&1.team_id}-#{&1.user_id}")
      |> stream(:team_members, [])
      |> assign(:site_menu_active, "game")}
   end

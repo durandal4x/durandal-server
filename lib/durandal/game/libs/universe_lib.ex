@@ -84,6 +84,7 @@ defmodule Durandal.Game.UniverseLib do
   """
   @spec get_universe_by_id(Durandal.universe_id()) :: Universe.t() | nil
   def get_universe_by_id(nil), do: nil
+
   def get_universe_by_id(universe_id) do
     case Cachex.get(:universe_by_universe_id_cache, universe_id) do
       {:ok, nil} ->

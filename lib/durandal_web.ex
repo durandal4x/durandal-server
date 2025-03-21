@@ -147,7 +147,13 @@ defmodule DurandalWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      import DurandalWeb.{CoreComponents, NavComponents, BootstrapComponents, FormattingComponents}
+      import DurandalWeb.{
+        CoreComponents,
+        NavComponents,
+        BootstrapComponents,
+        FormattingComponents
+      }
+
       use Gettext, backend: Durandal.Gettext
 
       # Shortcut for generating JS commands

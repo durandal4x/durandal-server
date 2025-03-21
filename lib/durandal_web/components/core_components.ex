@@ -253,7 +253,7 @@ defmodule DurandalWeb.CoreComponents do
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
 
-  attr :key, :string, default: nil, doc: "used for the in_map type"
+  attr :key, :any, default: nil, doc: "used for the in_map type"
   attr :actual_type, :string, default: nil, doc: "used for the in_map type"
 
   attr :rest, :global,
@@ -331,6 +331,26 @@ defmodule DurandalWeb.CoreComponents do
     """
   end
 
+  def input(%{type: "textarea-array"} = assigns) do
+    ~H"""
+    <div phx-feedback-for={@name}>
+      <.label :if={@label} for={@id}>{@label}</.label>
+      <br :if={@label} />
+      <textarea
+        id={@id || @name}
+        name={@name}
+        class={[
+          "form-control phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 phx-no-feedback:focus:ring-zinc-800/5",
+          "border-zinc-300 focus:border-zinc-400 focus:ring-zinc-800/5",
+          @errors != [] && "border-rose-400 focus:border-rose-400 focus:ring-rose-400/10"
+        ]}
+        {@rest}
+      ><%= Phoenix.HTML.Form.normalize_value("textarea", (@value || []) |> Enum.join("\n")) %></textarea>
+      <.error :for={msg <- @errors}>{msg}</.error>
+    </div>
+    """
+  end
+
   def input(%{type: "3dvector"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
@@ -338,7 +358,7 @@ defmodule DurandalWeb.CoreComponents do
       <div class="input-group">
         <input
           :for={{v, idx} <- Enum.with_index(@value || assigns[:value] || ["", "", ""])}
-          type={@type}
+          type="number"
           name={"#{@name}[]"}
           id={@id || "#{@name}_#{idx}"}
           value={v}
@@ -368,13 +388,48 @@ defmodule DurandalWeb.CoreComponents do
   end
 
   def input(%{type: "in_map"} = assigns) do
-    assigns = Map.merge(assigns, %{
-      name: "#{assigns[:name]}[#{assigns[:key]}]",
-      type: assigns[:actual_type],
-      value: assigns[:value][assigns[:key]],
-    })
+    name = assigns[:key] |> List.wrap() |> Enum.map(&"[#{&1}]") |> Enum.join("")
+
+    assigns =
+      Map.merge(assigns, %{
+        name: "#{assigns[:name]}#{name}",
+        type: assigns[:actual_type],
+        value: get_in(assigns[:value], List.wrap(assigns[:key]))
+      })
 
     input(assigns)
+  end
+
+  def input(%{type: "text-array"} = assigns) do
+    shown_value =
+      case Phoenix.HTML.Form.normalize_value(assigns[:type], assigns[:value]) do
+        nil -> ""
+        "" -> ""
+        v -> List.wrap(v) |> Enum.join(", ")
+      end
+
+    assigns =
+      assigns
+      |> assign(:shown_value, shown_value)
+
+    ~H"""
+    <div phx-feedback-for={@name}>
+      <.label :if={@label} for={@id}>{@label}</.label>
+      <br :if={@label} />
+      <input
+        type={@type}
+        name={@name}
+        id={@id || @name}
+        value={@shown_value}
+        class={[
+          "form-control",
+          @errors != [] && "border-danger"
+        ]}
+        {@rest}
+      />
+      <.error :for={msg <- @errors}>{msg}</.error>
+    </div>
+    """
   end
 
   def input(assigns) do

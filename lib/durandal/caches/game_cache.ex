@@ -15,7 +15,7 @@ defmodule Durandal.Caches.GameCache do
     children = [
       add_cache(:universe_by_universe_id_cache, ttl: :timer.minutes(5)),
       add_cache(:team_by_team_id_cache, ttl: :timer.minutes(5)),
-      add_cache(:team_member_by_id_cache, ttl: :timer.minutes(5)),
+      add_cache(:team_member_by_id_cache, ttl: :timer.minutes(5))
     ]
 
     Supervisor.init(children, strategy: :one_for_all)

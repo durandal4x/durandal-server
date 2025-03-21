@@ -69,6 +69,8 @@ defmodule Durandal.Application do
 
   defp startup() do
     Durandal.System.StartupLib.perform()
+    Durandal.Engine.build_system_lookup()
+    Durandal.Player.CommandLib.build_command_lookup()
     :ok
   end
 

@@ -25,6 +25,7 @@ defmodule Durandal.SimCase do
       import Ecto.Changeset
       import Ecto.Query
       import Durandal.SimCase
+      import Durandal.AccountFixtures, only: [user_fixture: 0]
     end
   end
 

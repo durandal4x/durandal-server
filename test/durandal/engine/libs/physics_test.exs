@@ -144,7 +144,7 @@ defmodule Durandal.Engine.PhysicsTest do
       {[1_000_000, 0, 0], [0, 0, 0], -@pi / 2, [0, -1_000_000, 0]},
 
       # Small rotation amounts (360 degrees divided by the period steps)
-      {[1_000_000, 0, 0], [0, 0, 0], (@pi*2)/1000, [999980, 6283, 0]},
+      {[1_000_000, 0, 0], [0, 0, 0], @pi * 2 / 1000, [999_980, 6283, 0]}
     ]
 
     for {object_position, central_point, arc_size, expected} <- values do
@@ -179,7 +179,7 @@ defmodule Durandal.Engine.PhysicsTest do
       {[1_000_000, 0, 0], [0, 0, 0], -@pi / 2, [-1_000_000, -1_000_000, 0]},
 
       # Small rotation amounts (360 degrees divided by the period steps)
-      {[1_000_000, 0, 0], [0, 0, 0], (@pi*2)/1000, [-20, 6283, 0]},
+      {[1_000_000, 0, 0], [0, 0, 0], @pi * 2 / 1000, [-20, 6283, 0]}
     ]
 
     for {object_position, central_point, arc_size, expected} <- values do
@@ -193,12 +193,16 @@ defmodule Durandal.Engine.PhysicsTest do
     end
 
     # Now ensure distances remain within tolerance, even for very small orbit speeds
-    result = Physics.calculate_orbit_translation([1_000_000, 0, 0], [0, 0, 0], @pi / 1000)
+    result =
+      Physics.calculate_orbit_translation([1_000_000, 0, 0], [0, 0, 0], @pi / 1000)
       |> add_vector([1_000_000, 0, 0])
+
     assert distance(result, [0, 0, 0]) == 1_000_000
 
-    result = Physics.calculate_orbit_translation([1_000_000, 0, 0], [0, 0, 0], @pi / 3600)
+    result =
+      Physics.calculate_orbit_translation([1_000_000, 0, 0], [0, 0, 0], @pi / 3600)
       |> add_vector([1_000_000, 0, 0])
+
     assert distance(result, [0, 0, 0]) == 1_000_000
   end
 end

@@ -5,8 +5,16 @@ defmodule Durandal.Player.CommandLib do
   use DurandalMacros, :library
   alias Durandal.Player.{Command, CommandQueries}
 
-  def command_types("ship"), do: [{"Move to position", "move_to_position"}, {"Move to object", "move_to_object"}, {"Orbit object", "orbit_object"}, {"Move to station", "move_to_station"}, {"Move to ship", "move_to_ship"}, {"Dock", "dock"}]
-  def command_types("station"), do: [{"Move to position", "move_to_position"}, {"Move to object", "move_to_object"}, {"Orbit object", "orbit_object"}, {"Move to station", "move_to_station"}, {"Move to ship", "move_to_ship"}]
+  # def command_types("ship"), do: [{"Move to position", "move_to_position"}, {"Move to object", "move_to_object"}, {"Orbit object", "orbit_object"}, {"Move to station", "move_to_station"}, {"Move to ship", "move_to_ship"}, {"Dock", "dock"}]
+
+  def command_types(subject, _language) do
+    command_lookup()
+    |> Enum.filter(fn {key, _module} -> String.starts_with?(key, "#{subject}$") end)
+    |> Map.new(fn {_key, module} ->
+      # TODO: Put in translation stuff
+      {module.name(), module.name()}
+    end)
+  end
 
   @doc """
   Returns the list of commands.
@@ -133,5 +141,79 @@ defmodule Durandal.Player.CommandLib do
   @spec change_command(Command.t(), map) :: Ecto.Changeset.t()
   def change_command(%Command{} = command, attrs \\ %{}) do
     Command.changeset(command, attrs)
+  end
+
+  @doc """
+  A map of %{command name => command module) for all commands
+  """
+  @spec command_lookup() :: %{String.t() => module()}
+  def command_lookup() do
+    case Cachex.get(:durandal_command_modules, "_complete") do
+      {:ok, nil} ->
+        {:ok, lookup} = build_command_lookup()
+        lookup
+
+      {:ok, lookup} ->
+        lookup
+    end
+  end
+
+  @spec get_command_module(String.t()) :: {:ok, nil | module()}
+  def get_command_module(name) do
+    Cachex.get(:durandal_command_modules, name)
+  end
+
+  @spec get_command_module!(String.t()) :: {:ok, nil | module()}
+  def get_command_module!(name) do
+    Cachex.get!(:durandal_command_modules, name)
+  end
+
+  def build_command_lookup() do
+    {:ok, command_list} = :application.get_key(:durandal, :modules)
+
+    # First, build the lookup from commands implementing this behaviour
+    # and exporting a name/0 function
+    lookup =
+      command_list
+      |> Enum.filter(fn m ->
+        Code.ensure_loaded(m)
+
+        system_macro? =
+          case m.__info__(:attributes)[:behaviour] do
+            [] -> false
+            nil -> false
+            b -> Enum.member?(b, Durandal.Engine.CommandMacro)
+          end
+
+        system_macro? and function_exported?(m, :name, 0)
+      end)
+      |> Map.new(fn m ->
+        {"#{m.category()}$#{m.name()}", m}
+      end)
+
+    old = Cachex.get!(:durandal_command_modules, "_all") || []
+
+    # Store all keys, we'll use it later for removing old ones
+    Cachex.put(:durandal_command_modules, "_all", lookup)
+
+    # Now store our lookups
+    lookup
+    |> Enum.each(fn {key, func} ->
+      Cachex.put(:durandal_command_modules, key, func)
+    end)
+
+    # And a copy of the complete lookup since we'll want to pull that back sometimes rather than doing several round trips
+    Cachex.put(:durandal_command_modules, "_complete", lookup)
+
+    # Delete out-dated keys
+    old
+    |> Enum.reject(fn old_key ->
+      Map.has_key?(lookup, old_key)
+    end)
+    |> Enum.each(fn old_key ->
+      Cachex.del(:durandal_command_modules, old_key)
+    end)
+
+    {:ok, lookup}
   end
 end

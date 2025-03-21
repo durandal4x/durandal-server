@@ -8,9 +8,7 @@
 <div class="row">
   <div class="col">
     <.card :if={@station}>
-      <div class="float-end">
-        
-      </div>
+      <div class="float-end"></div>
 
       <h4 class="d-inline-block">
         {@station.name}
@@ -62,7 +60,9 @@
                 <td>Distance</td>
                 <td>
                   {Durandal.Engine.Maths.distance(@station.orbiting.position, @station.position)
-                  |> abs |> round |> normalize}
+                  |> abs
+                  |> round
+                  |> normalize}
                 </td>
               </tr>
               <tr>
@@ -121,14 +121,47 @@
           <% end %>
         </:col>
         <:action :let={{_id, ship}}>
-          <.link
-            navigate={~p"/team/ship/#{ship}"}
-            class="btn btn-sm btn-secondary"
-          >
+          <.link navigate={~p"/team/ship/#{ship}"} class="btn btn-sm btn-secondary">
             Show
           </.link>
         </:action>
       </.table>
+    </.card>
+  </div>
+</div>
+
+<div class="row mt-1">
+  <div class="col">
+    <.card :if={@station}>
+      <h4>Commands</h4>
+
+      <.live_component
+        id={:commands}
+        module={DurandalWeb.Player.StationCommandListComponent}
+        station={@station}
+        commands={@station.commands}
+        station_lookup={@station_lookup}
+        system_object_lookup={@system_object_lookup}
+        ship_type_lookup={@ship_type_lookup}
+        station_module_type_lookup={@station_module_type_lookup}
+      >
+        <.live_component
+          module={DurandalWeb.Player.StationCommandAddComponent}
+          id={:command_add}
+          subject={@station}
+          command={
+            %Durandal.Player.Command{
+              team_id: @current_team.id,
+              universe_id: @current_team.universe_id,
+              user_id: @current_user.id,
+              subject_id: @station.id,
+              subject_type: "station",
+              command_type: "move_to_position",
+              contents: %{}
+            }
+          }
+        />
+      </.live_component>
     </.card>
   </div>
 </div>

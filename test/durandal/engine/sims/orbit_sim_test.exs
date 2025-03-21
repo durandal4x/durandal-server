@@ -228,22 +228,22 @@ defmodule Durandal.Engine.Sims.OrbitSimTest do
     assert objects["star"].position
            |> Maths.calculate_angle(objects["planet1"].position)
            |> Maths.rad2deg()
-           |> Maths.round_list == [90, 0]
+           |> Maths.round_list() == [90, 0]
 
     assert objects["planet1"].position
            |> Maths.calculate_angle(objects["planet2"].position)
            |> Maths.rad2deg()
-           |> Maths.round_list == [91, 0]
+           |> Maths.round_list() == [91, 0]
 
     assert objects["planet2"].position
            |> Maths.calculate_angle(objects["planet3a"].position)
            |> Maths.rad2deg()
-           |> Maths.round_list == [94, 0]
+           |> Maths.round_list() == [94, 0]
 
     assert objects["planet2"].position
            |> Maths.calculate_angle(objects["planet3b"].position)
            |> Maths.rad2deg()
-           |> Maths.round_list == [274, 0]
+           |> Maths.round_list() == [274, 0]
 
     # # Now we want to tick a bunch of times, where do we end up?
     # # after this command we'll have executed 100 ticks

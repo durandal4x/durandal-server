@@ -124,6 +124,18 @@ defmodule Durandal.Settings.ServerSettingLib do
 
   @spec set_server_setting_value(String.t(), String.t() | non_neg_integer() | boolean() | nil) ::
           :ok | {:error, String.t()}
+  def set_user_setting_value(key, nil) do
+    case get_server_setting(key) do
+      nil ->
+        :ok
+
+      setting ->
+        delete_server_setting(setting)
+    end
+
+    Durandal.invalidate_cache(:server_setting_cache, key)
+  end
+
   def set_server_setting_value(key, value) do
     type = ServerSettingTypeLib.get_server_setting_type(key)
     raw_value = convert_to_raw_value(value, type.type)

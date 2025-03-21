@@ -81,6 +81,7 @@ defmodule Durandal.Types.ShipTypeLib do
   """
   @spec get_ship_type_by_id(Durandal.ship_type_id()) :: ShipType.t() | nil
   def get_ship_type_by_id(nil), do: nil
+
   def get_ship_type_by_id(ship_type_id) do
     case Cachex.get(:ship_type_by_id_cache, ship_type_id) do
       {:ok, nil} ->

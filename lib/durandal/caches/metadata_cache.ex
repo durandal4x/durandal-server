@@ -14,7 +14,8 @@ defmodule Durandal.Caches.MetadataCache do
   def init(:ok) do
     children = [
       add_cache(:durandal_metadata),
-      add_cache(:durandal_system_modules)
+      add_cache(:durandal_system_modules),
+      add_cache(:durandal_command_modules)
     ]
 
     Supervisor.init(children, strategy: :one_for_all)

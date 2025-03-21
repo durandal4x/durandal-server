@@ -19,7 +19,9 @@ defmodule Durandal.Engine.VelocitySystem do
   end
 
   defp update_ships(universe_id) do
-    Space.list_ships(where: [universe_id: universe_id, orbiting_id: :is_nil, docked_with_id: :is_nil])
+    Space.list_ships(
+      where: [universe_id: universe_id, orbiting_id: :is_nil, docked_with_id: :is_nil]
+    )
     |> Enum.each(fn ship ->
       new_position = Maths.sum_vectors(ship.position, ship.velocity)
 

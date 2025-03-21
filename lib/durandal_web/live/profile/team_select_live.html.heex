@@ -1,39 +1,41 @@
 <div>
-  <%
-    current_universe_id = @current_universe &&  @current_universe.id
-    current_team_id = @current_team && @current_team.id
-  %>
+  <% current_universe_id = @current_universe && @current_universe.id
+  current_team_id = @current_team && @current_team.id %>
 
-  <div :for={universe <- @memberships} class="mb-4">
-    <h2 class={"d-inline-block" && (if universe.id == current_universe_id, do: "text-success2")}>
-      {universe.name}
-      <%= if universe.id == current_universe_id do %>
-        <Fontawesome.icon icon="circle-check" style="solid" class="text-success" />
-      <% end %>
-    </h2>
-    <%= if universe.active? do %>
-      <span class="badge rounded-success text-bg-success p-2 mx-1">
+  <div :if={current_universe_id == nil} class="alert alert-info mt-2">
+    No currently selected team
+  </div>
+
+  <div :for={%{team: team, universe: universe} = membership <- @memberships} class="mb-4">
+    <h2 class={["d-inline-block", if(universe.id == current_universe_id, do: "text-success2")]}>
+      <span :if={universe.active?} class="text-success">
         <Fontawesome.icon icon="play" style="solid" />
-        Active
       </span>
-    <% else %>
-      <span class="badge rounded-pill text-bg-danger p-2 mx-1">
+      <span :if={not universe.active?} class="text-danger">
         <Fontawesome.icon icon="pause" style="solid" />
-        Paused
       </span>
-    <% end %>
-    <br /><br />
 
-    <div :for={%{team_members: [team_member]} = team <- universe.teams} class="mb-1">
-      <h4 class={"d-inline-block" && (if team.id == current_team_id, do: "text-success2")}>
-        {team.name}
-        <%= if team.id == current_team_id do %>
-          <Fontawesome.icon icon="circle-check" style="solid" class="text-success" />
-        <% end %>
-      </h4>
-      
-      Roles: {inspect team_member.roles}<br />
-      <.button phx-click="select-team" phx-value-team_id={team.id} class="btn-primary">Select</.button>
-    </div>
+      {team.name} in {universe.name}
+    </h2>
+    <br /> Roles: {Enum.join(membership.roles, ", ")}<br />
+
+    <%= if team.id == current_team_id do %>
+      <.button phx-click="cancel-team" class="btn-sm btn-warning">
+        <Fontawesome.icon icon="times" style="regular" /> Deactivate team
+      </.button>
+
+      <a href={~p"/team/dashboard"} class="btn btn-sm btn-secondary">
+        <Fontawesome.icon
+          icon={StylingHelper.globe_icon(@user_settings["timezone"], @user_settings["language"])}
+          style="regular"
+        /> Team dashboard
+      </a>
+    <% else %>
+      <.button phx-click="select-team" phx-value-team_id={team.id} class="btn-sm btn-primary">
+        <Fontawesome.icon icon="check" style="solid" /> Activate team
+      </.button>
+    <% end %>
+
+    <br /><br />
   </div>
 </div>
