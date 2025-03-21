@@ -35,10 +35,8 @@
               </tbody>
             </table>
           </div>
-          
-          <div class="col">
-            
-          </div>
+
+          <div class="col"></div>
         </div>
       </.card>
     </div>
@@ -66,7 +64,9 @@
           module={DurandalWeb.Player.TeamMemberQuickAddComponent}
           id={:new_team_member}
           team={@team}
-          team_member={%Durandal.Player.TeamMember{team_id: @team.id, universe_id: @team.universe_id}}
+          team_member={
+            %Durandal.Player.TeamMember{team_id: @team.id, universe_id: @team.universe_id}
+          }
           patch={~p"/admin/teams/#{@team}"}
           current_user={@current_user}
         />
@@ -93,7 +93,9 @@
         <h4>Stations</h4>
         <.table id="stations" rows={@streams.stations} table_class="table-sm table-hover">
           <:col :let={{_id, station}} label="Name">{station.name}</:col>
-          <:col :let={{_id, station}} label="Position"><.vector_string value={station.position} /></:col>
+          <:col :let={{_id, station}} label="Position">
+            <.vector_string value={station.position} />
+          </:col>
           <:action :let={{_id, station}}>
             <.link navigate={~p"/admin/stations/#{station}"} class="btn btn-sm btn-secondary">
               Show

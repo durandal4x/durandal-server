@@ -15,7 +15,7 @@ defmodule Durandal.Caches.UserSettingCache do
     children = [
       add_cache(:user_setting_type_store, ttl: :timer.minutes(5)),
       add_cache(:user_setting_cache, ttl: :timer.minutes(5)),
-      add_cache(:user_setting_multi_cache, ttl: :timer.minutes(5)),
+      add_cache(:user_setting_multi_cache, ttl: :timer.minutes(5))
     ]
 
     Supervisor.init(children, strategy: :one_for_all)

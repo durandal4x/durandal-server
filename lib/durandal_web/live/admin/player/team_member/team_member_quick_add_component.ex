@@ -90,8 +90,9 @@ defmodule DurandalWeb.Player.TeamMemberQuickAddComponent do
           |> noreply
 
         {:error, %Ecto.Changeset{} = changeset} ->
-          changeset = changeset
-          |> maybe_error_name(socket.assigns.existing_members)
+          changeset =
+            changeset
+            |> maybe_error_name(socket.assigns.existing_members)
 
           {:noreply, assign_form(socket, changeset)}
       end

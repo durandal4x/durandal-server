@@ -81,6 +81,7 @@ defmodule Durandal.Player.TeamLib do
   """
   @spec get_team_by_id(Durandal.team_id()) :: Team.t() | nil
   def get_team_by_id(nil), do: nil
+
   def get_team_by_id(team_id) do
     case Cachex.get(:team_by_team_id_cache, team_id) do
       {:ok, nil} ->
@@ -184,7 +185,9 @@ defmodule Durandal.Player.TeamLib do
 
   def recalculate_member_count(team_id) do
     team = get_team!(team_id)
-    new_count = Durandal.Player.TeamMemberQueries.count_team_members(team_id, where: [enabled?: true])
+
+    new_count =
+      Durandal.Player.TeamMemberQueries.count_team_members(team_id, where: [enabled?: true])
 
     if team.member_count != new_count do
       update_team(team, %{member_count: new_count})

@@ -18,7 +18,6 @@ defmodule DurandalWeb.Space.SystemFormComponent do
           <div class="col-md-12 col-lg-6">
             <label for="system_name" class="control-label">Name:</label>
             <.input field={@form[:name]} type="text" autofocus="autofocus" phx-debounce="100" />
-
           </div>
         </div>
 
@@ -62,7 +61,8 @@ defmodule DurandalWeb.Space.SystemFormComponent do
 
   @impl true
   def handle_event("validate", %{"system" => system_params}, socket) do
-    system_params = convert_params(system_params)
+    system_params =
+      convert_params(system_params)
       |> Map.put("universe_id", socket.assigns.universe_id)
 
     changeset =
@@ -78,7 +78,8 @@ defmodule DurandalWeb.Space.SystemFormComponent do
   end
 
   def handle_event("save", %{"system" => system_params}, socket) do
-    system_params = convert_params(system_params)
+    system_params =
+      convert_params(system_params)
       |> Map.put("universe_id", socket.assigns.universe_id)
 
     save_system(socket, socket.assigns.action, system_params)

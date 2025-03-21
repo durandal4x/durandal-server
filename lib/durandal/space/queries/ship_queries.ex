@@ -241,8 +241,8 @@ defmodule Durandal.Space.ShipQueries do
   def _preload(query, :commands) do
     from ships in query,
       left_join: commands in assoc(ships, :commands),
-        on: commands.subject_id == ships.id,
-        on: commands.subject_type == "ship",
+      on: commands.subject_id == ships.id,
+      on: commands.subject_type == "ship",
       preload: [commands: commands]
   end
 end

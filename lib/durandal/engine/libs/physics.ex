@@ -109,12 +109,12 @@ defmodule Durandal.Engine.Physics do
     end
   end
 
-
   @doc """
   Given an object, a central point and radian_rotation
   return the new position of the object after the rotation is applied
   """
-  @spec rotate_about_point_to_new_position(Maths.vector(), Maths.vector(), Maths.radians()) :: Maths.vector()
+  @spec rotate_about_point_to_new_position(Maths.vector(), Maths.vector(), Maths.radians()) ::
+          Maths.vector()
   def rotate_about_point_to_new_position(object_position, central_point, xy_radian_rotation) do
     distance_to_point = distance(object_position, central_point)
 
@@ -135,14 +135,15 @@ defmodule Durandal.Engine.Physics do
     |> add_vector(central_point)
   end
 
-
   @doc """
   Given an object, a central point and radian_rotation
   return the transformation required to put the object at the new location
   """
-  @spec calculate_orbit_translation(Maths.vector(), Maths.vector(), Maths.radians()) :: Maths.vector()
+  @spec calculate_orbit_translation(Maths.vector(), Maths.vector(), Maths.radians()) ::
+          Maths.vector()
   def calculate_orbit_translation(object_position, central_point, xy_radian_rotation) do
-    new_position = rotate_about_point_to_new_position(object_position, central_point, xy_radian_rotation)
+    new_position =
+      rotate_about_point_to_new_position(object_position, central_point, xy_radian_rotation)
 
     sub_vector(new_position, object_position)
   end

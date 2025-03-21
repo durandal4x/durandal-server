@@ -17,6 +17,7 @@ defmodule Durandal.Repo.Migrations.EngineMigrations do
       add(:universe_id, references(:game_universes, on_delete: :nothing, type: :uuid),
         type: :uuid
       )
+
       add :enabled?, :boolean
     end
 
@@ -30,6 +31,7 @@ defmodule Durandal.Repo.Migrations.EngineMigrations do
       remove(:position)
       add(:position, {:array, :bigint})
     end
+
     create_if_not_exists(index(:space_ships, [:docked_with_id]))
 
     alter table(:space_stations) do

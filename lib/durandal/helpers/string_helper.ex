@@ -13,7 +13,10 @@ defmodule Durandal.Helper.StringHelper do
   def format_number(x), do: format_number(x, ",")
 
   def format_number(nil, _), do: nil
-  def format_number(%Decimal{} = v, separator), do: v |> Decimal.to_string() |> format_number(separator)
+
+  def format_number(%Decimal{} = v, separator),
+    do: v |> Decimal.to_string() |> format_number(separator)
+
   def format_number(v, _) when v < 1000, do: v
 
   def format_number(v, separator) when is_integer(v) do

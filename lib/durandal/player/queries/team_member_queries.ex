@@ -60,6 +60,11 @@ defmodule Durandal.Player.TeamMemberQueries do
       where: team_members.user_id in ^List.wrap(user_id)
   end
 
+  def _where(query, :universe_id, universe_id) do
+    from team_members in query,
+      where: team_members.universe_id in ^List.wrap(universe_id)
+  end
+
   def _where(query, :inserted_after, timestamp) do
     from team_members in query,
       where: team_members.inserted_at >= ^timestamp
@@ -141,17 +146,25 @@ defmodule Durandal.Player.TeamMemberQueries do
     Repo.aggregate(query, :count)
   end
 
-
-
   def list_all_enabled_team_memberships(nil), do: []
+
   def list_all_enabled_team_memberships(user_id) do
-    query = from universes in Durandal.Game.Universe,
-      join: teams in assoc(universes, :teams),
-      join: team_members in assoc(teams, :team_members),
+    # query = from universes in Durandal.Game.Universe,
+    #   join: teams in assoc(universes, :teams),
+    #   join: team_members in assoc(teams, :team_members),
+    #     where: team_members.user_id == ^user_id,
+    #   where: team_members.enabled? == true,
+    #   preload: [teams: {teams, team_members: team_members}],
+    #   order_by: [asc: universes.name]
+
+    query =
+      from team_members in TeamMember,
+        join: teams in assoc(team_members, :team),
+        join: universes in assoc(team_members, :universe),
         where: team_members.user_id == ^user_id,
-      where: team_members.enabled? == true,
-      preload: [teams: {teams, team_members: team_members}],
-      order_by: [asc: universes.name]
+        where: team_members.enabled? == true,
+        preload: [team: teams, universe: universes],
+        order_by: [asc: universes.name]
 
     Repo.all(query)
   end

@@ -32,7 +32,7 @@
                   <td>System</td>
                   <td>
                     {@system_object.system.name}
-                  
+
                     <a class="float-end" href={~p"/admin/systems/#{@system_object.system_id}"}>
                       <Fontawesome.icon icon="link" style="regular" />
                     </a>
@@ -42,7 +42,7 @@
                   <td>Type</td>
                   <td>
                     {@system_object.type.name}
-                    
+
                     <a class="float-end" href={~p"/admin/systems/#{@system_object.system_id}"}>
                       <Fontawesome.icon icon="link" style="regular" />
                     </a>
@@ -75,7 +75,10 @@
                   <td>
                     {@system_object.orbiting.name}
 
-                    <a class="float-end" href={~p"/admin/system_objects/#{@system_object.orbiting_id}"}>
+                    <a
+                      class="float-end"
+                      href={~p"/admin/system_objects/#{@system_object.orbiting_id}"}
+                    >
                       <Fontawesome.icon icon="link" style="regular" />
                     </a>
                   </td>

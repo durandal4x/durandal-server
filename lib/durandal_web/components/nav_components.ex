@@ -109,7 +109,6 @@ defmodule DurandalWeb.NavComponents do
                 {@universe.name}
               </a>
 
-
               <a
                 :if={@team}
                 class="badge rounded-pill text-bg-secondary p-2 mx-1"
@@ -123,17 +122,13 @@ defmodule DurandalWeb.NavComponents do
 
           <%= if assigns[:current_universe] do %>
             <%= if assigns[:current_team] do %>
-              <span
-                class="badge rounded-pill text-bg-info p-2 mx-1"
-              >
+              <span class="badge rounded-pill text-bg-info p-2 mx-1">
                 <Fontawesome.icon icon="users" style="solid" />
                 {@current_team.name}
               </span>
             <% end %>
 
-            <span
-              class="badge rounded-pill text-bg-info2 p-2 mx-1"
-            >
+            <span class="badge rounded-pill text-bg-info2 p-2 mx-1">
               <Fontawesome.icon icon="galaxy" style="solid" />
               {@current_universe.name}
             </span>

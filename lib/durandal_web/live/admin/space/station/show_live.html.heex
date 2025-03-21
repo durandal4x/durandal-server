@@ -32,7 +32,7 @@
                   <td>System</td>
                   <td>
                     {@station.system.name}
-                  
+
                     <a class="float-end" href={~p"/admin/systems/#{@station.system_id}"}>
                       <Fontawesome.icon icon="link" style="regular" />
                     </a>
@@ -42,7 +42,7 @@
                   <td>Team</td>
                   <td>
                     {@station.team.name}
-                  
+
                     <a class="float-end" href={~p"/admin/teams/#{@station.team_id}"}>
                       <Fontawesome.icon icon="link" style="regular" />
                     </a>
@@ -76,7 +76,7 @@
                     <a class="float-end" href={~p"/admin/system_objects/#{@station.orbiting_id}"}>
                       <Fontawesome.icon icon="link" style="regular" />
                     </a>
-                  
+
                     {@station.orbiting.name}
                   </td>
                 </tr>
@@ -84,7 +84,9 @@
                   <td>Distance</td>
                   <td>
                     {Durandal.Engine.Maths.distance(@station.orbiting.position, @station.position)
-                    |> abs |> round |> normalize}
+                    |> abs
+                    |> round
+                    |> normalize}
                   </td>
                 </tr>
                 <tr>
@@ -132,7 +134,7 @@
         </.table>
       </.card>
     </div>
-    
+
     <div class="col">
       <.card>
         <h4>Docked ships</h4>
@@ -151,10 +153,7 @@
             <% end %>
           </:col>
           <:action :let={{_id, ship}}>
-            <.link
-              navigate={~p"/admin/ships/#{ship}"}
-              class="btn btn-sm btn-secondary"
-            >
+            <.link navigate={~p"/admin/ships/#{ship}"} class="btn btn-sm btn-secondary">
               Show
             </.link>
           </:action>

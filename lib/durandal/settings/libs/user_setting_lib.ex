@@ -66,7 +66,8 @@ defmodule Durandal.Settings.UserSettingLib do
   """
   @spec get_multiple_user_setting_values(Durandal.user_id(), [UserSetting.key()]) :: map()
   def get_multiple_user_setting_values(user_id, keys) do
-    key_string = keys
+    key_string =
+      keys
       |> List.wrap()
       |> Enum.sort()
       |> Enum.join("$")
@@ -76,7 +77,8 @@ defmodule Durandal.Settings.UserSettingLib do
 
     case Cachex.get(:user_setting_multi_cache, lookup) do
       {:ok, nil} ->
-        result = keys
+        result =
+          keys
           |> Map.new(fn key ->
             {key, get_user_setting_value(user_id, key)}
           end)
@@ -90,7 +92,8 @@ defmodule Durandal.Settings.UserSettingLib do
   end
 
   def invalidate_multi_cache(user_id, keys) do
-    key_string = keys
+    key_string =
+      keys
       |> List.wrap()
       |> Enum.sort()
       |> Enum.join("$")
@@ -158,6 +161,18 @@ defmodule Durandal.Settings.UserSettingLib do
           String.t(),
           String.t() | non_neg_integer() | boolean() | nil
         ) :: :ok
+  def set_user_setting_value(user_id, key, nil) do
+    case get_user_setting(user_id, key) do
+      nil ->
+        :ok
+
+      setting ->
+        delete_user_setting(setting)
+    end
+
+    invalidate_user_setting_cache(user_id, key)
+  end
+
   def set_user_setting_value(user_id, key, value) do
     type = UserSettingTypeLib.get_user_setting_type(key)
     raw_value = convert_to_raw_value(value, type.type)
@@ -280,7 +295,7 @@ defmodule Durandal.Settings.UserSettingLib do
   @doc """
   Invalidates the cache lookup for this key
   """
-  @spec invalidate_user_setting_cache(Durandal.user_id, String.t()) :: :ok
+  @spec invalidate_user_setting_cache(Durandal.user_id(), String.t()) :: :ok
   def invalidate_user_setting_cache(user_id, key) do
     lookup = cache_key(user_id, key)
     Durandal.invalidate_cache(:user_setting_cache, lookup)

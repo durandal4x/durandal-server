@@ -16,7 +16,7 @@ defmodule DurandalWeb.SystemComponents do
 
   def filter_bar(assigns) do
     ~H"""
-    <div class="row section-menu" :if={@universe_id}>
+    <div :if={@universe_id} class="row section-menu">
       <div class="col">
         <.section_menu_button_url
           colour="info"

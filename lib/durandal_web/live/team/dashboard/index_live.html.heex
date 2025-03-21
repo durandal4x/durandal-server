@@ -6,7 +6,11 @@
 />
 
 <div class="row mt-4">
-  <.menu_card icon={StylingHelper.globe_icon(@user_settings["timezone"], @user_settings["language"])} icon_class="fa-duotone" url={~p"/team/dashboard"}>
+  <.menu_card
+    icon={StylingHelper.globe_icon(@user_settings["timezone"], @user_settings["language"])}
+    icon_class="fa-duotone"
+    url={~p"/team/dashboard"}
+  >
     Team dashboard
   </.menu_card>
 </div>

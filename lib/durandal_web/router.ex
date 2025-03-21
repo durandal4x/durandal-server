@@ -30,7 +30,7 @@ defmodule DurandalWeb.Router do
     live_session :general_index,
       on_mount: [
         {DurandalWeb.UserAuth, :mount_current_user},
-        {DurandalWeb.UserSettings, :load_user_configs},
+        {DurandalWeb.UserSettings, :load_user_configs}
       ] do
       live "/", IndexLive, :index
       live "/guest", GuestLive, :index
@@ -350,7 +350,7 @@ defmodule DurandalWeb.Router do
   #   live_session :play_index,
   #     on_mount: [
   #       {DurandalWeb.UserAuth, :ensure_authenticated},
-        {DurandalWeb.UserSettings, :load_user_configs}
+  {DurandalWeb.UserSettings, :load_user_configs}
   #     ] do
   #     live "/new", NewLive.Index, :index
   #     live "/find", FindLive.Index, :index
@@ -360,7 +360,7 @@ defmodule DurandalWeb.Router do
   #   live_session :play_in_game,
   #     on_mount: [
   #       {DurandalWeb.UserAuth, :ensure_authenticated},
-        {DurandalWeb.UserSettings, :load_user_configs}
+  {DurandalWeb.UserSettings, :load_user_configs}
   #     ] do
   #     live "/ward/:game_id", WardLive.Index, :index
   #     live "/patients/:game_id", PatientsLive.Index, :index

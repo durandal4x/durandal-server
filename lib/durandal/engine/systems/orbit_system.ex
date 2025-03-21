@@ -76,8 +76,8 @@ defmodule Durandal.Engine.OrbitSystem do
       |> Map.new(fn {id, id_chain} ->
         combined_translation =
           id_chain
-          |> Enum.reduce(translations[id] || [0,0,0], fn o, acc ->
-            Maths.add_vector(translations[o] || [0,0,0], acc)
+          |> Enum.reduce(translations[id] || [0, 0, 0], fn o, acc ->
+            Maths.add_vector(translations[o] || [0, 0, 0], acc)
           end)
 
         {id, combined_translation}
@@ -104,10 +104,15 @@ defmodule Durandal.Engine.OrbitSystem do
     |> Enum.each(fn ship ->
       radian_rotation = @pi2 / ship.orbit_period * if ship.orbit_clockwise, do: 1, else: -1
 
-      adjusted_position = Maths.add_vector(ship.position, translations[ship.orbiting_id] || [0,0,0])
+      adjusted_position =
+        Maths.add_vector(ship.position, translations[ship.orbiting_id] || [0, 0, 0])
 
       new_position =
-        Physics.rotate_about_point_to_new_position(adjusted_position, ship.orbiting.position, radian_rotation)
+        Physics.rotate_about_point_to_new_position(
+          adjusted_position,
+          ship.orbiting.position,
+          radian_rotation
+        )
         |> Maths.round_list()
 
       if new_position != ship.position do
@@ -124,10 +129,15 @@ defmodule Durandal.Engine.OrbitSystem do
     |> Enum.each(fn station ->
       radian_rotation = @pi2 / station.orbit_period * if station.orbit_clockwise, do: 1, else: -1
 
-      adjusted_position = Maths.add_vector(station.position, translations[station.orbiting_id] || [0,0,0])
+      adjusted_position =
+        Maths.add_vector(station.position, translations[station.orbiting_id] || [0, 0, 0])
 
       new_position =
-        Physics.rotate_about_point_to_new_position(adjusted_position, station.orbiting.position, radian_rotation)
+        Physics.rotate_about_point_to_new_position(
+          adjusted_position,
+          station.orbiting.position,
+          radian_rotation
+        )
         |> Maths.round_list()
 
       if new_position != station.position do

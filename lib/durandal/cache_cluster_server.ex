@@ -30,6 +30,7 @@ defmodule Durandal.CacheClusterServer do
     invalidate_cache(table, id_value)
     {:ok, value}
   end
+
   def invalidate_cache_on_ok(v, _, _), do: v
 
   @spec add_cache(atom, list) :: map()

@@ -38,7 +38,13 @@ defmodule Durandal.System.StartupLib do
       section: "interface",
       type: "string",
       permissions: nil,
-      choices: [{"English", "en-gb"}, {"American", "eu-us"}, {"Spanish", "es"}, {"Lojban", "lojban"}, {"Bork bork", "bork"}],
+      choices: [
+        {"English", "en-gb"},
+        {"American", "eu-us"},
+        {"Spanish", "es"},
+        {"Lojban", "lojban"},
+        {"Bork bork", "bork"}
+      ],
       default: "en",
       description: "The language used in the interface"
     })

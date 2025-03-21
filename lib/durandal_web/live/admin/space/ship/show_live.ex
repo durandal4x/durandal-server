@@ -107,7 +107,10 @@ defmodule DurandalWeb.Admin.Space.Ship.ShowLive do
 
   @spec get_ship(Phoenix.Socket.t()) :: Phoenix.Socket.t()
   defp get_ship(%{assigns: %{ship_id: ship_id}} = socket) do
-    ship = Space.get_ship!(ship_id, preload: [:type, :system, :orbiting, :team, :universe, :docked_with])
+    ship =
+      Space.get_ship!(ship_id,
+        preload: [:type, :system, :orbiting, :team, :universe, :docked_with]
+      )
 
     socket
     |> assign(:ship, ship)
