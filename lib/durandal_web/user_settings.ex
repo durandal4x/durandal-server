@@ -7,7 +7,7 @@ defmodule DurandalWeb.UserSettings do
 
   alias Durandal.{Game, Player, Settings}
 
-  @keys ~w(current_team_id current_universe_id timezone language)
+  @keys ~w(current_team_id current_universe_id timezone locale)
 
   def on_mount(:load_user_configs, _params, _session, socket) do
     {:cont, load_user_configs(socket)}
@@ -24,6 +24,7 @@ defmodule DurandalWeb.UserSettings do
     |> assign(:user_settings, Settings.get_multiple_user_setting_values(current_user.id, @keys))
     |> maybe_load_universe
     |> maybe_load_team
+    |> maybe_set_locale
   end
 
   defp maybe_load_universe(%{assigns: %{user_settings: %{"current_universe_id" => nil}}} = socket) do
@@ -58,6 +59,15 @@ defmodule DurandalWeb.UserSettings do
   def maybe_invalidate_plug_cache(user_id, key) do
     if Enum.member?(@keys, key) do
       Durandal.Settings.UserSettingLib.invalidate_multi_cache(user_id, @keys)
+    end
+  end
+
+  def maybe_set_locale(socket) do
+    if socket.assigns.user_settings["locale"] do
+      Gettext.put_locale(DurandalWeb.Gettext, socket.assigns.user_settings["locale"])
+      socket
+    else
+      socket
     end
   end
 

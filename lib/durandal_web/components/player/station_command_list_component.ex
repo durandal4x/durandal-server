@@ -34,7 +34,9 @@ defmodule DurandalWeb.Player.StationCommandListComponent do
     <div>
       <.table id="commands-table" rows={@commands} table_class="table-sm table-hover">
         <:col :let={command} label="Type">
-          {Map.get(@command_types, command.command_type, "N/A (#{command.command_type})")}
+          {translate_internal_name(
+            Map.get(@command_types, command.command_type, "N/A (#{command.command_type})")
+          )}
         </:col>
         <:col :let={command} label="Contents">
           <span :if={command.command_type == "move_to_position"}>

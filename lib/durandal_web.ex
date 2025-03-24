@@ -43,7 +43,7 @@ defmodule DurandalWeb do
         layouts: [html: DurandalWeb.Layouts]
 
       import Plug.Conn
-      use Gettext, backend: Durandal.Gettext
+      use Gettext, backend: DurandalWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -154,7 +154,7 @@ defmodule DurandalWeb do
         FormattingComponents
       }
 
-      use Gettext, backend: Durandal.Gettext
+      use Gettext, backend: DurandalWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

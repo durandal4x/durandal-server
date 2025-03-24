@@ -53,7 +53,7 @@ defmodule DurandalWeb.Router do
       ] do
       live "/", IndexLive
       live "/password", PasswordLive
-      # live "/account", AccountLive
+      live "/settings", SettingsLive
       live "/team_select", TeamSelectLive
     end
   end

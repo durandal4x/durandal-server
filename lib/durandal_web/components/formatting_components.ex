@@ -1,7 +1,7 @@
 defmodule DurandalWeb.FormattingComponents do
   use Phoenix.Component
   # alias Phoenix.LiveView.JS
-  use Gettext, backend: Durandal.Gettext
+  use Gettext, backend: DurandalWeb.Gettext
 
   alias Durandal.Helper.{NumberHelper, StringHelper}
 

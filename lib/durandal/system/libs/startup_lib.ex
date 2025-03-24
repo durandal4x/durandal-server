@@ -33,20 +33,21 @@ defmodule Durandal.System.StartupLib do
 
   defp user_settings() do
     Settings.add_user_setting_type(%{
-      key: "language",
-      label: "Language",
+      key: "locale",
+      label: "Locale",
       section: "interface",
       type: "string",
       permissions: nil,
       choices: [
-        {"English", "en-gb"},
-        {"American", "eu-us"},
-        {"Spanish", "es"},
-        {"Lojban", "lojban"},
-        {"Bork bork", "bork"}
+        {"English (en-GB)", "en_gb"},
+        {"Welsh (cy-GB)", "cy_gb"}
+        # {"American", "eu-us"},
+        # {"Spanish", "es"},
+        # {"Lojban", "lojban"},
+        # {"Bork bork", "bork"}
       ],
-      default: "en",
-      description: "The language used in the interface"
+      default: "en_gb",
+      description: "The locale used in the interface"
     })
 
     Settings.add_user_setting_type(%{
@@ -56,7 +57,7 @@ defmodule Durandal.System.StartupLib do
       type: "integer",
       permissions: nil,
       default: "0",
-      description: "The timezone to convert all Times to.",
+      description: "The timezone offset to adjust times.",
       validator: fn v ->
         if -12 <= v and v <= 14,
           do: :ok,
@@ -69,7 +70,7 @@ defmodule Durandal.System.StartupLib do
       label: "Universe",
       section: "active_game",
       type: "string",
-      permissions: ["admin"],
+      permissions: ["not-visible"],
       default: nil,
       description: "The universe currently selected",
       validator: fn v ->
@@ -85,7 +86,7 @@ defmodule Durandal.System.StartupLib do
       label: "Team",
       section: "active_game",
       type: "string",
-      permissions: ["admin"],
+      permissions: ["not-visible"],
       default: nil,
       description: "The team currently selected",
       validator: fn v ->

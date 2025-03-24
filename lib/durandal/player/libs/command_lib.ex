@@ -179,7 +179,8 @@ defmodule Durandal.Player.CommandLib do
         Code.ensure_loaded(m)
 
         system_macro? =
-          case m.__info__(:attributes)[:behaviour] do
+          case Code.loaded?(m) && m.__info__(:attributes)[:behaviour] do
+            false -> false
             [] -> false
             nil -> false
             b -> Enum.member?(b, Durandal.Engine.CommandMacro)

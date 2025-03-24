@@ -310,31 +310,21 @@ defmodule DurandalWeb.Player.StationCommandAddComponent do
 
     command_params = Map.put(command_params, "contents", parsed_contents)
 
-    IO.puts("")
-    IO.inspect(command_params, label: "#{__MODULE__}:#{__ENV__.line}")
-    IO.puts("")
+    if socket.assigns.form.source.valid? do
+      case Player.create_command(command_params) do
+        {:ok, command} ->
+          notify_parent({:saved, command})
 
-    socket
-    |> noreply
+          socket
+          |> noreply
 
-    # if socket.assigns.form.source.valid? do
-    #   case Player.create_command(command_params) do
-    #     {:ok, command} ->
-    #       notify_parent({:saved, command})
-
-    #       socket
-    #       |> noreply
-
-    #     {:error, %Ecto.Changeset{} = changeset} ->
-    #       changeset = changeset
-    #       # |> maybe_error_name(socket.assigns.existing_members)
-
-    #       {:noreply, assign_form(socket, changeset)}
-    #   end
-    # else
-    #   socket
-    #   |> noreply
-    # end
+        {:error, %Ecto.Changeset{} = changeset} ->
+          {:noreply, assign_form(socket, changeset)}
+      end
+    else
+      socket
+      |> noreply
+    end
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do

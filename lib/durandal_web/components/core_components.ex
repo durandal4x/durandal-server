@@ -5,7 +5,7 @@ defmodule DurandalWeb.CoreComponents do
 
   use Phoenix.Component
   alias Phoenix.LiveView.JS
-  use Gettext, backend: Durandal.Gettext
+  use Gettext, backend: DurandalWeb.Gettext
   alias Fontawesome
 
   @doc """
@@ -238,6 +238,7 @@ defmodule DurandalWeb.CoreComponents do
   attr :name, :any
   attr :label, :string, default: nil
   attr :value, :any
+  attr :class, :any
 
   attr :type, :string,
     default: "text",
@@ -259,7 +260,7 @@ defmodule DurandalWeb.CoreComponents do
   attr :rest, :global,
     include:
       ~w(autocomplete cols disabled form max maxlength min minlength
-                                   pattern placeholder readonly required rows size step show_valid valid_inset)
+                                   pattern placeholder readonly required rows size step show_valid valid_inset extra_classes)
 
   slot :inner_block
 
@@ -302,7 +303,7 @@ defmodule DurandalWeb.CoreComponents do
     ~H"""
     <div phx-feedback-for={@name}>
       <.label :if={@label} for={@id}>{@label}</.label>
-      <select id={@id} name={@name} class="form-control" multiple={@multiple} {@rest}>
+      <select id={@id} name={@name} class={["form-control", @class]} multiple={@multiple} {@rest}>
         <option :if={@prompt} value="">{@prompt}</option>
         {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
@@ -758,9 +759,18 @@ defmodule DurandalWeb.CoreComponents do
     # should be written to the errors.po file. The :count option is
     # set by Ecto and indicates we should also apply plural rules.
     if count = opts[:count] do
-      Gettext.dngettext(Durandal.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(DurandalWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(Durandal.Gettext, "errors", msg, opts)
+      Gettext.dgettext(DurandalWeb.Gettext, "errors", msg, opts)
+    end
+  end
+
+  def translate_internal_name(msg, opts \\ []) do
+    # Same as translate_error but for internal names
+    if count = opts[:count] do
+      Gettext.dngettext(DurandalWeb.Gettext, "internals", msg, msg, count, opts)
+    else
+      Gettext.dgettext(DurandalWeb.Gettext, "internals", msg, opts)
     end
   end
 
