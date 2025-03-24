@@ -2,7 +2,7 @@
 
 <div :if={allow?(@current_user, ~w(admin))} class="row">
   <.menu_card icon="fa-server" icon_class="fa-duotone" url={~p"/admin"}>
-    Administration
+    {gettext("Administration")}
   </.menu_card>
 </div>
 
@@ -12,17 +12,17 @@
     icon_class="fa-duotone"
     url={~p"/team/dashboard"}
   >
-    Team dashboard
+    {gettext("Team dashboard")}
   </.menu_card>
 </div>
 
 <div class="row">
   <.menu_card icon="fa-screen-users" icon_class="fa-duotone" url={~p"/profile/team_select"}>
-    Team select
+    {gettext("Team select")}
   </.menu_card>
 
   <.menu_card icon="fa-user-circle" icon_class="fa-duotone" url={~p"/profile"}>
-    Profile
+    {gettext("Profile")}
   </.menu_card>
 
   <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2 col-xxl-1 menu-card">
@@ -32,7 +32,7 @@
       class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
     >
       <Fontawesome.icon icon="sign-out-alt" style="duotone" size="4x" />
-      <br /> Logout
+      <br /> {gettext("Logout")}
     </.link>
   </div>
 </div>

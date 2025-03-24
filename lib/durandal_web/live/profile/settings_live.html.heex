@@ -1,0 +1,109 @@
+<div class="row mt-4 mb-3">
+  <div class="col">
+    <div :for={{section_name, group_configs} <- @config_types}>
+      <h4>{section_name}</h4>
+      <table class="table table-hover" style="cursor: pointer;">
+        <tbody>
+          <tr :for={the_config <- group_configs} id={"config-row-#{the_config.key}"}>
+            <td phx-click="open-form" phx-value-key={the_config.key}>
+              <strong>
+                {the_config.label}
+              </strong>
+
+              <%= if the_config.key == @selected_key do %>
+                <br />
+                <em>
+                  {raw(the_config.description)}
+                </em>
+              <% else %>
+                &nbsp;&nbsp;&nbsp;
+                <em>
+                  {the_config.description |> String.slice(0..90) |> raw}
+                </em>
+              <% end %>
+            </td>
+
+            <td
+              :if={the_config.key != @selected_key}
+              style="width:250px;"
+              phx-click="open-form"
+              phx-value-key={the_config.key}
+            >
+              {Gettext.gettext(
+                DurandalWeb.Gettext,
+                user_setting_display_value(the_config, @config_values[the_config.key])
+              )}
+            </td>
+
+            <td :if={the_config.key == @selected_key} style="width:700px; text-align: right;">
+              <%= case the_config do %>
+                <% %{type: "integer"} -> %>
+                  <.form
+                    for={to_form(%{}, as: :temp_form)}
+                    phx-change="set-to"
+                    phx-submit="set-to"
+                  >
+                    <.input
+                      type="number"
+                      name="value"
+                      value={@config_values[the_config.key] || the_config.default}
+                    />
+                  </.form>
+                <% %{choices: _} -> %>
+                  <.form
+                    for={to_form(%{}, as: :temp_form)}
+                    phx-change="set-to"
+                    phx-submit="set-to"
+                  >
+                    <div class="row">
+                      <div class="col-md-8">
+                        <.input
+                          type="select"
+                          name="value"
+                          class="d-inline-block"
+                          value={@config_values[the_config.key] || the_config.default}
+                          options={the_config.choices}
+                        />
+                      </div>
+                      <div class="col-md-4">
+                        <span class="btn btn-secondary" phx-click="reset-value">
+                          <Fontawesome.icon icon="arrow-rotate-left" style="regular" /> Default
+                        </span>
+                      </div>
+                    </div>
+                  </.form>
+                <% %{type: "boolean"} -> %>
+                  <span
+                    class="btn btn-secondary"
+                    phx-click="open-form"
+                    phx-value-key={the_config.key}
+                  >
+                    <Fontawesome.icon icon="cancel" style="regular" size="2x" /><br /> Cancel
+                  </span>
+                  &nbsp;&nbsp;&nbsp;
+                  <span class="btn btn-secondary" phx-click="reset-value">
+                    <Fontawesome.icon icon="arrow-rotate-left" style="regular" size="2x" /><br />
+                    Default
+                  </span>
+                  &nbsp;&nbsp;&nbsp;
+
+                  &nbsp;&nbsp;&nbsp;
+                  <span class="btn btn-danger" phx-click="set-false">
+                    <Fontawesome.icon icon="times" style="solid" size="2x" /><br /> No
+                  </span>
+                  &nbsp;&nbsp;&nbsp;
+                  <span class="btn btn-success" phx-click="set-true">
+                    <Fontawesome.icon icon="check" style="solid" size="2x" /><br /> Yes
+                  </span>
+                <% _ -> %>
+                  <div class="alert alert-danger monospace" style="text-align: center;">
+                    No handler for user_config '{inspect(the_config)}'
+                  </div>
+              <% end %>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

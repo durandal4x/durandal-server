@@ -70,8 +70,11 @@ defmodule Durandal.Engine do
       |> Enum.filter(fn m ->
         Code.ensure_loaded(m)
 
+        # We got a weird bug sometimes where an old module got picked up by the module list
+        # but would then error on the next part, the solution was to check if Code was loaded or not
         system_macro? =
-          case m.__info__(:attributes)[:behaviour] do
+          case Code.loaded?(m) && m.__info__(:attributes)[:behaviour] do
+            false -> false
             [] -> false
             nil -> false
             b -> Enum.member?(b, Durandal.Engine.SystemMacro)

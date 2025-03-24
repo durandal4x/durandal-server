@@ -1,0 +1,47 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: cy_GB\n"
+"Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3;\n"
+
+#: lib/durandal_web/components/core_components.ex:578
+#, elixir-autogen, elixir-format
+msgid "Actions"
+msgstr "Gweithredoedd"
+
+#: lib/durandal_web/components/core_components.ex:127
+#, elixir-autogen, elixir-format
+msgid "close"
+msgstr "gau"
+
+#: lib/durandal_web/live/general/home/index_live.html.heex:5
+#, elixir-autogen, elixir-format
+msgid "Administration"
+msgstr "Gweinyddu"
+
+#: lib/durandal_web/live/general/home/index_live.html.heex:35
+#, elixir-autogen, elixir-format
+msgid "Logout"
+msgstr "Allgofnodi"
+
+#: lib/durandal_web/live/general/home/index_live.html.heex:25
+#, elixir-autogen, elixir-format
+msgid "Profile"
+msgstr "Proffil"
+
+#: lib/durandal_web/live/general/home/index_live.html.heex:15
+#, elixir-autogen, elixir-format
+msgid "Team dashboard"
+msgstr "Dangosfwrdd tîm"
+
+#: lib/durandal_web/live/general/home/index_live.html.heex:21
+#, elixir-autogen, elixir-format
+msgid "Team select"
+msgstr "Dewis tîm"

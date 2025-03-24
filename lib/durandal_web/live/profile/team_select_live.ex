@@ -12,14 +12,14 @@ defmodule DurandalWeb.Profile.TeamSelectLive do
     Durandal.Settings.get_user_setting(socket.assigns.current_user.id, "current_universe")
 
     socket
-    |> assign(:site_menu_active, "home")
+    |> assign(:site_menu_active, "profile")
     |> assign(:memberships, memberships)
     |> ok
   end
 
   def mount(_params, _session, socket) do
     socket
-    |> assign(:site_menu_active, "home")
+    |> assign(:site_menu_active, "profile")
     |> assign(:memberships, [])
     |> ok
   end

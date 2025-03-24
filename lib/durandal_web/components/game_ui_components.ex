@@ -42,7 +42,7 @@ defmodule DurandalWeb.GameUIComponents do
           Admin
         </.nav_button_url>
 
-        <.nav_button_url colour="secondary" icon="home" active={@selected == "home"} url={~p"/team"}>
+        <.nav_button_url colour="secondary" icon="home" active={@selected == "home"} url={~p"/"}>
           Home
         </.nav_button_url>
 

@@ -105,7 +105,7 @@ defmodule Durandal.MixProject do
       "test.ci": [
         "format --check-formatted",
         "deps.unlock --check-unused",
-        "test --raise"
+        "test --raise --exclude translations"
       ]
     ]
   end

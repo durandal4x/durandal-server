@@ -149,7 +149,4 @@ defmodule Durandal.Settings do
           String.t() | non_neg_integer() | boolean() | nil
         ) :: :ok
   defdelegate set_user_setting_value(user_id, key, value), to: UserSettingLib
-
-  #   @spec invalidate_user_setting_cache(Durandal.user_id, String.t()) :: :ok
-  #   defdelegate invalidate_user_setting_cache(user_id, key), to: UserSettingLib
 end

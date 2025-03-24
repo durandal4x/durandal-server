@@ -4,9 +4,9 @@ defmodule DurandalWeb.General.IndexLive do
   @impl true
   def mount(_params, _session, socket) when is_connected?(socket) do
     if socket.assigns.current_user do
-      {:ok,
-       socket
-       |> assign(:site_menu_active, "home")}
+      socket
+      |> assign(:site_menu_active, "home")
+      |> ok
     else
       {:ok, redirect(socket, to: ~p"/guest")}
     end

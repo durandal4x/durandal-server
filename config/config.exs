@@ -18,6 +18,10 @@ config :durandal,
     timestamp_type: :utc_datetime
   ]
 
+config :durandal, DurandalWeb.Gettext,
+  default_locale: "en_gb",
+  locales: ~w(en_gb cy_gb)
+
 # Configures the endpoint
 config :durandal, DurandalWeb.Endpoint,
   url: [host: "localhost"],
