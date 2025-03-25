@@ -12,13 +12,15 @@ defmodule Durandal.Engine.CombatSystem do
 
   def combat_range(), do: 200
 
-  @spec execute(Durandal.universe_id()) :: :ok | {:error, [String.t()]}
-  def execute(universe_id) do
-    universe_id
+  @spec execute(map()) :: map()
+  def execute(context) do
+    context.universe_id
     |> find_targets()
     |> Enum.map(fn {shooter, target} ->
       perform_attack(shooter, target)
     end)
+
+    context
   end
 
   @spec find_targets(Durandal.universe_id()) :: [

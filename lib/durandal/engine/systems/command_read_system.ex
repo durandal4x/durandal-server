@@ -5,13 +5,22 @@ defmodule Durandal.Engine.CommandReadSystem do
   """
 
   use Durandal.Engine.SystemMacro
+  alias Durandal.Player
+  alias Durandal.Player.CommandLib
 
   def name(), do: "CommandRead"
   def stage(), do: :player_commands
 
-  @spec execute(Durandal.universe_id()) :: :ok | {:error, [String.t()]}
-  def execute(_universe_id) do
-    # Read orders
-    # Drop orders which are no longer possible
+  @doc """
+  For each command, execute it and pass on the context to the next stage
+  """
+  @spec execute(map()) :: :ok | {:error, [String.t()]}
+  def execute(context) do
+    context.universe_id
+    |> Player.CommandQueries.pull_most_recent_commands()
+    |> Enum.reduce(context, fn command, acc ->
+      {:ok, module} = CommandLib.get_command_module(command.subject_type, command.command_type)
+      module.execute(acc, command)
+    end)
   end
 end

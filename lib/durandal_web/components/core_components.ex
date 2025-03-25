@@ -238,7 +238,7 @@ defmodule DurandalWeb.CoreComponents do
   attr :name, :any
   attr :label, :string, default: nil
   attr :value, :any
-  attr :class, :any
+  attr :class, :any, default: nil
 
   attr :type, :string,
     default: "text",

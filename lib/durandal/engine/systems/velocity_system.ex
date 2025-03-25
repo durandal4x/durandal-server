@@ -10,12 +10,14 @@ defmodule Durandal.Engine.VelocitySystem do
   def name(), do: "Velocity"
   def stage(), do: :physics
 
-  @spec execute(Durandal.universe_id()) :: :ok | {:error, [String.t()]}
-  def execute(universe_id) do
+  @spec execute(map()) :: map()
+  def execute(%{universe_id: universe_id} = context) do
     # For all objects needing to move, move them
     update_ships(universe_id)
     update_stations(universe_id)
     update_system_objects(universe_id)
+
+    context
   end
 
   defp update_ships(universe_id) do

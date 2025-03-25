@@ -25,7 +25,7 @@ defmodule Durandal.SimCase do
       import Ecto.Changeset
       import Ecto.Query
       import Durandal.SimCase
-      import Durandal.AccountFixtures, only: [user_fixture: 0]
+      import Durandal.{AccountFixtures, PlayerFixtures, TypesFixtures, SpaceFixtures}
     end
   end
 
@@ -79,9 +79,15 @@ defmodule Durandal.SimCase do
     if tick_count > 1, do: tick_universe(universe_id, tick_count - 1)
   end
 
-  def tear_down(universe_id) do
-    UniverseLib.stop_universe_supervisor(universe_id)
-    :timer.sleep(500)
+  def tear_down(_universe_id) do
+    # We used to tear these down but it caused the supervisor to restart with
+    # ** (exit) :reached_max_restart_intensity
+    # which caused the main application supervisor to restart and thus the repo was no longer present
+    # We found this by setting `handle_sasl_reports: true` in the logger config
+    # In theory setting max_restarts to a high number should have worked but it did not
+
+    # UniverseLib.stop_universe_supervisor(universe_id)
+    # :timer.sleep(500)
   end
 
   def await_tick_completion(universe_id, sleep_time \\ 10) do

@@ -159,13 +159,23 @@ defmodule Durandal.Player.CommandLib do
   end
 
   @spec get_command_module(String.t()) :: {:ok, nil | module()}
-  def get_command_module(name) do
-    Cachex.get(:durandal_command_modules, name)
+  def get_command_module(combined_name) do
+    Cachex.get(:durandal_command_modules, combined_name)
   end
 
-  @spec get_command_module!(String.t()) :: {:ok, nil | module()}
-  def get_command_module!(name) do
-    Cachex.get!(:durandal_command_modules, name)
+  @spec get_command_module(String.t(), String.t()) :: {:ok, nil | module()}
+  def get_command_module(type, name) do
+    Cachex.get(:durandal_command_modules, "#{type}$#{name}")
+  end
+
+  @spec get_command_module!(String.t()) :: nil | module()
+  def get_command_module!(combined_name) do
+    Cachex.get!(:durandal_command_modules, combined_name)
+  end
+
+  @spec get_command_module!(String.t(), String.t()) :: nil | module()
+  def get_command_module!(type, name) do
+    Cachex.get!(:durandal_command_modules, "#{type}$#{name}")
   end
 
   def build_command_lookup() do

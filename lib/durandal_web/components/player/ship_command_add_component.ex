@@ -278,7 +278,14 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
       command_params["contents"]
       |> socket.assigns.command_module.parse()
 
-    command_params = Map.put(command_params, "contents", parsed_contents)
+    ordering =
+      Durandal.Player.CommandQueries.next_ordering_for_subject(command_params["subject_id"])
+
+    command_params =
+      Map.merge(command_params, %{
+        "contents" => parsed_contents,
+        "ordering" => ordering
+      })
 
     if socket.assigns.form.source.valid? do
       case Player.create_command(command_params) do

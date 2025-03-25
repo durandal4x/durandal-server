@@ -112,13 +112,14 @@ defmodule Durandal.Game.UniverseServer do
           task_pid: self()
         })
 
-        Durandal.Engine.TickTask.perform_tick(state.universe_id)
+        result = Durandal.Engine.TickTask.perform_tick(state.universe_id)
 
         Durandal.broadcast(state.topic, %{
           event: :completed_tick,
           topic: state.topic,
           universe_id: state.universe_id,
-          server_pid: server_pid
+          server_pid: server_pid,
+          result: result
         })
       end)
 

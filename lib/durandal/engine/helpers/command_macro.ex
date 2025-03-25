@@ -20,10 +20,16 @@ defmodule Durandal.Engine.CommandMacro do
   """
   @callback parse(map()) :: {:ok, map()} | {:error, String.t()}
 
+  # @doc """
+  # Execute goes here
+  # """
+  # @callback execute(map()) :: {:ok, map()} | {:error, String.t()}
+
   defmacro __using__(_opts) do
     quote do
       @behaviour Durandal.Engine.CommandMacro
       require Logger
+      alias Durandal.Engine
     end
   end
 end

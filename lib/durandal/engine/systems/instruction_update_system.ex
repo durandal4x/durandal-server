@@ -8,9 +8,11 @@ defmodule Durandal.Engine.InstructionUpdateSystem do
   def name(), do: "InstructionUpdate"
   def stage(), do: :internal_instructions
 
-  @spec execute(Durandal.universe_id()) :: :ok | {:error, [String.t()]}
-  def execute(_universe_id) do
+  @spec execute(map()) :: map()
+  def execute(context) do
     # Evaluate if the current instruction needs to change
     # Change/Drop instructions which are no longer relevant
+
+    context
   end
 end
