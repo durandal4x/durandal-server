@@ -3,13 +3,4 @@ Commands given by players, some examples include:
 - Move to point A
 - Go to A, pick up B, deliver to C
 
-## Instructions
-Commands are sub-divided into instructions which are themselves composed of discreet Actions. To use the 2nd example from above the instructions might be broken down into:
-- Travel to A
-  - Accelerate
-  - Decelerate
-- Collect goods
-  - Load
-- Travel to B
-  - Accelerate
-  - Decelerate
+Each tick the highest ordered command is evaluated, resulting in 0 or more actions. The actions are passed down the rest of the tick execution system and used in various systems accordingly.

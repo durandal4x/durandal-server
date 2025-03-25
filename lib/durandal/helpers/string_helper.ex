@@ -35,4 +35,8 @@ defmodule Durandal.Helper.StringHelper do
     v
     |> String.replace(~r/[0-9](?=(?:[0-9]{3})+(?![0-9]))/, "\\0#{separator}")
   end
+
+  def md5(s) do
+    :crypto.hash(:md5, s) |> Base.encode16()
+  end
 end

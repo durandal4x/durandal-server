@@ -72,7 +72,7 @@ defmodule Durandal.Settings.UserSettingLib do
       |> Enum.sort()
       |> Enum.join("$")
 
-    hash = :crypto.hash(:md5, key_string) |> Base.encode16()
+    hash = Durandal.Helper.StringHelper.md5(key_string)
     lookup = cache_key(user_id, hash)
 
     case Cachex.get(:user_setting_multi_cache, lookup) do

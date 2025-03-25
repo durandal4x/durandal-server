@@ -23,6 +23,7 @@ defmodule Durandal.Engine.SystemMacro do
   defmacro __using__(_opts) do
     quote do
       @behaviour Durandal.Engine.SystemMacro
+      alias Durandal.Engine
       require Logger
 
       # alias Durandal.Engine.TypeConvertors

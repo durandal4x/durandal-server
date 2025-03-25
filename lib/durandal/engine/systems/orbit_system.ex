@@ -12,12 +12,14 @@ defmodule Durandal.Engine.OrbitSystem do
 
   @pi2 :math.pi() * 2
 
-  @spec execute(Durandal.universe_id()) :: :ok | {:error, [String.t()]}
-  def execute(universe_id) do
+  @spec execute(map()) :: map()
+  def execute(%{universe_id: universe_id} = context) do
     # For all objects needing to move, move them
     translations = update_system_objects(universe_id)
     update_ships(universe_id, translations)
     update_stations(universe_id, translations)
+
+    context
   end
 
   defp calculate_orbit_nest(object_map, id, acc \\ []) do

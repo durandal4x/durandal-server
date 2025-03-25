@@ -111,4 +111,47 @@ defmodule Durandal.Engine do
 
     {:ok, lookup}
   end
+
+  @spec add_action(map(), Ecto.UUID.t(), list(atom()), map()) :: map()
+  def add_action(context, subject_id, tags, action) do
+    id = Ecto.UUID.generate()
+
+    # Add the action id to the ref lookup
+    context = put_in(context[:actions][id], action)
+
+    # Reference the id in subject_id
+    v = [id | Map.get(context.actions_by_subject_id, subject_id, [])]
+    context = put_in(context[:actions_by_subject_id][subject_id], v)
+
+    # Reference it per tag, if tags are empty skip this step
+    if Enum.empty?(tags) do
+      context
+    else
+      v =
+        tags
+        |> Map.new(fn tag ->
+          {tag, [id | Map.get(context.actions_by_tag, tag, [])]}
+        end)
+
+      new_actions_by_tag = Map.merge(context[:actions_by_tag], v)
+
+      %{context | actions_by_tag: new_actions_by_tag}
+    end
+  end
+
+  @spec get_actions_by_tag(map(), atom) :: [map()]
+  def get_actions_by_tag(context, tag) do
+    Map.get(context.actions_by_tag, tag, [])
+    |> Enum.map(fn id ->
+      Map.get(context.actions, id)
+    end)
+  end
+
+  @spec get_actions_by_subject_id(map(), atom) :: [map()]
+  def get_actions_by_subject_id(context, subject_id) do
+    Map.get(context.actions_by_subject_id, subject_id, [])
+    |> Enum.map(fn id ->
+      Map.get(context.actions, id)
+    end)
+  end
 end
