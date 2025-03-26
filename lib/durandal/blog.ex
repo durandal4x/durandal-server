@@ -70,8 +70,8 @@ defmodule Durandal.Blog do
   @spec create_post(map) :: {:ok, Post} | {:error, Ecto.Changeset}
   defdelegate create_post(attrs), to: PostLib
 
-  @spec update_post(Post, map) :: {:ok, Post} | {:error, Ecto.Changeset}
-  defdelegate update_post(post, attrs), to: PostLib
+  @spec update_post(Post, map, atom) :: {:ok, Post} | {:error, Ecto.Changeset}
+  defdelegate update_post(post, attrs, reason), to: PostLib
 
   @spec delete_post(Post) :: {:ok, Post} | {:error, Ecto.Changeset}
   defdelegate delete_post(post), to: PostLib

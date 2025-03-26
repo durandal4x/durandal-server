@@ -112,7 +112,7 @@ defmodule Durandal.BlogTest do
         view_count: 43
       }
 
-      assert {:ok, %Post{} = post} = Blog.update_post(post, update_attrs)
+      assert {:ok, %Post{} = post} = Blog.update_post(post, update_attrs, :update)
       assert post.contents == "some updated contents"
       assert post.title == "some updated title"
       assert post.view_count == 43
@@ -120,7 +120,7 @@ defmodule Durandal.BlogTest do
 
     test "update_post/2 with invalid data returns error changeset" do
       post = post_fixture()
-      assert {:error, %Ecto.Changeset{}} = Blog.update_post(post, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Blog.update_post(post, @invalid_attrs, :update)
       assert post == Blog.get_post!(post.id)
     end
 

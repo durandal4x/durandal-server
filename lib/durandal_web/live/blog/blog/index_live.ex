@@ -41,10 +41,19 @@ defmodule DurandalWeb.Blog.BlogLive.Index do
     {:noreply, stream_insert(socket, :posts, db_post, at: 0)}
   end
 
-  def handle_info(%{channel: "blog_posts", event: :post_updated, post: post}, socket) do
-    db_post = Blog.get_post!(post.id, preload: [:tags, :poster])
+  def handle_info(%{channel: "blog_posts", event: :post_updated, post: post} = msg, socket) do
+    # If we're just adding a new response we don't want to ping the db to update anything
+    # if the post is updated then we need to grab the tags and poster
+    if msg.reason == :update do
+      db_post = Blog.get_post!(post.id, preload: [:tags, :poster])
 
-    {:noreply, stream_insert(socket, :posts, db_post, at: -1)}
+      socket
+      |> stream_insert(:posts, db_post, at: -1)
+      |> noreply
+    else
+      socket
+      |> noreply
+    end
   end
 
   def handle_info(%{channel: "blog_posts", event: :post_deleted, post: post}, socket) do

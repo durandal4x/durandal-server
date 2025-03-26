@@ -141,28 +141,28 @@ defmodule Durandal.Blog.PostLib do
   defp broadcast_create_post(value), do: value
 
   @doc """
-  Updates a post.
+  Updates a post. Reason allows us to inform consumers of the pubsub why it was updated
 
   ## Examples
 
-      iex> update_post(post, %{field: new_value})
+      iex> update_post(post, %{field: new_value}, :update)
       {:ok, %Post{}}
 
-      iex> update_post(post, %{field: bad_value})
+      iex> update_post(post, %{field: bad_value}, :update)
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_post(%Post{} = post, attrs) do
+  def update_post(%Post{} = post, attrs, reason) do
     post
     |> Post.changeset(attrs)
     |> Repo.update()
-    |> broadcast_update_post
+    |> broadcast_update_post(reason)
   end
 
-  defp broadcast_update_post({:ok, %Post{} = post}) do
+  defp broadcast_update_post({:ok, %Post{} = post}, reason) do
     spawn(fn ->
       # We sleep this because sometimes the message is seen fast enough the database doesn't
-      # show as having the new data (row lock maybe?)
+      # show as having the new data
       :timer.sleep(1000)
 
       PubSub.broadcast(
@@ -171,6 +171,7 @@ defmodule Durandal.Blog.PostLib do
         %{
           channel: "blog_posts",
           event: :post_updated,
+          reason: reason,
           post: post
         }
       )
@@ -179,7 +180,7 @@ defmodule Durandal.Blog.PostLib do
     {:ok, post}
   end
 
-  defp broadcast_update_post(value), do: value
+  defp broadcast_update_post(value, _), do: value
 
   def update_post_response_cache(post) do
     counts =
@@ -193,7 +194,7 @@ defmodule Durandal.Blog.PostLib do
         {c, Map.get(counts, c, 0)}
       end)
 
-    {:ok, _} = update_post(post, %{poll_result_cache: new_response_cache})
+    {:ok, _} = update_post(post, %{poll_result_cache: new_response_cache}, :new_response)
   end
 
   @doc """

@@ -342,7 +342,7 @@ defmodule DurandalWeb.Blog.PostFormComponent do
   end
 
   defp save_post(socket, :edit, post_params) do
-    case Blog.update_post(socket.assigns.post, post_params) do
+    case Blog.update_post(socket.assigns.post, post_params, :update) do
       {:ok, post} ->
         deleted_tags =
           socket.assigns.originally_selected_tags

@@ -23,7 +23,7 @@
     </h3>
 
     <div id="post-content">
-      {@post.contents |> Earmark.as_html!() |> raw}
+      {@post.contents |> MDEx.to_html!() |> raw}
     </div>
     <br /><br />
 
