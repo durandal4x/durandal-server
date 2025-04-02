@@ -13,6 +13,7 @@ defmodule Durandal.Engine.Physics do
       angle_adjust: 2,
       limit_change: 3,
       angle: 1,
+      invert_angle: 1,
       add_vector: 2,
       sub_vector: 2
     ]
@@ -72,7 +73,7 @@ defmodule Durandal.Engine.Physics do
   @doc """
   Given a velocity and an ideal heading, steer that velocity by a certain
   amount. Most obviously useful for something like a car but also useful
-  if you wanted to have an intertial drive.
+  if you wanted to have an inertial drive.
   """
   @spec steer(Maths.vector(), Maths.facing(), Integer) :: List
   def steer(velocity = [_, _, _], [target_xy, target_yz], amount) do
@@ -90,22 +91,52 @@ defmodule Durandal.Engine.Physics do
   def decelerate?(%{position: position, velocity: velocity, acceleration: acceleration}, target),
     do: decelerate?(position, velocity, acceleration, target)
 
+  def decelerate?(%{position: position, velocity: velocity, type: %{acceleration: acceleration}}, target),
+    do: decelerate?(position, velocity, acceleration, target)
+
   def decelerate?(position, velocity, acceleration, %{x: x, y: y, z: z}),
     do: decelerate?(position, velocity, acceleration, [x, y, z])
 
   def decelerate?(position, velocity, acceleration, target) do
-    travel_time = suvat_travel_time(distance(velocity), acceleration)
-    travel_distance = suvat_travel_distance(acceleration, travel_time)
+    stopping_time = suvat_travel_time(distance(velocity), acceleration)
+    stopping_distance = suvat_travel_distance(acceleration, stopping_time)
     target_distance = distance(position, target)
 
     actual_heading = calculate_angle(velocity)
     target_heading = calculate_angle(position, target)
     [xy_dist, yz_dist] = angle_distance(actual_heading, target_heading)
 
-    if xy_dist < :math.pi() / 2 and yz_dist < :math.pi() / 2 do
-      target_distance <= travel_distance
+    stopping_percentage = target_distance / max(stopping_distance, 1)
+
+
+    raise "So far the issue is if the craft stops 1 tick sooner it under-shoots and if it stops when it does it over-shoots. Ideally there needs to be a tick in the middle were it only accelerates by half?"
+
+    if xy_dist < (:math.pi() / 2) and yz_dist < (:math.pi() / 2) do
+      target_distance <= (stopping_distance * 0.9)
     else
       false
+    end
+  end
+
+  @doc """
+  Given a velocity and a maximum acceleration, attempt to decelerate. Returns a velocity
+  adjustment rather than a new velocity
+  """
+  @spec calculate_deceleration(Maths.vector(), number()) :: Maths.vector()
+  def calculate_deceleration(current_velocity, acceleration) do
+    if (sv = distance(current_velocity)) <= acceleration do
+      current_velocity
+      |> Enum.map(fn v -> -v end)
+    else
+      total_velocity = current_velocity |> Enum.map(&abs/1) |> Enum.sum()
+
+      current_velocity
+      |> Enum.map(fn v ->
+        percentage_of_total = abs(v)/total_velocity
+
+        # Invert the acceleration relative to the velocity of this axis
+        if v > 0, do: -acceleration * percentage_of_total, else: acceleration * percentage_of_total
+      end)
     end
   end
 

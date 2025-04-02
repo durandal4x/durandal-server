@@ -47,6 +47,28 @@ defmodule Durandal.Engine.PhysicsTest do
     end
   end
 
+  test "calculate_deceleration" do
+    values = [
+      # Standard behaviour
+      {[100.0, 0.0, 0.0], 10, [-10.0, 0.0, 0.0]},
+      {[100.0, -100.0, 0.0], 10, [-5.0, 5.0, 0.0]},
+
+      # And for when acceleration is higher than velocity
+      {[5.0, 0.0, 0.0], 10, [-5.0, 0.0, 0.0]},
+      {[5.0, -5.0, 0.0], 10, [-5.0, 5.0, 0.0]},
+      {[5.0, -5.0, 0.0], 20, [-5.0, 5.0, 0.0]}
+    ]
+
+    for {velocity, acceleration, expected} <- values do
+      result = Physics.calculate_deceleration(velocity, acceleration)
+      |> round(4)
+
+      assert result == expected,
+        message:
+          "Error with #{inspect(velocity)}, #{inspect(acceleration)}, expected #{inspect(expected)} but got #{inspect(result)}"
+    end
+  end
+
   test "steer" do
     values = [
       # Wants to change but not allowed to

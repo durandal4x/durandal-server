@@ -92,7 +92,7 @@ defmodule Durandal.Engine.Maths do
   end
 
   @doc """
-  Rotates an angle about half a rotation but ensures the result sits within
+  Rotates an angle half a rotation but ensures the result sits within
   standard angular bounds
   """
   @spec invert_angle(radian()) :: radian()
