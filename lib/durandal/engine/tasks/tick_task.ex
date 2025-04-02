@@ -8,7 +8,9 @@ defmodule Durandal.Engine.TickTask do
       universe_id: universe_id,
       actions: %{},
       actions_by_subject_id: %{},
-      actions_by_tag: %{}
+      actions_by_tag: %{},
+      command_changes: %{},
+      command_deletes: []
     }
   end
 

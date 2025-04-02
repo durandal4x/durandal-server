@@ -25,10 +25,20 @@ defmodule Durandal.Engine.ActionApplySystem do
     context
   end
 
+  defp apply_velocity(%{ship_id: id, direction: :stop} = action) do
+    ship = Space.get_ship!(id, preload: [:type])
+    extra_velocity = Physics.calculate_deceleration(ship.velocity, ship.type.acceleration)
+    new_velocity = Maths.add_vector(ship.velocity, extra_velocity) |> Maths.round_list()
+    # IO.inspect new_velocity, label: "S"
+
+    {:ok, _} = Space.update_ship(ship, %{velocity: new_velocity})
+  end
+
   defp apply_velocity(%{ship_id: id} = action) do
     ship = Space.get_ship!(id, preload: [:type])
     extra_velocity = Physics.apply_acceleration(action.direction, ship.type.acceleration)
     new_velocity = Maths.add_vector(ship.velocity, extra_velocity) |> Maths.round_list()
+    # IO.inspect new_velocity, label: "A"
     {:ok, _} = Space.update_ship(ship, %{velocity: new_velocity})
   end
 
