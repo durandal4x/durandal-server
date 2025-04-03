@@ -13,4 +13,8 @@ defmodule Durandal.Engine.StationMoveToPositionCommand do
       "position" => Enum.map(params["position"], &String.to_integer/1)
     })
   end
+
+  def execute(context, _command) do
+    context
+  end
 end

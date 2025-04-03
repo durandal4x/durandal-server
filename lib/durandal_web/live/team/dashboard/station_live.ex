@@ -122,7 +122,10 @@ defmodule DurandalWeb.Team.StationLive do
       |> Enum.map(fn cmd ->
         [
           Map.get(cmd.contents, "target", nil),
-          Map.get(cmd.contents, "type", nil)
+          Map.get(cmd.contents, "station_id", nil),
+          Map.get(cmd.contents, "type", nil),
+          Map.get(cmd.contents, "ship_id", nil),
+          Map.get(cmd.contents, "system_object_id", nil)
         ]
       end)
       |> List.flatten()

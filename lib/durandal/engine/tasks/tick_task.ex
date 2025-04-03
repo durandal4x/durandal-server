@@ -3,28 +3,32 @@ defmodule Durandal.Engine.TickTask do
   # alias Durandal.Game.UniverseLib
   require Logger
 
-  defp starting_context(universe_id) do
+  defp starting_context(universe_id, tick_count) do
     %{
       universe_id: universe_id,
+      tick: tick_count,
       actions: %{},
       actions_by_subject_id: %{},
       actions_by_tag: %{},
       command_changes: %{},
-      command_deletes: []
+      command_deletes: [],
+      systems_logs: %{}
     }
   end
 
-  def perform_tick(universe_id) do
+  def perform_tick(universe_id, tick_count) do
     Logger.info("Ticking #{universe_id}")
 
     :telemetry.span(
       [:durandal, :engine, :tick],
       %{universe_id: universe_id},
       fn ->
+        context = starting_context(universe_id, tick_count)
+
         # Run through each stage
         result =
           Engine.evaluation_stages()
-          |> Enum.reduce(starting_context(universe_id), fn stage, context ->
+          |> Enum.reduce(context, fn stage, context ->
             run_stage(universe_id, stage, context)
           end)
 

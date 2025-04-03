@@ -34,3 +34,9 @@ msgstr "Move to system object"
 
 msgid "orbit_system_object"
 msgstr "Orbit system object"
+
+msgid "transfer_to_station"
+msgstr ""
+
+msgid "transfer_to_system_object"
+msgstr ""

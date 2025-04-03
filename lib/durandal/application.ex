@@ -43,7 +43,7 @@ defmodule Durandal.Application do
       {Horde.Registry, [keys: :unique, members: :auto, name: Durandal.UniverseServerRegistry]}
     ]
 
-    # Some stuff we don't want running during tests (unless we specifcially want it)
+    # Some stuff we don't want running during tests (unless we specifically want it)
     non_test_children =
       if Application.get_env(:durandal, :test) do
         []

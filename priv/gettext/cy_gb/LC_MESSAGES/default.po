@@ -45,3 +45,126 @@ msgstr "Dangosfwrdd tîm"
 #, elixir-autogen, elixir-format
 msgid "Team select"
 msgstr "Dewis tîm"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:136
+#, elixir-autogen, elixir-format
+msgid "Acceleration"
+msgstr "Cyflymiad"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:86
+#, elixir-autogen, elixir-format
+msgid "Build progress"
+msgstr "Adeiladu cynnydd"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:124
+#, elixir-autogen, elixir-format
+msgid "Build time"
+msgstr "Adeiladu amser"
+
+#: lib/durandal_web/components/player/ship_command_list_component.ex:64
+#, elixir-autogen, elixir-format
+msgid "Cancel"
+msgstr "Canslo"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:108
+#, elixir-autogen, elixir-format
+msgid "Clockwise?"
+msgstr "Clocwedd?"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:132
+#, elixir-autogen, elixir-format
+msgid "Damage"
+msgstr "Difrod"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:101
+#, elixir-autogen, elixir-format
+msgid "Distance"
+msgstr "Difrod"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:26
+#, elixir-autogen, elixir-format
+msgid "Docked with"
+msgstr "Tocio gyda"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:82
+#, elixir-autogen, elixir-format
+msgid "Health"
+msgstr "Iechyd"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:128
+#, elixir-autogen, elixir-format
+msgid "Max health"
+msgstr "Iechyd mwyaf"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:97
+#, elixir-autogen, elixir-format
+msgid "Orbiting"
+msgstr "Yn cylchdroi"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:112
+#, elixir-autogen, elixir-format
+msgid "Period"
+msgstr "Cyfnod"
+
+#: lib/durandal_web/components/player/ship_command_add_component.ex:50
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:50
+#, elixir-autogen, elixir-format
+msgid "Position"
+msgstr "Swydd"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:72
+#, elixir-autogen, elixir-format
+msgid "Progress"
+msgstr "Cynnydd"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:22
+#, elixir-autogen, elixir-format
+msgid "System"
+msgstr "System"
+
+#: lib/durandal_web/components/player/ship_command_add_component.ex:59
+#: lib/durandal_web/components/player/ship_command_add_component.ex:69
+#: lib/durandal_web/components/player/ship_command_add_component.ex:79
+#: lib/durandal_web/components/player/ship_command_add_component.ex:89
+#: lib/durandal_web/components/player/ship_command_add_component.ex:99
+#: lib/durandal_web/components/player/ship_command_list_component.ex:40
+#: lib/durandal_web/components/player/ship_command_list_component.ex:43
+#: lib/durandal_web/components/player/ship_command_list_component.ex:46
+#: lib/durandal_web/components/player/ship_command_list_component.ex:49
+#: lib/durandal_web/components/player/ship_command_list_component.ex:52
+#: lib/durandal_web/components/player/ship_command_list_component.ex:55
+#, elixir-autogen, elixir-format
+msgid "Target"
+msgstr "Targed"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:61
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:66
+#, elixir-autogen, elixir-format
+msgid "Transfer target"
+msgstr "Targed trosglwyddo"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:39
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:120
+#, elixir-autogen, elixir-format
+msgid "Type"
+msgstr "Math"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:54
+#, elixir-autogen, elixir-format
+msgid "Velocity"
+msgstr "Cyflymder"
+
+#: lib/durandal_web/components/player/ship_command_add_component.ex:40
+#, elixir-autogen, elixir-format
+msgid "Command"
+msgstr "Gorchymyn"
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:150
+#, elixir-autogen, elixir-format
+msgid "Commands"
+msgstr "Gorchmynion"
+
+#: lib/durandal_web/components/player/ship_command_add_component.ex:108
+#, elixir-autogen, elixir-format
+msgid "Add"
+msgstr "Ychwanegu"

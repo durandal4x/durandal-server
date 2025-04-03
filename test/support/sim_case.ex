@@ -72,14 +72,23 @@ defmodule Durandal.SimCase do
     universe
   end
 
-  def tick_universe(universe_id, tick_count \\ 1) do
-    UniverseLib.cast_universe_server(universe_id, :force_perform_tick)
-    await_tick_completion(universe_id)
+  @doc """
+  Ticks the universe N times (defaults to 1) and returns a list of univers tick const
+  """
+  def tick_universe(universe_id), do: tick_universe(universe_id, 1, [])
+  def tick_universe(universe_id, tick_count), do: tick_universe(universe_id, tick_count, [])
 
-    if tick_count > 1, do: tick_universe(universe_id, tick_count - 1)
+  def tick_universe(_universe_id, 0, results), do: Enum.reverse(results)
+
+  def tick_universe(universe_id, tick_count, results) do
+    UniverseLib.cast_universe_server(universe_id, :force_perform_tick)
+    result = await_tick_completion(universe_id)
+
+    tick_universe(universe_id, tick_count - 1, [result | results])
   end
 
   def tear_down(_universe_id) do
+    # TODO: Make it so tear_down works, we could end up with some overly high memory usage if we have a lot of tests
     # We used to tear these down but it caused the supervisor to restart with
     # ** (exit) :reached_max_restart_intensity
     # which caused the main application supervisor to restart and thus the repo was no longer present
@@ -90,10 +99,13 @@ defmodule Durandal.SimCase do
     # :timer.sleep(500)
   end
 
+  @spec await_tick_completion(Durandal.universe_id(), non_neg_integer()) :: map()
   def await_tick_completion(universe_id, sleep_time \\ 10) do
     if UniverseLib.call_universe_server(universe_id, :tick_in_progress?) do
       :timer.sleep(sleep_time)
       await_tick_completion(universe_id, sleep_time)
+    else
+      UniverseLib.call_universe_server(universe_id, :last_result)
     end
   end
 end

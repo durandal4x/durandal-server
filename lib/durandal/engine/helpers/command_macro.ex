@@ -4,6 +4,7 @@ defmodule Durandal.Engine.CommandMacro do
 
   Apply with `use Durandal.Engine.CommandMacro`
   """
+  alias Durandal.Engine.Command
 
   @doc """
   The subjects this command applies to
@@ -20,16 +21,22 @@ defmodule Durandal.Engine.CommandMacro do
   """
   @callback parse(map()) :: {:ok, map()} | {:error, String.t()}
 
-  # @doc """
-  # Execute goes here
-  # """
-  # @callback execute(map()) :: {:ok, map()} | {:error, String.t()}
+  @doc """
+
+  """
+  @callback execute(map(), Command.t()) :: map()
+
+  @doc """
+
+  """
+  @callback maybe_complete(map(), Command.t()) :: map()
 
   defmacro __using__(_opts) do
     quote do
       @behaviour Durandal.Engine.CommandMacro
       require Logger
       alias Durandal.Engine
+      import Durandal.Engine, only: [defer_update_command: 3, defer_delete_command: 2]
     end
   end
 end

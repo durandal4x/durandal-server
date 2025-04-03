@@ -77,4 +77,46 @@ defmodule Durandal.Game.Libs.ScenarioLibTest do
 
     Durandal.SimCase.tear_down(universe_id)
   end
+
+  test "test each hard-coded scenario" do
+    standard_path = "priv/scenarios"
+
+    File.ls!(standard_path)
+    |> Enum.each(fn name ->
+      struct =
+        Path.join(standard_path, name)
+        |> File.read!()
+        |> Jason.decode!()
+
+      {team_data, user_data} = Game.ScenarioLib.get_user_data_from_struct(struct)
+
+      team_opts =
+        team_data
+        |> Map.new(fn team ->
+          {team["id"],
+           %{
+             "name" => team["id"] |> String.replace("$", "")
+           }}
+        end)
+
+      user_opts =
+        user_data
+        |> Map.new(fn user ->
+          user_account = user_fixture()
+
+          {user["id"],
+           %{
+             "name" => user_account.name,
+             "roles" => ""
+           }}
+        end)
+
+      opts = %{
+        team_data: team_opts,
+        user_data: user_opts
+      }
+
+      {:ok, _} = Game.ScenarioLib.load_from_struct(struct, opts)
+    end)
+  end
 end

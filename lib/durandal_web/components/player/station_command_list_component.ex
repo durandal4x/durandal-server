@@ -87,7 +87,7 @@ defmodule DurandalWeb.Player.StationCommandListComponent do
   def update(assigns, socket) do
     command_types =
       "station"
-      |> CommandLib.command_types("en-gb")
+      |> CommandLib.command_types()
       |> Map.new(fn {a, b} -> {b, a} end)
 
     socket

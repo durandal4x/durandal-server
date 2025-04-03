@@ -66,6 +66,10 @@ defmodule Durandal.Space do
   defdelegate get_station(station_id, query_args \\ []), to: StationLib
 
   @doc section: :station
+  @spec get_extended_station(Station.id()) :: Station.t() | nil
+  defdelegate get_extended_station(station_id), to: StationLib
+
+  @doc section: :station
   @spec create_station(map) :: {:ok, Station.t()} | {:error, Ecto.Changeset.t()}
   defdelegate create_station(attrs), to: StationLib
 
@@ -146,6 +150,10 @@ defmodule Durandal.Space do
   defdelegate get_ship(ship_id, query_args \\ []), to: ShipLib
 
   @doc section: :ship
+  @spec get_extended_ship(Ship.id()) :: Ship.t() | nil
+  defdelegate get_extended_ship(ship_id), to: ShipLib
+
+  @doc section: :ship
   @spec create_ship(map) :: {:ok, Ship.t()} | {:error, Ecto.Changeset.t()}
   defdelegate create_ship(attrs), to: ShipLib
 
@@ -201,4 +209,56 @@ defmodule Durandal.Space do
   @doc section: :system_object
   @spec change_system_object(SystemObject.t(), map) :: Ecto.Changeset.t()
   defdelegate change_system_object(system_object, attrs \\ %{}), to: SystemObjectLib
+
+  # ShipTransfers
+  alias Durandal.Space.{ShipTransfer, ShipTransferLib, ShipTransferQueries}
+
+  @doc false
+  @spec ship_transfer_topic(Durandal.ship_transfer_id()) :: String.t()
+  defdelegate ship_transfer_topic(ship_transfer_id), to: ShipTransferLib, as: :topic
+
+  @doc false
+  @spec ship_transfer_query(Durandal.query_args()) :: Ecto.Query.t()
+  defdelegate ship_transfer_query(args), to: ShipTransferQueries
+
+  @doc section: :ship_transfer
+  @spec list_ship_transfers(Durandal.query_args()) :: [ShipTransfer.t()]
+  defdelegate list_ship_transfers(args), to: ShipTransferLib
+
+  @doc section: :ship_transfer
+  @spec get_ship_transfer!(ShipTransfer.id(), Durandal.query_args()) :: ShipTransfer.t()
+  defdelegate get_ship_transfer!(ship_transfer_id, query_args \\ []), to: ShipTransferLib
+
+  @doc section: :ship_transfer
+  @spec get_ship_transfer(ShipTransfer.id(), Durandal.query_args()) :: ShipTransfer.t() | nil
+  defdelegate get_ship_transfer(ship_transfer_id, query_args \\ []), to: ShipTransferLib
+
+  @doc section: :ship_transfer
+  @spec create_ship_transfer(map) :: {:ok, ShipTransfer.t()} | {:error, Ecto.Changeset.t()}
+  defdelegate create_ship_transfer(attrs), to: ShipTransferLib
+
+  @doc section: :ship_transfer
+  @spec update_ship_transfer(ShipTransfer, map) ::
+          {:ok, ShipTransfer.t()} | {:error, Ecto.Changeset.t()}
+  defdelegate update_ship_transfer(ship_transfer, attrs), to: ShipTransferLib
+
+  @doc section: :ship_transfer
+  @spec delete_ship_transfer(ShipTransfer.t()) ::
+          {:ok, ShipTransfer.t()} | {:error, Ecto.Changeset.t()}
+  defdelegate delete_ship_transfer(ship_transfer), to: ShipTransferLib
+
+  @doc section: :ship_transfer
+  @spec change_ship_transfer(ShipTransfer.t(), map) :: Ecto.Changeset.t()
+  defdelegate change_ship_transfer(ship_transfer, attrs \\ %{}), to: ShipTransferLib
+
+  alias Durandal.Space.TransferLib
+
+  @doc section: :transfer
+  @spec calculate_distance(Durandal.positional_entity(), Durandal.positional_entity()) ::
+          non_neg_integer()
+  defdelegate calculate_distance(from_entity, to_entity), to: TransferLib
+
+  @doc section: :transfer
+  @spec calculate_midpoint(Maths.vector(), Maths.vector(), number()) :: Maths.vector()
+  defdelegate calculate_midpoint(origin, destination, progress_percentage), to: TransferLib
 end

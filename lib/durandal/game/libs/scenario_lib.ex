@@ -19,6 +19,7 @@ defmodule Durandal.Game.ScenarioLib do
 
   """
   alias Durandal.{Repo, Game, Account}
+  alias Durandal.Space.TransferLib
 
   @spec uuid() :: Ecto.UUID.t()
   defp uuid(), do: Ecto.UUID.generate()
@@ -34,20 +35,49 @@ defmodule Durandal.Game.ScenarioLib do
 
   @doc """
   Given a scenario data object, get a list of the users offered as part of it.
+
+  Example output:
+
+    {[
+      %{
+        "id" => "$team1",
+        "members" => [
+          %{"default-name" => "Raghna", "id" => "@leader1", "roles" => []}
+        ],
+        "name" => "Team 1"
+      },
+      %{
+        "id" => "$team2",
+        "members" => [
+          %{
+            "default-name" => "Teifion",
+            "id" => "@leader2",
+            "roles" => ["r1", "r2"]
+          }
+        ],
+        "name" => "Team 2"
+      }
+    ],
+    [
+      %{
+        "default-name" => "Raghna",
+        "id" => "@leader1",
+        "label" => "leader1",
+        "roles" => []
+      },
+      %{
+        "default-name" => "Teifion",
+        "id" => "@leader2",
+        "label" => "leader2",
+        "roles" => ["r1", "r2"]
+      }
+    ]}
   """
   @spec get_user_data_from_struct(map()) :: {map(), map()}
   def get_user_data_from_struct(data) do
     teams_data =
       data
       |> Map.get("teams", %{})
-
-    # |> Enum.map(fn team ->
-    #   %{
-    #     defaults: %{
-    #       name: Map.get(team, "name")
-    #     }
-    #   }
-    # end)
 
     users_data =
       teams_data
@@ -294,7 +324,36 @@ defmodule Durandal.Game.ScenarioLib do
       end)
 
     Repo.insert_all(Durandal.Space.Ship, rows)
+    build_ship_transfers(data, ids)
     build_ship_commands(data, ids)
+  end
+
+  defp build_ship_transfers(data, ids) do
+    rows =
+      data
+      |> Enum.filter(fn ship -> Map.get(ship, "current_transfer") != nil end)
+      |> Enum.map(fn %{"current_transfer" => transfer} = ship ->
+        # TODO: It is possible to have a transfer without a valid end-target, this needs to be checked for
+        %{
+          id: Ecto.UUID.generate(),
+          ship_id: Map.fetch!(ids, ship["id"]),
+          origin: transfer["origin"],
+          to_station_id: Map.get(ids, transfer["to_station"]),
+          to_system_object_id: Map.get(ids, transfer["to_system_object"]),
+          distance: transfer["distance"],
+          progress: transfer["progress"],
+          progress_percentage:
+            TransferLib.calculate_progress_percentage(transfer["progress"], transfer["distance"]),
+          status: "in progress",
+          started_tick: transfer["started_tick"] || 0,
+          universe_id: Map.fetch!(ids, "$universe"),
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
+        }
+      end)
+      |> List.flatten()
+
+    Repo.insert_all(Durandal.Space.ShipTransfer, rows)
   end
 
   defp build_ship_commands(data, ids) do

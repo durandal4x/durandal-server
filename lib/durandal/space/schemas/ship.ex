@@ -33,6 +33,9 @@ defmodule Durandal.Space.Ship do
     belongs_to(:orbiting, Durandal.Space.SystemObject, type: Ecto.UUID)
     field(:orbit_clockwise, :boolean)
     field(:orbit_period, :integer)
+
+    belongs_to(:current_transfer, Durandal.Space.ShipTransfer, type: Ecto.UUID)
+
     field(:build_progress, :integer)
     field(:health, :integer)
 
@@ -64,7 +67,7 @@ defmodule Durandal.Space.Ship do
   #       }
 
   @required_fields ~w(name team_id type_id system_id position velocity build_progress health universe_id)a
-  @optional_fields ~w(orbiting_id orbit_clockwise orbit_period docked_with_id)a
+  @optional_fields ~w(orbiting_id orbit_clockwise orbit_period docked_with_id current_transfer_id)a
 
   @doc false
   @spec changeset(map(), map()) :: Ecto.Changeset.t()

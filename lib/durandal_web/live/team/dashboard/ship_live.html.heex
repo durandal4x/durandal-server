@@ -19,11 +19,11 @@
           <table class="table table-sm">
             <tbody>
               <tr>
-                <td>System</td>
+                <td>{gettext("System")}</td>
                 <td>{@ship.system.name}</td>
               </tr>
               <tr :if={@ship.docked_with}>
-                <td>Docked with</td>
+                <td>{gettext("Docked with")}</td>
                 <td>
                   {@ship.docked_with.name}
 
@@ -36,7 +36,7 @@
                 </td>
               </tr>
               <tr>
-                <td>Type</td>
+                <td>{gettext("Type")}</td>
                 <td>{@ship.type.name}</td>
               </tr>
             </tbody>
@@ -47,19 +47,43 @@
           <table class="table table-sm">
             <tbody>
               <tr>
-                <td>Position</td>
+                <td>{gettext("Position")}</td>
                 <td><.vector_string value={@ship.position} /></td>
               </tr>
               <tr>
-                <td>Velocity</td>
+                <td>{gettext("Velocity")}</td>
                 <td><.vector_string value={@ship.velocity} /></td>
               </tr>
+              <%= cond do %>
+                <% @ship.current_transfer_id == nil -> %>
+                <% @ship.current_transfer.to_station_id -> %>
+                  <tr>
+                    <td>{gettext("Transfer target")}</td>
+                    <td>{@ship.current_transfer.to_station.name}</td>
+                  </tr>
+                <% @ship.current_transfer.to_system_object_id -> %>
+                  <tr>
+                    <td>{gettext("Transfer target")}</td>
+                    <td>{@ship.current_transfer.to_system_object.name}</td>
+                  </tr>
+              <% end %>
+              <%= if @ship.current_transfer_id != nil do %>
+                <tr>
+                  <td>{gettext("Progress")}</td>
+                  <td>
+                    {normalize(@ship.current_transfer.progress)} / {normalize(
+                      @ship.current_transfer.distance
+                    )} ({round(@ship.current_transfer.progress_percentage)}%)
+                  </td>
+                </tr>
+              <% end %>
+
               <tr>
-                <td>Health</td>
+                <td>{gettext("Health")}</td>
                 <td>{@ship.health}</td>
               </tr>
               <tr>
-                <td>Build progress</td>
+                <td>{gettext("Build progress")}</td>
                 <td>{@ship.build_progress}</td>
               </tr>
             </tbody>
@@ -70,22 +94,22 @@
           <table class="table table-sm">
             <tbody>
               <tr>
-                <td>Orbiting</td>
+                <td>{gettext("Orbiting")}</td>
                 <td>{@ship.orbiting.name}</td>
               </tr>
               <tr>
-                <td>Distance</td>
+                <td>{gettext("Distance")}</td>
                 <td>
                   {Durandal.Engine.Maths.distance(@ship.orbiting.position, @ship.position)
                   |> abs}
                 </td>
               </tr>
               <tr>
-                <td>Clockwise?</td>
+                <td>{gettext("Clockwise?")}</td>
                 <td>{@ship.orbit_clockwise}</td>
               </tr>
               <tr>
-                <td>Period</td>
+                <td>{gettext("Period")}</td>
                 <td>{@ship.orbit_period}</td>
               </tr>
             </tbody>
@@ -93,23 +117,23 @@
         </div>
 
         <div class="col">
-          <h5>Type</h5>
+          <h5>{gettext("Type")}</h5>
           <table class="table table-sm">
             <tbody>
               <tr>
-                <td>Build time</td>
+                <td>{gettext("Build time")}</td>
                 <td>{format_number(@ship.type.build_time)}</td>
               </tr>
               <tr>
-                <td>Max health</td>
+                <td>{gettext("Max health")}</td>
                 <td>{format_number(@ship.type.max_health)}</td>
               </tr>
               <tr>
-                <td>Damage</td>
+                <td>{gettext("Damage")}</td>
                 <td>{format_number(@ship.type.damage)}</td>
               </tr>
               <tr>
-                <td>Acceleration</td>
+                <td>{gettext("Acceleration")}</td>
                 <td>{format_number(@ship.type.acceleration)}</td>
               </tr>
             </tbody>
@@ -123,7 +147,7 @@
 <div class="row mt-1">
   <div class="col">
     <.card :if={@ship}>
-      <h4>Commands</h4>
+      <h4>{gettext("Commands")}</h4>
 
       <.live_component
         id={:commands}
@@ -135,6 +159,8 @@
         system_object_lookup={@system_object_lookup}
       >
         <.live_component
+          #
+          user_settings={@user_settings}
           module={DurandalWeb.Player.ShipCommandAddComponent}
           id={:command_add}
           subject={@ship}

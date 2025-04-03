@@ -9,7 +9,7 @@ defmodule Durandal.Game.UniverseServer do
 
   defmodule State do
     @moduledoc false
-    defstruct ~w(universe_id universe next_tick topic tick_timer tick_in_progress? task_pid tick_count)a
+    defstruct ~w(universe_id universe next_tick topic tick_timer tick_in_progress? last_result task_pid tick_count)a
   end
 
   @impl true
@@ -23,6 +23,10 @@ defmodule Durandal.Game.UniverseServer do
 
   def handle_call(:tick_count, _from, %State{} = state) do
     {:reply, state.tick_count, state}
+  end
+
+  def handle_call(:last_result, _from, %State{} = state) do
+    {:reply, state.last_result, state}
   end
 
   def handle_call(msg, _from, state) do
@@ -77,7 +81,7 @@ defmodule Durandal.Game.UniverseServer do
 
       :completed_tick ->
         state
-        |> complete_tick
+        |> complete_tick(msg.result)
         |> noreply
 
       _ ->
@@ -112,7 +116,7 @@ defmodule Durandal.Game.UniverseServer do
           task_pid: self()
         })
 
-        result = Durandal.Engine.TickTask.perform_tick(state.universe_id)
+        result = Durandal.Engine.TickTask.perform_tick(state.universe_id, state.tick_count)
 
         Durandal.broadcast(state.topic, %{
           event: :completed_tick,
@@ -136,7 +140,7 @@ defmodule Durandal.Game.UniverseServer do
   end
 
   # The tick completed, bring on the next one!
-  defp complete_tick(state) do
+  defp complete_tick(state, result) do
     # It's possible that the universe was updated during the tick and we've
     # not updated our cached version yet
     universe = UniverseLib.get_universe!(state.universe_id)
@@ -149,6 +153,7 @@ defmodule Durandal.Game.UniverseServer do
       tick_in_progress?: false,
       task_pid: nil,
       universe: universe,
+      last_result: result,
       tick_count: state.tick_count + 1
     })
   end
@@ -197,6 +202,7 @@ defmodule Durandal.Game.UniverseServer do
        universe_id: universe_id,
        universe: universe,
        next_tick: universe.next_tick,
+       last_result: nil,
        tick_timer: nil,
        tick_in_progress?: false,
        task_pid: nil,

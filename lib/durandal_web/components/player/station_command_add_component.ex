@@ -134,7 +134,7 @@ defmodule DurandalWeb.Player.StationCommandAddComponent do
 
     socket
     |> assign(assigns)
-    |> assign(:command_types, CommandLib.command_types("station", "en-gb"))
+    |> assign(:command_types, CommandLib.command_types("station"))
     |> assign(:command_type, nil)
     |> assign(:existing_members, existing_members)
     |> assign_form(changeset)

@@ -765,14 +765,15 @@ defmodule DurandalWeb.CoreComponents do
     end
   end
 
-  def translate_internal_name(msg, opts \\ []) do
-    # Same as translate_error but for internal names
-    if count = opts[:count] do
-      Gettext.dngettext(DurandalWeb.Gettext, "internals", msg, msg, count, opts)
-    else
-      Gettext.dgettext(DurandalWeb.Gettext, "internals", msg, opts)
-    end
-  end
+  defdelegate translate_internal_name(msg), to: Durandal
+  defdelegate translate_internal_name(msg, opts), to: Durandal
+  #   # Same as translate_error but for internal names
+  #   if count = opts[:count] do
+  #     Gettext.dngettext(DurandalWeb.Gettext, "internals", msg, msg, count, opts)
+  #   else
+  #     Gettext.dgettext(DurandalWeb.Gettext, "internals", msg, opts)
+  #   end
+  # end
 
   @doc """
   Translates the errors for a field from a keyword list of errors.

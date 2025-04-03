@@ -166,6 +166,17 @@ defmodule Durandal.Player.CommandQueries do
     (Repo.one(query) || -1) + 1
   end
 
+  @spec current_command_for_subject(Durandal.ship_id() | Durandal.station_id()) :: Command.t() | nil
+  def current_command_for_subject(subject_id) do
+    query =
+      from commands in Command,
+        where: commands.subject_id == ^subject_id and commands.completed? == false,
+        order_by: [asc: commands.ordering],
+        limit: 1
+
+    Repo.one(query)
+  end
+
   def pull_most_recent_commands(universe_id) do
     min_orderings_cte =
       from(
@@ -179,7 +190,7 @@ defmodule Durandal.Player.CommandQueries do
         t1 in Command,
         join: mo in subquery(min_orderings_cte),
         on: t1.subject_id == mo.subject_id and t1.ordering == mo.min_ordering,
-        where: t1.universe_id == ^universe_id,
+        where: t1.universe_id == ^universe_id and t1.completed? == false,
         select: t1
       )
 

@@ -67,6 +67,27 @@ defmodule Durandal.Space.StationLib do
   end
 
   @doc """
+  Gets a single station complete with relevant preloads in place.
+
+  Returns nil if the Station does not exist.
+
+  ## Examples
+
+      iex> get_station("005f5e0b-ee46-4c07-9f81-2d565c2ade30")
+      %Station{}
+
+      iex> get_station("c11a487b-16a2-4806-bd7a-dcf110d16b61")
+      nil
+
+  """
+  @spec get_extended_station(Station.id()) :: Station.t() | nil
+  def get_extended_station(station_id) do
+    get_station(station_id,
+      preload: [:type, :orbiting, :modules_with_types, :docked_ships_with_types]
+    )
+  end
+
+  @doc """
   Creates a station.
 
   ## Examples

@@ -11,4 +11,8 @@ defmodule Durandal.Engine.StationBuildModuleCommand do
   def parse(params) do
     params
   end
+
+  def execute(context, _command) do
+    context
+  end
 end
