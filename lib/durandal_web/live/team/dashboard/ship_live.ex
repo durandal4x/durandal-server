@@ -94,7 +94,10 @@ defmodule DurandalWeb.Team.ShipLive do
 
   @spec get_ship(Phoenix.Socket.t()) :: Phoenix.Socket.t()
   defp get_ship(%{assigns: %{ship_id: ship_id}} = socket) do
-    ship = Space.get_ship!(ship_id, preload: [:type, :system, :orbiting, :docked_with, :commands])
+    ship =
+      Space.get_ship!(ship_id,
+        preload: [:type, :system, :orbiting, :docked_with, :commands, :transfer_with_destination]
+      )
 
     socket
     |> assign(:ship, ship)
@@ -106,7 +109,10 @@ defmodule DurandalWeb.Team.ShipLive do
       ship.commands
       |> Enum.map(fn cmd ->
         [
-          Map.get(cmd.contents, "target", nil)
+          Map.get(cmd.contents, "target", nil),
+          Map.get(cmd.contents, "station_id", nil),
+          Map.get(cmd.contents, "ship_id", nil),
+          Map.get(cmd.contents, "system_object_id", nil)
         ]
       end)
       |> List.flatten()

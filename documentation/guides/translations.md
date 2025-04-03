@@ -1,6 +1,15 @@
 # Translations
 Durandal intends to support translations.
 
+## Command quick reference
+```sh
+# Test for missing strings
+mix test.translations
+
+# Update .pot files
+mix gettext.extract --merge
+```
+
 ## Improving an existing locale
 To improve or extend an existing locale you just need to identify the relevant string(s) you want to improve and update them.
 
@@ -18,7 +27,7 @@ mix gettext.extract --merge
 ## Finding locale related issues
 We have some tests written to help find issues with certain locales missing. It's experimental and feedback on the use of the tests is very welcome. To run them use:
 ```sh
-mix test --only translations
+mix test.translations
 ```
 
 ## Adding a new locale

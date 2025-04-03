@@ -60,8 +60,9 @@ defmodule Durandal.Engine.PhysicsTest do
     ]
 
     for {velocity, acceleration, expected} <- values do
-      result = Physics.calculate_deceleration(velocity, acceleration)
-      |> round(4)
+      result =
+        Physics.calculate_deceleration(velocity, acceleration)
+        |> round(4)
 
       assert result == expected,
         message:

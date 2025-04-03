@@ -12,13 +12,13 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3;\n"
 
 msgid "build_module"
-msgstr ""
+msgstr "Adeiladu modiwl"
 
 msgid "build_ship"
-msgstr ""
+msgstr "Adeiladu llong"
 
 msgid "dock_at_station"
-msgstr ""
+msgstr "Doc yn yr orsaf"
 
 msgid "move_to_position"
 msgstr ""
@@ -35,4 +35,10 @@ msgid "move_to_system_object"
 msgstr ""
 
 msgid "orbit_system_object"
-msgstr ""
+msgstr "Orbit i wrthrych y system"
+
+msgid "transfer_to_station"
+msgstr "Trosglwyddo i orsaf"
+
+msgid "transfer_to_system_object"
+msgstr "Trosglwyddo i wrthrych system"

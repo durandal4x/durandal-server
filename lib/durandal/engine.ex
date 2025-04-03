@@ -19,7 +19,7 @@ defmodule Durandal.Engine do
   The stages run through each tick
   """
   def evaluation_stages do
-    ~w(player_commands internal_instructions apply_actions physics combat)a
+    ~w(player_commands internal_instructions apply_actions transfer physics combat player_commands_post_process)a
   end
 
   @doc """
@@ -171,5 +171,9 @@ defmodule Durandal.Engine do
     |> Enum.map(fn id ->
       Map.get(context.actions, id)
     end)
+  end
+
+  def add_systems_logs(context, system_id, logs) do
+    put_in(context, [:systems_logs, system_id], logs)
   end
 end

@@ -136,6 +136,16 @@ defmodule Durandal.Space.ShipQueries do
       where: ships.docked_with_id in ^List.wrap(docked_with_id)
   end
 
+  def _where(query, :transferring?, true) do
+    from ships in query,
+      where: not is_nil(ships.current_transfer_id)
+  end
+
+  def _where(query, :transferring?, false) do
+    from ships in query,
+      where: is_nil(ships.current_transfer_id)
+  end
+
   def _where(query, :inserted_after, timestamp) do
     from ships in query,
       where: ships.inserted_at >= ^timestamp
@@ -226,6 +236,32 @@ defmodule Durandal.Space.ShipQueries do
       preload: [orbiting: space_system_objects]
   end
 
+  def _preload(query, :transfer) do
+    from ships in query,
+      left_join: space_ship_transfers in assoc(ships, :current_transfer),
+      preload: [current_transfer: space_ship_transfers]
+  end
+
+  def _preload(query, :transfer_with_destination) do
+    from ships in query,
+      left_join: space_ship_transfers in assoc(ships, :current_transfer),
+      left_join: space_stations in assoc(space_ship_transfers, :to_station),
+      left_join: space_system_objects in assoc(space_ship_transfers, :to_system_object),
+      preload: [
+        current_transfer:
+          {space_ship_transfers,
+           to_station: space_stations, to_system_object: space_system_objects}
+      ]
+
+    # query = from universes in Durandal.Game.Universe,
+    #   join: teams in assoc(universes, :teams),
+    #   join: team_members in assoc(teams, :team_members),
+    #     where: team_members.user_id == ^user_id,
+    #   where: team_members.enabled? == true,
+    #   preload: [teams: {teams, team_members: team_members}],
+    #   order_by: [asc: universes.name]
+  end
+
   def _preload(query, :docked_with) do
     from ships in query,
       left_join: space_stations in assoc(ships, :docked_with),
@@ -238,11 +274,20 @@ defmodule Durandal.Space.ShipQueries do
       preload: [universe: game_universes]
   end
 
-  def _preload(query, :commands) do
+  def _preload(query, :all_commands) do
     from ships in query,
       left_join: commands in assoc(ships, :commands),
       on: commands.subject_id == ships.id,
       on: commands.subject_type == "ship",
+      preload: [commands: commands]
+  end
+
+  def _preload(query, :incomplete_commands) do
+    from ships in query,
+      left_join: commands in assoc(ships, :commands),
+      on: commands.subject_id == ships.id,
+      on: commands.subject_type == "ship",
+      on: commands.completed? == false,
       preload: [commands: commands]
   end
 end

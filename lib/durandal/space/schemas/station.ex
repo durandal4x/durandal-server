@@ -28,6 +28,8 @@ defmodule Durandal.Space.Station do
     field(:orbit_clockwise, :boolean)
     field(:orbit_period, :integer)
 
+    # belongs_to(:current_transfer, Durandal.Space.StationTransfer, type: Ecto.UUID)
+
     has_many(:modules, Durandal.Space.StationModule)
     has_many(:docked_ships, Durandal.Space.Ship, foreign_key: :docked_with_id)
 

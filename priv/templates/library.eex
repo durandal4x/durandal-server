@@ -6,7 +6,7 @@ defmodule $Application.$Context.$ObjectLib do
   alias $Application.$Context.{$Object, $ObjectQueries}
 
   @spec topic($Application.object_id()) :: String.t()
-  def topic(object_id), do: "$Application.$Context.$Object:#{object_id}"
+  def topic($object_id), do: "$Application.$Context.$Object:#{$object_id}"
 
   @doc """
   Returns the list of $objects.

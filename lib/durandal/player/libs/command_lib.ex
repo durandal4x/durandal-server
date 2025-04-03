@@ -5,14 +5,14 @@ defmodule Durandal.Player.CommandLib do
   use DurandalMacros, :library
   alias Durandal.Player.{Command, CommandQueries}
 
-  # def command_types("ship"), do: [{"Move to position", "move_to_position"}, {"Move to object", "move_to_object"}, {"Orbit object", "orbit_object"}, {"Move to station", "move_to_station"}, {"Move to ship", "move_to_ship"}, {"Dock", "dock"}]
-
-  def command_types(subject, _language) do
+  def command_types(subject) do
     command_lookup()
     |> Enum.filter(fn {key, _module} -> String.starts_with?(key, "#{subject}$") end)
     |> Map.new(fn {_key, module} ->
-      # TODO: Put in translation stuff
-      {module.name(), module.name()}
+      key = module.name()
+      label = Durandal.translate_internal_name(key)
+
+      {label, key}
     end)
   end
 

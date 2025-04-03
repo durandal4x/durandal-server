@@ -37,7 +37,7 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
               type="select"
               options={@command_types}
               class="d-inline-block"
-              label="Command:"
+              label={gettext("Command")}
             />
           </div>
           <div class="col-md-8">
@@ -47,7 +47,7 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
                 type="in_map"
                 key="position"
                 actual_type="3dvector"
-                label="Position: "
+                label={gettext("Position")}
               />
             </div>
             <div :if={@command_type == "move_to_system_object"}>
@@ -56,7 +56,7 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
                 type="in_map"
                 key="target"
                 actual_type="select"
-                label="Target: "
+                label={gettext("Target")}
                 options={@target_list}
               />
             </div>
@@ -66,7 +66,7 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
                 type="in_map"
                 key="target"
                 actual_type="select"
-                label="Target: "
+                label={gettext("Target")}
                 options={@target_list}
               />
             </div>
@@ -76,7 +76,7 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
                 type="in_map"
                 key="target"
                 actual_type="select"
-                label="Target: "
+                label={gettext("Target")}
                 options={@target_list}
               />
             </div>
@@ -86,7 +86,7 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
                 type="in_map"
                 key="target"
                 actual_type="select"
-                label="Target: "
+                label={gettext("Target")}
                 options={@target_list}
               />
             </div>
@@ -96,7 +96,7 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
                 type="in_map"
                 key="target"
                 actual_type="select"
-                label="Target: "
+                label={gettext("Target")}
                 options={@target_list}
               />
             </div>
@@ -105,7 +105,7 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
           <div class="col-md-2">
             &nbsp;
             <button class="btn btn-primary btn-block" type="submit">
-              <Fontawesome.icon icon="plus" style="regular" /> Add
+              <Fontawesome.icon icon="plus" style="regular" /> {gettext("Add")}
             </button>
           </div>
         </div>
@@ -124,7 +124,7 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
 
     socket
     |> assign(assigns)
-    |> assign(:command_types, CommandLib.command_types("ship", "en-gb"))
+    |> assign(:command_types, CommandLib.command_types("ship"))
     |> assign(:command_type, nil)
     |> assign(:existing_members, existing_members)
     |> assign_form(changeset)

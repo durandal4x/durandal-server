@@ -103,7 +103,7 @@ if Code.ensure_loaded?(Igniter) do
         "lib/#{camel_case(@application)}/#{camel_case(context)}/libs/#{camel_case(singular)}_lib.ex"
 
       file_output =
-        File.read!("priv/templates/library.exs")
+        File.read!("priv/templates/library.eex")
         |> do_template(igniter.args.argv)
 
       Igniter.create_new_file(igniter, path, file_output, on_exists: :warning)
@@ -120,7 +120,7 @@ if Code.ensure_loaded?(Igniter) do
         # TODO: this doesn't correctly check for the presence of this code if the name is long
         # enough it will be wrapped by a format command
         file_output =
-          File.read!("priv/templates/context.exs")
+          File.read!("priv/templates/context.eex")
           |> do_template(igniter.args.argv)
 
         # If we're redoing the file the content will already exist
@@ -132,7 +132,11 @@ if Code.ensure_loaded?(Igniter) do
               file_output
               |> String.replace("\\", "\\\\")
 
-            Regex.replace(~r/\nend$/, existing_content, "\n\n#{formatted_file_output}\nend")
+            Regex.replace(
+              ~r/\nend$/,
+              String.trim(existing_content),
+              "\n\n#{formatted_file_output}\nend"
+            )
           end
 
         Igniter.create_new_file(igniter, path, new_source, on_exists: :warning)
@@ -147,7 +151,7 @@ if Code.ensure_loaded?(Igniter) do
         post = "end"
 
         file_output =
-          File.read!("priv/templates/context.exs")
+          File.read!("priv/templates/context.eex")
           |> do_template(igniter.args.argv)
 
         Igniter.create_new_file(igniter, path, "#{pre}\n#{file_output}\n#{post}",
@@ -230,7 +234,7 @@ if Code.ensure_loaded?(Igniter) do
         end)
 
       file_output =
-        File.read!("priv/templates/schema.exs")
+        File.read!("priv/templates/schema.eex")
         |> String.replace("# SCHEMA DOC FIELDS", doc_fields)
         |> String.replace("# SCHEMA FIELDS", schema_fields)
         |> String.replace("# SCHEMA TYPE FIELDS", schema_type_fields)
@@ -376,7 +380,7 @@ if Code.ensure_loaded?(Igniter) do
         end
 
       file_output =
-        File.read!("priv/templates/queries.exs")
+        File.read!("priv/templates/queries.eex")
         |> String.replace("# WHERE FUNCTIONS", where_functions)
         |> String.replace("# ORDER BY FUNCTIONS", order_by_functions)
         |> String.replace("# PRELOAD FUNCTIONS", preload_output)
@@ -511,7 +515,7 @@ if Code.ensure_loaded?(Igniter) do
         |> Enum.join("\n")
 
       file_output =
-        File.read!("priv/templates/library_test.exs")
+        File.read!("priv/templates/library_test.eex")
         |> String.replace("# VALID ATTRS", valid_attrs)
         |> String.replace("# UPDATE ATTRS", update_attrs)
         |> String.replace("# INVALID ATTRS", invalid_attrs)
@@ -613,7 +617,7 @@ if Code.ensure_loaded?(Igniter) do
         end)
 
       file_output =
-        File.read!("priv/templates/queries_test.exs")
+        File.read!("priv/templates/queries_test.eex")
         |> String.replace("# FIELD TEST", field_test)
         |> String.replace("# ORDER BY TEST", order_by_test)
         |> String.replace("# PRELOAD TESTS", preload_tests)
@@ -735,12 +739,13 @@ if Code.ensure_loaded?(Igniter) do
         existing_content = File.read!(path)
 
         file_output =
-          File.read!("priv/templates/test_fixtures.exs")
+          File.read!("priv/templates/test_fixtures.eex")
           |> String.replace("# OBJECT FIELDS", fixture_fields)
           |> do_template(igniter.args.argv)
           |> String.replace("\\", "\\\\")
 
-        new_source = Regex.replace(~r/\nend$/, existing_content, "\n\n#{file_output}\nend")
+        new_source =
+          Regex.replace(~r/\nend$/, String.trim(existing_content), "\n\n#{file_output}\nend")
 
         Igniter.create_new_file(igniter, path, new_source, on_exists: :warning)
       else
@@ -752,7 +757,7 @@ if Code.ensure_loaded?(Igniter) do
         post = "end"
 
         file_output =
-          File.read!("priv/templates/test_fixtures.exs")
+          File.read!("priv/templates/test_fixtures.eex")
           |> String.replace("# OBJECT FIELDS", fixture_fields)
           |> do_template(igniter.args.argv)
 

@@ -8,7 +8,7 @@
     $Object.changeset(
       %$Object{},
       %{
-        # $OBJECT FIELDS
+        # OBJECT FIELDS
       }
     )
     |> Durandal.Repo.insert!()

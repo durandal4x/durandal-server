@@ -23,6 +23,9 @@ defmodule Durandal.Player.Command do
     field(:ordering, :integer)
     field(:contents, :map)
 
+    field(:completed?, :boolean, default: false)
+    field(:outcome, :map)
+
     belongs_to(:team, Durandal.Player.Team, type: Ecto.UUID)
     belongs_to(:user, Durandal.Account.User, type: Ecto.UUID)
     belongs_to(:universe, Durandal.Game.Universe, type: Ecto.UUID)
@@ -46,7 +49,7 @@ defmodule Durandal.Player.Command do
   #       }
 
   @required_fields ~w(command_type subject_type subject_id contents team_id user_id universe_id)a
-  @optional_fields ~w(ordering)a
+  @optional_fields ~w(ordering completed? outcome)a
 
   @doc false
   @spec changeset(map(), map()) :: Ecto.Changeset.t()

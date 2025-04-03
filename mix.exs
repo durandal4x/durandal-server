@@ -24,6 +24,15 @@ defmodule Durandal.MixProject do
     ]
   end
 
+  def cli() do
+    [
+      preferred_envs: [
+        "test.translations": :test,
+        "test.ci": :test
+      ]
+    ]
+  end
+
   # Configuration for the OTP application.
   #
   # Type `mix help compile.app` for more information.
@@ -91,7 +100,8 @@ defmodule Durandal.MixProject do
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      "test.translations": ["test --raise --only translations"],
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test --raise --exclude translations"],
       "test.reset": ["ecto.drop --quiet", "test.setup"],
       "test.setup": ["ecto.create --quiet", "ecto.migrate --quiet"],
       "assets.setup": ["esbuild.install --if-missing"],

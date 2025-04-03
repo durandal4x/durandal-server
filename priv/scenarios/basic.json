@@ -135,18 +135,26 @@
           "build_progress": 100,
           "health": 100,
           "docked_with": null,
+          "current_transfer": {
+            "origin": [7500, 2500, 0],
+            "to_station": "$station1",
+            "to_system_object": null,
+            "distance": 7905,
+            "progress": 0,
+            "started_tick": 0
+          },
           "commands": [
             {
-              "type": "move_to_station",
+              "type": "transfer_to_station",
               "contents": {
-                "target": "$station1"
+                "station_id": "$station1"
               },
               "user": "@leader1"
             },
             {
               "type": "dock_at_station",
               "contents": {
-                "target": "$station1"
+                "station_id": "$station1"
               },
               "user": "@leader1"
             }
@@ -167,16 +175,16 @@
           "docked_with": null,
           "commands": [
             {
-              "type": "move_to_station",
+              "type": "transfer_to_station",
               "contents": {
-                "target": "$station2"
+                "station_id": "$station2"
               },
               "user": "@leader2"
             },
             {
               "type": "dock_at_station",
               "contents": {
-                "target": "$station2"
+                "station_id": "$station2"
               },
               "user": "@leader2"
             }

@@ -19,6 +19,9 @@ defmodule Durandal do
   @type system_object_type_id :: Durandal.Types.SystemObjectType.id()
   @type ship_type_id :: Durandal.Types.ShipType.id()
 
+  @type positional_entity ::
+          Durandal.Space.Ship.t() | Durandal.Space.Station.t() | Durandal.Space.SystemObject.t()
+
   @type query_args ::
           keyword(
             id: non_neg_integer() | nil,
@@ -62,4 +65,13 @@ defmodule Durandal do
 
   @spec invalidate_cache_on_ok(any, atom, atom) :: any
   defdelegate invalidate_cache_on_ok(value, table, id_field), to: Durandal.CacheClusterServer
+
+  def translate_internal_name(msg, opts \\ []) do
+    # Same as translate_error but for internal names
+    if count = opts[:count] do
+      Gettext.dngettext(DurandalWeb.Gettext, "internals", msg, msg, count, opts)
+    else
+      Gettext.dgettext(DurandalWeb.Gettext, "internals", msg, opts)
+    end
+  end
 end

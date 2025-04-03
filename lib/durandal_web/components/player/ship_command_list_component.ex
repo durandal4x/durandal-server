@@ -10,7 +10,6 @@ defmodule DurandalWeb.Player.ShipCommandListComponent do
     system_object_lookup={@system_object_lookup}
   />
 
-
   <.live_component
     id={:commands}
     module={DurandalWeb.Player.ShipCommandListComponent}
@@ -38,22 +37,22 @@ defmodule DurandalWeb.Player.ShipCommandListComponent do
         </:col>
         <:col :let={command} label="Contents">
           <span :if={command.command_type == "move_to_position"}>
-            Target: <.vector_string value={command.contents["position"]} />
+            {gettext("Target")}: <.vector_string value={command.contents["position"]} />
           </span>
           <span :if={command.command_type == "move_to_system_object"}>
-            Target: {@system_object_lookup[command.contents["target"]].name}
+            {gettext("Target")}: {@system_object_lookup[command.contents["target"]].name}
           </span>
           <span :if={command.command_type == "orbit_system_object"}>
-            Target: {@system_object_lookup[command.contents["target"]].name}
+            {gettext("Target")}: {@system_object_lookup[command.contents["target"]].name}
           </span>
           <span :if={command.command_type == "move_to_station"}>
-            Target: {@station_lookup[command.contents["target"]].name}
+            {gettext("Target")}: {@station_lookup[command.contents["target"]].name}
           </span>
           <span :if={command.command_type == "move_to_ship"}>
-            Target: {@ship_lookup[command.contents["target"]].name}
+            {gettext("Target")}: {@ship_lookup[command.contents["target"]].name}
           </span>
           <span :if={command.command_type == "dock_at_station"}>
-            Target: {@station_lookup[command.contents["target"]].name}
+            {gettext("Target")}: {@station_lookup[command.contents["station_id"]].name}
           </span>
         </:col>
         <:action :let={command}>
@@ -62,7 +61,7 @@ defmodule DurandalWeb.Player.ShipCommandListComponent do
             phx-click="cancel-command"
             phx-value-command_id={command.id}
           >
-            <Fontawesome.icon icon="times" style="regular" /> Cancel
+            <Fontawesome.icon icon="times" style="regular" /> {gettext("Cancel")}
           </span>
         </:action>
       </.table>
@@ -82,7 +81,7 @@ defmodule DurandalWeb.Player.ShipCommandListComponent do
   def update(assigns, socket) do
     command_types =
       "ship"
-      |> CommandLib.command_types("en-gb")
+      |> CommandLib.command_types()
       |> Map.new(fn {a, b} -> {b, a} end)
 
     socket
