@@ -15,4 +15,8 @@ defmodule Durandal.Engine.StationBuildShipCommand do
   def execute(context, _command) do
     context
   end
+
+  def maybe_complete(context, _command) do
+    context
+  end
 end

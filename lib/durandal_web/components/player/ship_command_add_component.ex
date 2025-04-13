@@ -41,52 +41,45 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
             />
           </div>
           <div class="col-md-8">
-            <div :if={@command_type == "move_to_position"}>
+            <%!-- Moving relative to System objects --%>
+            <div :if={@command_type == "transfer_to_system_object"}>
               <.input
                 field={@form[:contents]}
                 type="in_map"
-                key="position"
-                actual_type="3dvector"
-                label={gettext("Position")}
-              />
-            </div>
-            <div :if={@command_type == "move_to_system_object"}>
-              <.input
-                field={@form[:contents]}
-                type="in_map"
-                key="target"
+                key="system_object_id"
                 actual_type="select"
-                label={gettext("Target")}
+                label={gettext("System object")}
                 options={@target_list}
+              />
+              <br />
+
+              <.input
+                field={@form[:contents]}
+                type="in_map"
+                key="orbit_distance"
+                actual_type="number"
+                label={gettext("Orbit distance")}
               />
             </div>
             <div :if={@command_type == "orbit_system_object"}>
               <.input
                 field={@form[:contents]}
                 type="in_map"
-                key="target"
+                key="system_object_id"
                 actual_type="select"
-                label={gettext("Target")}
+                label={gettext("System object")}
                 options={@target_list}
               />
             </div>
-            <div :if={@command_type == "move_to_station"}>
+
+            <%!-- Moving relative to Stations --%>
+            <div :if={@command_type == "transfer_to_station"}>
               <.input
                 field={@form[:contents]}
                 type="in_map"
-                key="target"
+                key="station_id"
                 actual_type="select"
-                label={gettext("Target")}
-                options={@target_list}
-              />
-            </div>
-            <div :if={@command_type == "move_to_ship"}>
-              <.input
-                field={@form[:contents]}
-                type="in_map"
-                key="target"
-                actual_type="select"
-                label={gettext("Target")}
+                label={gettext("Station")}
                 options={@target_list}
               />
             </div>
@@ -94,9 +87,9 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
               <.input
                 field={@form[:contents]}
                 type="in_map"
-                key="target"
+                key="station_id"
                 actual_type="select"
-                label={gettext("Target")}
+                label={gettext("Station")}
                 options={@target_list}
               />
             </div>
@@ -117,6 +110,20 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
   @impl true
   def update(%{command: command} = assigns, socket) do
     changeset = Player.change_command(command)
+    command_types = CommandLib.command_types("ship")
+
+    changeset =
+      if Ecto.Changeset.fetch_field!(changeset, :command_type) != nil do
+        changeset
+      else
+        default_type =
+          command_types
+          |> Map.values()
+          |> Enum.sort()
+          |> hd
+
+        Ecto.Changeset.put_change(changeset, :command_type, default_type)
+      end
 
     existing_members =
       Player.list_commands(where: [team_id: command.team_id], select: [:user_id])
@@ -124,7 +131,7 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
 
     socket
     |> assign(assigns)
-    |> assign(:command_types, CommandLib.command_types("ship"))
+    |> assign(:command_types, command_types)
     |> assign(:command_type, nil)
     |> assign(:existing_members, existing_members)
     |> assign_form(changeset)
@@ -151,18 +158,7 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
     end
   end
 
-  defp do_change_command_type(%{assigns: assigns} = socket, "move_to_position") do
-    changeset =
-      assigns.command
-      |> Player.change_command(%{"contents" => %{"position" => [1, 2, 3]}})
-
-    socket
-    |> assign(:target_list, nil)
-    |> assign(:target_list_type, nil)
-    |> assign_form(changeset)
-  end
-
-  defp do_change_command_type(%{assigns: assigns} = socket, "move_to_system_object") do
+  defp do_change_command_type(%{assigns: assigns} = socket, "transfer_to_system_object") do
     target_list =
       if assigns.target_list_type != "system_object" do
         get_system_object_dropdown(socket)
@@ -172,65 +168,16 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
 
     changeset =
       assigns.command
-      |> Player.change_command(%{"contents" => %{"target" => nil}})
+      |> Player.change_command(%{
+        "contents" => %{
+          "system_object_id" => nil,
+          "orbit_distance" => 1000
+        }
+      })
 
     socket
     |> assign(:target_list, target_list)
     |> assign(:target_list_type, "system_object")
-    |> assign_form(changeset)
-  end
-
-  defp do_change_command_type(%{assigns: assigns} = socket, "orbit_system_object") do
-    target_list =
-      if assigns.target_list_type != "system_object" do
-        get_system_object_dropdown(socket)
-      else
-        assigns.target_list
-      end
-
-    changeset =
-      assigns.command
-      |> Player.change_command(%{"contents" => %{"target" => nil}})
-
-    socket
-    |> assign(:target_list, target_list)
-    |> assign(:target_list_type, "system_object")
-    |> assign_form(changeset)
-  end
-
-  defp do_change_command_type(%{assigns: assigns} = socket, "move_to_station") do
-    target_list =
-      if assigns.target_list_type != "station" do
-        get_station_dropdown(socket)
-      else
-        assigns.target_list
-      end
-
-    changeset =
-      assigns.command
-      |> Player.change_command(%{"contents" => %{"target" => nil}})
-
-    socket
-    |> assign(:target_list, target_list)
-    |> assign(:target_list_type, "station")
-    |> assign_form(changeset)
-  end
-
-  defp do_change_command_type(%{assigns: assigns} = socket, "move_to_ship") do
-    target_list =
-      if assigns.target_list_type != "ship" do
-        get_ship_dropdown(socket)
-      else
-        assigns.target_list
-      end
-
-    changeset =
-      assigns.command
-      |> Player.change_command(%{"contents" => %{"target" => nil}})
-
-    socket
-    |> assign(:target_list, target_list)
-    |> assign(:target_list_type, "ship")
     |> assign_form(changeset)
   end
 
@@ -244,7 +191,7 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
 
     changeset =
       assigns.command
-      |> Player.change_command(%{"contents" => %{"target" => nil}})
+      |> Player.change_command(%{"contents" => %{"station_id" => nil}})
 
     socket
     |> assign(:target_list, target_list)
@@ -252,11 +199,47 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
     |> assign_form(changeset)
   end
 
+  defp do_change_command_type(%{assigns: assigns} = socket, "undock_from_station") do
+    changeset =
+      assigns.command
+      |> Player.change_command(%{"contents" => %{}})
+
+    socket
+    |> assign_form(changeset)
+  end
+
+  defp do_change_command_type(%{assigns: assigns} = socket, "transfer_to_station") do
+    target_list =
+      if assigns.target_list_type != "station" do
+        get_station_dropdown(socket)
+      else
+        assigns.target_list
+      end
+
+    changeset =
+      assigns.command
+      |> Player.change_command(%{"contents" => %{"station_id" => nil}})
+
+    socket
+    |> assign(:target_list, target_list)
+    |> assign(:target_list_type, "station")
+    |> assign_form(changeset)
+  end
+
+  defp do_change_command_type(%{assigns: _assigns} = socket, command_type) do
+    raise "No handler for command type of #{command_type}"
+    socket
+  end
+
   @impl true
   def handle_event("validate", %{"command" => command_params}, socket) do
     parsed_contents =
-      command_params["contents"]
-      |> socket.assigns.command_module.parse()
+      if socket.assigns[:command_module] do
+        command_params["contents"]
+        |> socket.assigns.command_module.parse()
+      else
+        command_params["contents"]
+      end
 
     command_params = Map.put(command_params, "contents", parsed_contents)
 
@@ -287,20 +270,16 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
         "ordering" => ordering
       })
 
-    if socket.assigns.form.source.valid? do
-      case Player.create_command(command_params) do
-        {:ok, command} ->
-          notify_parent({:saved, command})
+    # if socket.assigns.form.source.valid? do
+    case Player.create_command(command_params) do
+      {:ok, command} ->
+        notify_parent({:saved, command})
 
-          socket
-          |> noreply
+        socket
+        |> noreply
 
-        {:error, %Ecto.Changeset{} = changeset} ->
-          {:noreply, assign_form(socket, changeset)}
-      end
-    else
-      socket
-      |> noreply
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign_form(socket, changeset)}
     end
   end
 
@@ -309,18 +288,6 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
-
-  defp get_ship_dropdown(socket) do
-    Space.list_ships(
-      where: [
-        system_id: socket.assigns.subject.system_id,
-        id_not: socket.assigns.subject.id
-      ],
-      order_by: "Name (A-Z)",
-      select: [:id, :name]
-    )
-    |> Enum.map(fn row -> {row.name, row.id} end)
-  end
 
   defp get_system_object_dropdown(socket) do
     Space.list_system_objects(

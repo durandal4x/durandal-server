@@ -39,19 +39,10 @@ defmodule DurandalWeb.Player.StationCommandListComponent do
           )}
         </:col>
         <:col :let={command} label="Contents">
-          <span :if={command.command_type == "move_to_position"}>
-            Target: <.vector_string value={command.contents["position"]} />
-          </span>
-          <span :if={command.command_type == "move_to_system_object"}>
+          <span :if={command.command_type == "transfer_to_system_object"}>
             Target: {@system_object_lookup[command.contents["target"]].name}
           </span>
-          <span :if={command.command_type == "orbit_system_object"}>
-            Target: {@system_object_lookup[command.contents["target"]].name}
-          </span>
-          <span :if={command.command_type == "move_to_station"}>
-            Target: {@station_lookup[command.contents["target"]].name}
-          </span>
-          <span :if={command.command_type == "move_to_station"}>
+          <span :if={command.command_type == "transfer_to_station"}>
             Target: {@station_lookup[command.contents["target"]].name}
           </span>
           <span :if={command.command_type == "build_ship"}>

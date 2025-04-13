@@ -279,6 +279,7 @@ defmodule Durandal.Space.ShipQueries do
       left_join: commands in assoc(ships, :commands),
       on: commands.subject_id == ships.id,
       on: commands.subject_type == "ship",
+      order_by: [asc: commands.ordering],
       preload: [commands: commands]
   end
 
@@ -288,6 +289,7 @@ defmodule Durandal.Space.ShipQueries do
       on: commands.subject_id == ships.id,
       on: commands.subject_type == "ship",
       on: commands.completed? == false,
+      order_by: [asc: commands.ordering],
       preload: [commands: commands]
   end
 end

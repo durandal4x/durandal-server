@@ -20,19 +20,9 @@ msgstr "Adeiladu llong"
 msgid "dock_at_station"
 msgstr "Doc yn yr orsaf"
 
-msgid "move_to_position"
-msgstr ""
-
 #, fuzzy
-msgid "move_to_ship"
-msgstr ""
-
-#, fuzzy
-msgid "move_to_station"
-msgstr ""
-
-msgid "move_to_system_object"
-msgstr ""
+msgid "undock_from_station"
+msgstr "Doc yn yr orsaf"
 
 msgid "orbit_system_object"
 msgstr "Orbit i wrthrych y system"

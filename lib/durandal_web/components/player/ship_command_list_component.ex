@@ -22,7 +22,6 @@ defmodule DurandalWeb.Player.ShipCommandListComponent do
   </.live_component>
   """
   use DurandalWeb, :live_component
-  # alias Durandal.Player
   alias Durandal.Player.CommandLib
 
   @impl true
@@ -36,20 +35,13 @@ defmodule DurandalWeb.Player.ShipCommandListComponent do
           )}
         </:col>
         <:col :let={command} label="Contents">
-          <span :if={command.command_type == "move_to_position"}>
-            {gettext("Target")}: <.vector_string value={command.contents["position"]} />
+          <span :if={command.command_type == "transfer_to_system_object"}>
+            {gettext("Target")}: {@system_object_lookup[command.contents["system_object_id"]].name} &nbsp;&nbsp;&nbsp; {gettext(
+              "Orbit distance"
+            )}: {command.contents["orbit_distance"]}
           </span>
-          <span :if={command.command_type == "move_to_system_object"}>
-            {gettext("Target")}: {@system_object_lookup[command.contents["target"]].name}
-          </span>
-          <span :if={command.command_type == "orbit_system_object"}>
-            {gettext("Target")}: {@system_object_lookup[command.contents["target"]].name}
-          </span>
-          <span :if={command.command_type == "move_to_station"}>
-            {gettext("Target")}: {@station_lookup[command.contents["target"]].name}
-          </span>
-          <span :if={command.command_type == "move_to_ship"}>
-            {gettext("Target")}: {@ship_lookup[command.contents["target"]].name}
+          <span :if={command.command_type == "transfer_to_station"}>
+            {gettext("Target")}: {@station_lookup[command.contents["station_id"]].name}
           </span>
           <span :if={command.command_type == "dock_at_station"}>
             {gettext("Target")}: {@station_lookup[command.contents["station_id"]].name}
@@ -57,7 +49,26 @@ defmodule DurandalWeb.Player.ShipCommandListComponent do
         </:col>
         <:action :let={command}>
           <span
-            class="btn btn-sm btn-warning"
+            class="btn btn-sm btn-info"
+            phx-click="command-lower-order"
+            phx-value-command_id={command.id}
+          >
+            <Fontawesome.icon icon="arrow-up" style="regular" />
+          </span>
+        </:action>
+        <:action :let={command}>
+          <span
+            class="btn btn-sm btn-info"
+            phx-click="command-higher-order"
+            phx-value-command_id={command.id}
+          >
+            <Fontawesome.icon icon="arrow-down" style="regular" />
+          </span>
+        </:action>
+
+        <:action :let={command}>
+          <span
+            class="btn btn-sm btn-warning ms-4"
             phx-click="cancel-command"
             phx-value-command_id={command.id}
           >

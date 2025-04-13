@@ -15,7 +15,7 @@ defmodule DurandalWeb.UserLoginLive do
                 height="42"
                 style="margin-right: 5px;"
                 class="d-inline align-top"
-              /> Sign In
+              /> {gettext "Sign In"}
             </h3>
 
             <.simple_form for={@form} id="login_form" action={~p"/login"} phx-update="ignore">
@@ -30,7 +30,7 @@ defmodule DurandalWeb.UserLoginLive do
               <br />
 
               <.link href={~p"/users/reset_password"} class="float-end" tabindex="-1">
-                Forgot your password?
+                {gettext "Forgot your password?"}
               </.link>
               <.input field={@form[:password]} type="password" label="Password" tabindex="2" required />
               <br />
@@ -51,7 +51,7 @@ defmodule DurandalWeb.UserLoginLive do
                   class="btn btn-primary float-end w-40"
                   tabindex="40"
                 >
-                  Login <span aria-hidden="true">→</span>
+                  {gettext "Login"} <span aria-hidden="true">→</span>
                 </.button>
               </:actions>
             </.simple_form>

@@ -10,8 +10,9 @@ defmodule Durandal.Engine.TickTask do
       actions: %{},
       actions_by_subject_id: %{},
       actions_by_tag: %{},
-      command_changes: %{},
-      command_deletes: [],
+      # command_changes: %{},
+      # command_deletes: [],
+      command_logs: %{},
       systems_logs: %{}
     }
   end

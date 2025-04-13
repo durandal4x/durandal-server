@@ -1,6 +1,7 @@
 defmodule DurandalWeb.NavComponents do
   @moduledoc false
   use Phoenix.Component
+  use Gettext, backend: DurandalWeb.Gettext
 
   import Durandal.Account.AuthLib,
     only: [
@@ -74,14 +75,14 @@ defmodule DurandalWeb.NavComponents do
           </a>
           <!-- Left links -->
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <.top_nav_item text="Home" active={@active == "home"} route={~p"/"} />
+            <.top_nav_item text={gettext "Home"} active={@active == "home"} route={~p"/"} />
 
             <.top_nav_item text="Blog" active={@active == "blog"} route={~p"/blog"} />
-            <.top_nav_item text="Profile" active={@active == "profile"} route={~p"/profile"} />
+            <.top_nav_item text={gettext "Profile"} active={@active == "profile"} route={~p"/profile"} />
 
             <.top_nav_item
               :if={@current_team}
-              text="Team"
+              text={gettext "Team"}
               active={@active == "team"}
               route={~p"/team"}
             />
@@ -90,12 +91,12 @@ defmodule DurandalWeb.NavComponents do
               <.top_nav_item text="Admin" active={@active == "admin"} route={~p"/admin"} />
 
               <.top_nav_item
-                text="Accounts"
+                text={gettext "Accounts"}
                 active={@active == "account"}
                 route={~p"/admin/accounts"}
               />
 
-              <.top_nav_item text="Games" active={@active == "game"} route={~p"/admin/games"} />
+              <.top_nav_item text={gettext "Games"} active={@active == "game"} route={~p"/admin/games"} />
             <% end %>
           </ul>
           <!-- Left links -->
@@ -482,7 +483,7 @@ defmodule DurandalWeb.NavComponents do
       >
         <a class="dropdown-item" href={~p"/profile"}>
           <i class="fa-fw fa-user-circle fa-solid"></i> &nbsp;
-          Profile
+          {gettext "Profile"}
         </a>
 
         <hr style="margin: 0;" />
@@ -499,7 +500,7 @@ defmodule DurandalWeb.NavComponents do
             id="signout-link"
           >
             <i class="fa-regular fa-sign-out fa-fw"></i> &nbsp;
-            Sign out {@current_user.name}
+            {gettext("Sign out %{name}", name: @current_user.name)}
           </a>
         </form>
       </div>

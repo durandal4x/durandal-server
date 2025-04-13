@@ -62,6 +62,16 @@ defmodule Durandal.Player.CommandQueries do
       where: commands.ordering in ^List.wrap(ordering)
   end
 
+  # def _where(query, :ordering_gte, ordering) do
+  #   from commands in query,
+  #     where: commands.ordering >= ^ordering
+  # end
+
+  # def _where(query, :ordering_lte, ordering) do
+  #   from commands in query,
+  #     where: commands.ordering <= ^ordering
+  # end
+
   def _where(query, :contents, contents) do
     from commands in query,
       where: commands.contents in ^List.wrap(contents)
@@ -166,7 +176,8 @@ defmodule Durandal.Player.CommandQueries do
     (Repo.one(query) || -1) + 1
   end
 
-  @spec current_command_for_subject(Durandal.ship_id() | Durandal.station_id()) :: Command.t() | nil
+  @spec current_command_for_subject(Durandal.ship_id() | Durandal.station_id()) ::
+          Command.t() | nil
   def current_command_for_subject(subject_id) do
     query =
       from commands in Command,

@@ -139,24 +139,6 @@ defmodule Durandal.Engine do
     end
   end
 
-  @doc """
-  At the end of the command read cycle all updates will be applied to the relevant commands
-  """
-  @spec defer_update_command(map(), Durandal.Player.Command.t(), map()) :: map()
-  def defer_update_command(context, command_id, content_changes) do
-    v = [content_changes | Map.get(context.command_changes, command_id, [])]
-    put_in(context[:command_changes][command_id], v)
-  end
-
-  @doc """
-  At the end of the command cycle (and before updates are applied) the command will be deleted
-  """
-  @spec defer_delete_command(map(), Durandal.Player.Command.t()) :: map()
-  def defer_delete_command(context, command_id) do
-    new_command_deletes = [command_id | context.command_deletes]
-    %{context | command_deletes: new_command_deletes}
-  end
-
   @spec get_actions_by_tag(map(), atom) :: [map()]
   def get_actions_by_tag(context, tag) do
     Map.get(context.actions_by_tag, tag, [])
@@ -171,6 +153,10 @@ defmodule Durandal.Engine do
     |> Enum.map(fn id ->
       Map.get(context.actions, id)
     end)
+  end
+
+  def add_command_logs(context, command_id, logs) do
+    put_in(context, [:command_logs, command_id], logs)
   end
 
   def add_systems_logs(context, system_id, logs) do

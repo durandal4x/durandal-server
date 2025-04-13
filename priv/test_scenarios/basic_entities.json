@@ -137,7 +137,7 @@
           "docked_with": null,
           "commands": [
             {
-              "type": "move_to_station",
+              "type": "transfer_to_station",
               "contents": {
                 "target": "$station1"
               },
@@ -167,7 +167,7 @@
           "docked_with": null,
           "commands": [
             {
-              "type": "move_to_station",
+              "type": "transfer_to_station",
               "contents": {
                 "target": "$station2"
               },

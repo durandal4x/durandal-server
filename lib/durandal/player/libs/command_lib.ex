@@ -227,4 +227,40 @@ defmodule Durandal.Player.CommandLib do
 
     {:ok, lookup}
   end
+
+  def increase_command_ordering(command_id, subject_id) do
+    commands = list_commands(where: [subject_id: subject_id], order_by: ["Priority"])
+
+    command_of_interest = Enum.find(commands, fn c -> c.id == command_id end)
+
+    next_command =
+      commands
+      |> Enum.filter(fn c -> c.ordering > command_of_interest.ordering end)
+      |> hd_or_nil()
+
+    if next_command do
+      {:ok, _} = update_command(command_of_interest, %{ordering: next_command.ordering})
+      {:ok, _} = update_command(next_command, %{ordering: command_of_interest.ordering})
+    end
+  end
+
+  def decrease_command_ordering(command_id, subject_id) do
+    commands = list_commands(where: [subject_id: subject_id], order_by: ["Priority"])
+
+    command_of_interest = Enum.find(commands, fn c -> c.id == command_id end)
+
+    prev_command =
+      commands
+      |> Enum.filter(fn c -> c.ordering < command_of_interest.ordering end)
+      |> Enum.reverse()
+      |> hd_or_nil()
+
+    if prev_command do
+      {:ok, _} = update_command(command_of_interest, %{ordering: prev_command.ordering})
+      {:ok, _} = update_command(prev_command, %{ordering: command_of_interest.ordering})
+    end
+  end
+
+  defp hd_or_nil([]), do: nil
+  defp hd_or_nil([x | _]), do: x
 end

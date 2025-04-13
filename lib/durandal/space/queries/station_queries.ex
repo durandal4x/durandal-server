@@ -217,11 +217,20 @@ defmodule Durandal.Space.StationQueries do
       preload: [universe: game_universes]
   end
 
-  def _preload(query, :commands) do
+  def _preload(query, :all_commands) do
     from stations in query,
       left_join: commands in assoc(stations, :commands),
       on: commands.subject_id == stations.id,
       on: commands.subject_type == "station",
+      preload: [commands: commands]
+  end
+
+  def _preload(query, :incomplete_commands) do
+    from stations in query,
+      left_join: commands in assoc(stations, :commands),
+      on: commands.subject_id == stations.id,
+      on: commands.subject_type == "station",
+      on: commands.completed? == false,
       preload: [commands: commands]
   end
 end
