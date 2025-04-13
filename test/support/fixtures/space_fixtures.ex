@@ -114,7 +114,8 @@ defmodule Durandal.SpaceFixtures do
         orbit_clockwise: data["orbit_clockwise"] || true,
         orbit_period: data["orbit_period"] || r,
         build_progress: data["build_progress"] || r,
-        health: data["health"] || r
+        health: data["health"] || r,
+        docked_with_id: data["docked_with_id"]
       }
     )
     |> Durandal.Repo.insert!()

@@ -17,16 +17,7 @@ msgstr ""
 msgid "dock_at_station"
 msgstr ""
 
-msgid "move_to_position"
-msgstr ""
-
-msgid "move_to_ship"
-msgstr ""
-
-msgid "move_to_station"
-msgstr ""
-
-msgid "move_to_system_object"
+msgid "undock_from_station"
 msgstr ""
 
 msgid "orbit_system_object"

@@ -3,7 +3,7 @@ defmodule Durandal.Engine.Commands.ShipTransferToStationCommandTest do
   alias Durandal.Engine.ShipTransferToStationCommand
   alias Durandal.Space
 
-  test "perform transfer" do
+  setup do
     universe = start_universe("empty", [])
 
     team = team_fixture(%{"universe_id" => universe.id})
@@ -38,7 +38,7 @@ defmodule Durandal.Engine.Commands.ShipTransferToStationCommandTest do
         "velocity" => [0, 0, 0]
       })
 
-    _command =
+    command =
       command_fixture(%{
         "command_type" => ShipTransferToStationCommand.name(),
         "subject_type" => "ship",
@@ -51,16 +51,21 @@ defmodule Durandal.Engine.Commands.ShipTransferToStationCommandTest do
         }
       })
 
-    ship = Space.get_ship!(ship.id)
+    {:ok,
+     universe: universe, ship: ship, station: station, ship_type: ship_type, command: command}
+  end
+
+  test "perform transfer", %{ship: ship, universe: universe, ship_type: ship_type} do
     assert ship.velocity == [0, 0, 0]
     assert ship.position == [0, 0, 0]
     assert ship.universe_id == universe.id
     assert ship.current_transfer_id == nil
 
     [result] = tick_universe(universe.id)
+
     assert result.systems_logs["Transfer"] == %{
-      ships: %{progress: [ship.id]}
-    }
+             ships: %{progress: [ship.id]}
+           }
 
     ship = Space.get_ship!(ship.id, preload: [:transfer])
     assert ship.velocity == [0, 0, 0]
@@ -88,11 +93,12 @@ defmodule Durandal.Engine.Commands.ShipTransferToStationCommandTest do
     refute ship.current_transfer_id == nil
     assert_in_delta(ship.current_transfer.progress_percentage, 99, 0.1)
 
-    # Now that one extra tick, should no longer be transferring
+    # Now with that one extra tick, should no longer be transferring
     [result] = tick_universe(universe.id)
+
     assert result.systems_logs["Transfer"] == %{
-      ships: %{complete: [ship.id]}
-    }
+             ships: %{complete: [ship.id]}
+           }
 
     ship = Space.get_ship!(ship.id, preload: [:transfer, :incomplete_commands])
     assert ship.velocity == [0, 0, 0]

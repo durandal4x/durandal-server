@@ -21,7 +21,7 @@ defmodule Durandal.Player.Command do
     field(:subject_type, :string)
     field(:subject_id, Ecto.UUID)
     field(:ordering, :integer)
-    field(:contents, :map)
+    field(:contents, :map, default: %{})
 
     field(:completed?, :boolean, default: false)
     field(:outcome, :map)
@@ -48,8 +48,8 @@ defmodule Durandal.Player.Command do
   #         updated_at: DateTime.t()
   #       }
 
-  @required_fields ~w(command_type subject_type subject_id contents team_id user_id universe_id)a
-  @optional_fields ~w(ordering completed? outcome)a
+  @required_fields ~w(command_type subject_type subject_id team_id user_id universe_id)a
+  @optional_fields ~w(contents ordering completed? outcome)a
 
   @doc false
   @spec changeset(map(), map()) :: Ecto.Changeset.t()

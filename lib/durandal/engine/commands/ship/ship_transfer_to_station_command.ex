@@ -45,10 +45,13 @@ defmodule Durandal.Engine.ShipTransferToStationCommand do
       })
 
     # Update the command so it has a reference of the transfer
-    {:ok, _command} = Player.update_command(command, %{outcome: %{
-      "transfer_id" => transfer.id,
-      "start_tick" => context.tick
-    }})
+    {:ok, _command} =
+      Player.update_command(command, %{
+        outcome: %{
+          "transfer_id" => transfer.id,
+          "start_tick" => context.tick
+        }
+      })
 
     {:ok, _ship} = Space.update_ship(ship, %{current_transfer_id: transfer.id})
 
@@ -66,36 +69,30 @@ defmodule Durandal.Engine.ShipTransferToStationCommand do
 
     case transfer do
       %{status: "complete"} ->
-        new_outcome = Map.merge((command.outcome || %{}), %{
-          stop_tick: context.tick
-        })
-        {:ok, command} = Player.update_command(command, %{completed?: true, outcome: new_outcome})
-        {:ok, ship} = Space.update_ship(ship, %{current_transfer_id: nil})
+        new_outcome =
+          Map.merge(command.outcome || %{}, %{
+            stop_tick: context.tick
+          })
 
-        IO.puts ""
-        IO.inspect command, label: "#{__MODULE__}:#{__ENV__.line}"
-        IO.puts ""
+        {:ok, _command} =
+          Player.update_command(command, %{completed?: true, outcome: new_outcome})
 
-        IO.puts ""
-        IO.inspect ship, label: "#{__MODULE__}:#{__ENV__.line}"
-        IO.puts ""
+        station = Space.get_station!(transfer.to_station_id)
+
+        {:ok, _ship} =
+          Space.update_ship(ship, %{
+            current_transfer_id: nil,
+            velocity: station.velocity,
+            orbiting_id: station.orbiting_id,
+            orbit_clockwise: station.orbit_clockwise,
+            orbit_period: station.orbit_period
+          })
+
         context
+
       _ ->
-        IO.puts ""
-        IO.inspect "See me", label: "#{__MODULE__}:#{__ENV__.line}"
-        IO.puts ""
         context
     end
-  end
-
-  # Transfer completed
-  defp do_maybe_complete(context, command, %{current_transfer: %{status: "complete"}} = ship) do
-    IO.puts "maybe_complete #{context.tick}"
-    IO.inspect command, label: "#{__MODULE__}:#{__ENV__.line}"
-    IO.inspect ship.current_transfer, label: "#{__MODULE__}:#{__ENV__.line}"
-    IO.puts ""
-
-    context
   end
 
   defp do_maybe_complete(context, _command, _ship) do

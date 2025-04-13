@@ -20,23 +20,15 @@ msgstr "Build ship"
 msgid "dock_at_station"
 msgstr "Dock at station"
 
-msgid "move_to_position"
-msgstr "Move to position"
-
-msgid "move_to_ship"
-msgstr "Move to ship"
-
-msgid "move_to_station"
-msgstr "Move to station"
-
-msgid "move_to_system_object"
-msgstr "Move to system object"
+#, fuzzy
+msgid "undock_from_station"
+msgstr "Undock from station"
 
 msgid "orbit_system_object"
 msgstr "Orbit system object"
 
 msgid "transfer_to_station"
-msgstr ""
+msgstr "Transfer to station"
 
 msgid "transfer_to_system_object"
-msgstr ""
+msgstr "Transfer to system object"

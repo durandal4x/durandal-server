@@ -16,13 +16,13 @@ defmodule DurandalWeb.UserRegistrationLive do
                 height="42"
                 style="margin-right: 5px;"
                 class="d-inline align-top"
-              /> Register for an account
+              /> {gettext "Register for an account"}
               <:subtitle>
-                Already registered?
+                {gettext "Already registered?"}
                 <.link navigate={~p"/login"} class="font-semibold text-brand hover:underline">
-                  Sign in
+                  {gettext "Sign in"}
                 </.link>
-                to your account now.
+                {gettext "to your account now."}
               </:subtitle>
             </.header>
 
@@ -36,7 +36,7 @@ defmodule DurandalWeb.UserRegistrationLive do
               method="post"
             >
               <.error :if={@check_errors}>
-                Oops, something went wrong! Please check the errors below.
+                {gettext "Oops, something went wrong! Please check the errors below."}
               </.error>
 
               <.input
@@ -61,7 +61,7 @@ defmodule DurandalWeb.UserRegistrationLive do
 
               <:actions>
                 <.button phx-disable-with="Creating account..." class="btn-primary float-end w-40">
-                  Create an account <span aria-hidden="true">→</span>
+                  {gettext "Create an account"} <span aria-hidden="true">→</span>
                 </.button>
               </:actions>
             </.simple_form>

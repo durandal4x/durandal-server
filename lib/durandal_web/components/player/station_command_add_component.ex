@@ -41,16 +41,7 @@ defmodule DurandalWeb.Player.StationCommandAddComponent do
             />
           </div>
           <div class="col-md-8">
-            <div :if={@command_type == "move_to_position"}>
-              <.input
-                field={@form[:contents]}
-                type="in_map"
-                key="position"
-                actual_type="3dvector"
-                label="Position: "
-              />
-            </div>
-            <div :if={@command_type == "move_to_ship"}>
+            <div :if={@command_type == "transfer_to_system_object"}>
               <.input
                 field={@form[:contents]}
                 type="in_map"
@@ -60,27 +51,7 @@ defmodule DurandalWeb.Player.StationCommandAddComponent do
                 options={@target_list}
               />
             </div>
-            <div :if={@command_type == "move_to_system_object"}>
-              <.input
-                field={@form[:contents]}
-                type="in_map"
-                key="target"
-                actual_type="select"
-                label="Target: "
-                options={@target_list}
-              />
-            </div>
-            <div :if={@command_type == "orbit_system_object"}>
-              <.input
-                field={@form[:contents]}
-                type="in_map"
-                key="target"
-                actual_type="select"
-                label="Target: "
-                options={@target_list}
-              />
-            </div>
-            <div :if={@command_type == "move_to_station"}>
+            <div :if={@command_type == "transfer_to_station"}>
               <.input
                 field={@form[:contents]}
                 type="in_map"
@@ -163,18 +134,7 @@ defmodule DurandalWeb.Player.StationCommandAddComponent do
     end
   end
 
-  defp do_change_command_type(%{assigns: assigns} = socket, "move_to_position") do
-    changeset =
-      assigns.command
-      |> Player.change_command(%{"contents" => %{"position" => [1, 2, 3]}})
-
-    socket
-    |> assign(:target_list, nil)
-    |> assign(:target_list_type, nil)
-    |> assign_form(changeset)
-  end
-
-  defp do_change_command_type(%{assigns: assigns} = socket, "move_to_system_object") do
+  defp do_change_command_type(%{assigns: assigns} = socket, "transfer_to_system_object") do
     target_list =
       if assigns.target_list_type != "system_object" do
         get_system_object_dropdown(socket)
@@ -192,43 +152,7 @@ defmodule DurandalWeb.Player.StationCommandAddComponent do
     |> assign_form(changeset)
   end
 
-  defp do_change_command_type(%{assigns: assigns} = socket, "move_to_ship") do
-    target_list =
-      if assigns.target_list_type != "ship" do
-        get_ship_dropdown(socket)
-      else
-        assigns.target_list
-      end
-
-    changeset =
-      assigns.command
-      |> Player.change_command(%{"contents" => %{"target" => nil}})
-
-    socket
-    |> assign(:target_list, target_list)
-    |> assign(:target_list_type, "ship")
-    |> assign_form(changeset)
-  end
-
-  defp do_change_command_type(%{assigns: assigns} = socket, "orbit_system_object") do
-    target_list =
-      if assigns.target_list_type != "system_object" do
-        get_system_object_dropdown(socket)
-      else
-        assigns.target_list
-      end
-
-    changeset =
-      assigns.command
-      |> Player.change_command(%{"contents" => %{"target" => nil}})
-
-    socket
-    |> assign(:target_list, target_list)
-    |> assign(:target_list_type, "system_object")
-    |> assign_form(changeset)
-  end
-
-  defp do_change_command_type(%{assigns: assigns} = socket, "move_to_station") do
+  defp do_change_command_type(%{assigns: assigns} = socket, "transfer_to_station") do
     target_list =
       if assigns.target_list_type != "station" do
         get_station_dropdown(socket)
@@ -339,18 +263,6 @@ defmodule DurandalWeb.Player.StationCommandAddComponent do
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
-
-  defp get_ship_dropdown(socket) do
-    Space.list_ships(
-      where: [
-        system_id: socket.assigns.subject.system_id,
-        id_not: socket.assigns.subject.id
-      ],
-      order_by: "Name (A-Z)",
-      select: [:id, :name]
-    )
-    |> Enum.map(fn row -> {row.name, row.id} end)
-  end
 
   defp get_station_dropdown(socket) do
     Space.list_stations(

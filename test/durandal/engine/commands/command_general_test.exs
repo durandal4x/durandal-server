@@ -4,6 +4,7 @@ defmodule Durandal.Engine.Commands.CommandGeneralTest do
   import DurandalWeb.CoreComponents, only: [translate_internal_name: 1]
 
   # This test ensures each command name has a relevant translation in each locale
+  # TODO: Make this a mix task with arguments to help translators
   @tag :translations
   test "ensure translations exist" do
     locales = Application.get_env(:durandal, DurandalWeb.Gettext)[:locales]

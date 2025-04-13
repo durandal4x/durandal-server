@@ -93,7 +93,8 @@ defmodule DurandalWeb.Team.StationLive do
 
   @spec get_station(Phoenix.Socket.t()) :: Phoenix.Socket.t()
   defp get_station(%{assigns: %{station_id: station_id}} = socket) do
-    station = Space.get_station!(station_id, preload: [:team, :system, :orbiting, :commands])
+    station =
+      Space.get_station!(station_id, preload: [:team, :system, :orbiting, :incomplete_commands])
 
     station_modules =
       Durandal.Space.list_station_modules(

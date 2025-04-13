@@ -39,6 +39,22 @@ defmodule DurandalWeb.Team.ShipLive do
     |> noreply
   end
 
+  def handle_event("command-lower-order", %{"command_id" => id}, socket) do
+    Player.CommandLib.decrease_command_ordering(id, socket.assigns.ship_id)
+
+    socket
+    |> get_ship
+    |> noreply
+  end
+
+  def handle_event("command-higher-order", %{"command_id" => id}, socket) do
+    Player.CommandLib.increase_command_ordering(id, socket.assigns.ship_id)
+
+    socket
+    |> get_ship
+    |> noreply
+  end
+
   @impl true
   # Ship updates
   def handle_info(%{event: :updated_ship, topic: "Durandal.Space.Ship:" <> _} = msg, socket) do
@@ -66,10 +82,9 @@ defmodule DurandalWeb.Team.ShipLive do
       ) do
     # We don't know for certain this will be a uuid, this allows us
     # to only have UUIDs
+
     uuids =
-      [
-        Map.get(cmd.contents, "target", nil)
-      ]
+      Map.values(cmd.contents || %{})
       |> Enum.reject(&is_nil(&1))
       |> Enum.filter(fn maybe_uuid ->
         case Ecto.UUID.cast(maybe_uuid) do
@@ -96,7 +111,14 @@ defmodule DurandalWeb.Team.ShipLive do
   defp get_ship(%{assigns: %{ship_id: ship_id}} = socket) do
     ship =
       Space.get_ship!(ship_id,
-        preload: [:type, :system, :orbiting, :docked_with, :commands, :transfer_with_destination]
+        preload: [
+          :type,
+          :system,
+          :orbiting,
+          :docked_with,
+          :incomplete_commands,
+          :transfer_with_destination
+        ]
       )
 
     socket
@@ -107,14 +129,7 @@ defmodule DurandalWeb.Team.ShipLive do
   defp initial_uuid_lookup(%{assigns: %{ship: ship}} = socket) do
     uuids =
       ship.commands
-      |> Enum.map(fn cmd ->
-        [
-          Map.get(cmd.contents, "target", nil),
-          Map.get(cmd.contents, "station_id", nil),
-          Map.get(cmd.contents, "ship_id", nil),
-          Map.get(cmd.contents, "system_object_id", nil)
-        ]
-      end)
+      |> Enum.map(fn cmd -> Map.values(cmd.contents || %{}) end)
       |> List.flatten()
       |> Enum.reject(&is_nil(&1))
       |> Enum.filter(fn maybe_uuid ->

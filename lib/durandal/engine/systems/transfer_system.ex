@@ -4,7 +4,7 @@ defmodule Durandal.Engine.TransferSystem do
   """
 
   use Durandal.Engine.SystemMacro
-  alias Durandal.{Space, Player}
+  alias Durandal.Space
 
   def name(), do: "Transfer"
   def stage(), do: :transfer

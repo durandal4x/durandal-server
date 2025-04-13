@@ -1,11 +1,11 @@
-defmodule Durandal.Engine.DockAtStationCommand do
+defmodule Durandal.Engine.StationTransferToSystemObjectCommand do
   @moduledoc """
 
   """
   use Durandal.Engine.CommandMacro
 
-  def category(), do: "ship"
-  def name(), do: "dock_at_station"
+  def category(), do: "station"
+  def name(), do: "transfer_to_system_object"
 
   @spec parse(map()) :: {:ok, map()} | {:error, String.t()}
   def parse(params) do
@@ -13,6 +13,10 @@ defmodule Durandal.Engine.DockAtStationCommand do
   end
 
   def execute(context, _command) do
+    context
+  end
+
+  def maybe_complete(context, _command) do
     context
   end
 end

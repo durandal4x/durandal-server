@@ -36,7 +36,6 @@ defmodule Durandal.Engine.CommandMacro do
       @behaviour Durandal.Engine.CommandMacro
       require Logger
       alias Durandal.Engine
-      import Durandal.Engine, only: [defer_update_command: 3, defer_delete_command: 2]
     end
   end
 end
