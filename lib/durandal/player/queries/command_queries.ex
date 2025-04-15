@@ -181,7 +181,7 @@ defmodule Durandal.Player.CommandQueries do
   def current_command_for_subject(subject_id) do
     query =
       from commands in Command,
-        where: commands.subject_id == ^subject_id and commands.completed? == false,
+        where: commands.subject_id == ^subject_id and commands.progress < 100,
         order_by: [asc: commands.ordering],
         limit: 1
 
@@ -193,6 +193,7 @@ defmodule Durandal.Player.CommandQueries do
       from(
         c in Command,
         group_by: [c.subject_id],
+        where: c.progress < 100 or is_nil(c.progress),
         select: %{subject_id: c.subject_id, min_ordering: min(c.ordering)}
       )
 
@@ -201,7 +202,7 @@ defmodule Durandal.Player.CommandQueries do
         t1 in Command,
         join: mo in subquery(min_orderings_cte),
         on: t1.subject_id == mo.subject_id and t1.ordering == mo.min_ordering,
-        where: t1.universe_id == ^universe_id and t1.completed? == false,
+        where: t1.universe_id == ^universe_id and (t1.progress < 100 or is_nil(t1.progress)),
         select: t1
       )
 

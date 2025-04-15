@@ -34,6 +34,38 @@ defmodule Durandal.Repo.Migrations.EngineMigrations do
       timestamps(type: :utc_datetime_usec)
     end
 
+    create_if_not_exists table(:space_station_transfers, primary_key: false) do
+      add(:id, :uuid, primary_key: true, null: false)
+
+      add(:station_id, references(:space_stations, on_delete: :nothing, type: :uuid), type: :uuid)
+
+      add(:origin, {:array, :bigint})
+
+      add(:to_station_id, references(:space_stations, on_delete: :nothing, type: :uuid),
+        type: :uuid
+      )
+
+      add(
+        :to_system_object_id,
+        references(:space_system_objects, on_delete: :nothing, type: :uuid),
+        type: :uuid
+      )
+
+      add(:universe_id, references(:game_universes, on_delete: :nothing, type: :uuid),
+        type: :uuid
+      )
+
+      add(:owner_id, :uuid)
+      add(:distance, :bigint)
+      add(:progress, :bigint)
+      add(:progress_percentage, :float)
+      add(:status, :string)
+      add(:started_tick, :integer)
+      add(:completed_tick, :integer)
+
+      timestamps(type: :utc_datetime_usec)
+    end
+
     alter table(:game_universes) do
       add :last_tick, :utc_datetime_usec
       add :next_tick, :utc_datetime_usec
@@ -77,9 +109,11 @@ defmodule Durandal.Repo.Migrations.EngineMigrations do
       remove(:position)
       add(:position, {:array, :bigint})
 
-      # add(:current_transfer_id, references(:space_station_transfers, on_delete: :nothing, type: :uuid),
-      #   type: :uuid
-      # )
+      add(
+        :current_transfer_id,
+        references(:space_station_transfers, on_delete: :nothing, type: :uuid),
+        type: :uuid
+      )
     end
 
     alter table(:space_system_objects) do
@@ -89,7 +123,7 @@ defmodule Durandal.Repo.Migrations.EngineMigrations do
     end
 
     alter table(:player_commands) do
-      add(:completed?, :boolean)
+      add(:progress, :integer)
       add(:outcome, :jsonb)
     end
   end
@@ -108,6 +142,7 @@ end
 # ALTER TABLE player_team_members DROP COLUMN universe_id;
 
 # ALTER TABLE player_commands DROP COLUMN "completed?";
+# ALTER TABLE player_commands DROP COLUMN progress;
 # ALTER TABLE player_commands DROP COLUMN outcome;
 
 # ALTER TABLE space_ships DROP COLUMN current_transfer_id;

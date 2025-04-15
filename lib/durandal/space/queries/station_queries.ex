@@ -52,6 +52,16 @@ defmodule Durandal.Space.StationQueries do
       where: stations.team_id in ^List.wrap(team_id)
   end
 
+  def _where(query, :transferring?, true) do
+    from stations in query,
+      where: not is_nil(stations.current_transfer_id)
+  end
+
+  def _where(query, :transferring?, false) do
+    from stations in query,
+      where: is_nil(stations.current_transfer_id)
+  end
+
   def _where(query, :universe_id, universe_id) do
     from stations in query,
       where: stations.universe_id in ^List.wrap(universe_id)
@@ -211,6 +221,24 @@ defmodule Durandal.Space.StationQueries do
     )
   end
 
+  def _preload(query, :transfer) do
+    from stations in query,
+      left_join: space_station_transfers in assoc(stations, :current_transfer),
+      preload: [current_transfer: space_station_transfers]
+  end
+
+  def _preload(query, :transfer_with_destination) do
+    from stations in query,
+      left_join: space_station_transfers in assoc(stations, :current_transfer),
+      left_join: space_stations in assoc(space_station_transfers, :to_station),
+      left_join: space_system_objects in assoc(space_station_transfers, :to_system_object),
+      preload: [
+        current_transfer:
+          {space_station_transfers,
+           to_station: space_stations, to_system_object: space_system_objects}
+      ]
+  end
+
   def _preload(query, :universe) do
     from stations in query,
       left_join: game_universes in assoc(stations, :universe),
@@ -230,7 +258,7 @@ defmodule Durandal.Space.StationQueries do
       left_join: commands in assoc(stations, :commands),
       on: commands.subject_id == stations.id,
       on: commands.subject_type == "station",
-      on: commands.completed? == false,
+      on: commands.progress < 100,
       preload: [commands: commands]
   end
 end

@@ -63,9 +63,7 @@ defmodule Durandal.Engine.Commands.ShipTransferToStationCommandTest do
 
     [result] = tick_universe(universe.id)
 
-    assert result.systems_logs["Transfer"] == %{
-             ships: %{progress: [ship.id]}
-           }
+    assert result.systems_logs["Transfer"][:ships] == %{progress: [ship.id]}
 
     ship = Space.get_ship!(ship.id, preload: [:transfer])
     assert ship.velocity == [0, 0, 0]
@@ -96,9 +94,7 @@ defmodule Durandal.Engine.Commands.ShipTransferToStationCommandTest do
     # Now with that one extra tick, should no longer be transferring
     [result] = tick_universe(universe.id)
 
-    assert result.systems_logs["Transfer"] == %{
-             ships: %{complete: [ship.id]}
-           }
+    assert result.systems_logs["Transfer"][:ships] == %{complete: [ship.id]}
 
     ship = Space.get_ship!(ship.id, preload: [:transfer, :incomplete_commands])
     assert ship.velocity == [0, 0, 0]
@@ -110,6 +106,6 @@ defmodule Durandal.Engine.Commands.ShipTransferToStationCommandTest do
 
     # Tick again, we expect no transfers
     [result] = tick_universe(universe.id)
-    assert result.systems_logs["Transfer"] == %{ships: %{}}
+    assert result.systems_logs["Transfer"][:ships] == %{}
   end
 end

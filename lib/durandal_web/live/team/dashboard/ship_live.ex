@@ -5,6 +5,8 @@ defmodule DurandalWeb.Team.ShipLive do
 
   @impl true
   def mount(%{"ship_id" => ship_id}, _session, socket) when is_connected?(socket) do
+    :ok = Durandal.subscribe(Space.ship_topic(ship_id))
+
     socket =
       socket
       |> assign(:ship_id, ship_id)
@@ -57,9 +59,9 @@ defmodule DurandalWeb.Team.ShipLive do
 
   @impl true
   # Ship updates
-  def handle_info(%{event: :updated_ship, topic: "Durandal.Space.Ship:" <> _} = msg, socket) do
+  def handle_info(%{event: :updated_ship, topic: "Durandal.Space.Ship:" <> _} = _msg, socket) do
     socket
-    |> assign(:ship, msg.ship)
+    |> get_ship
     |> noreply
   end
 

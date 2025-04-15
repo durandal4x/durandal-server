@@ -70,6 +70,6 @@ defmodule Durandal.Engine.Commands.ShipUndockFromStationCommandTest do
     assert ship.docked_with_id == nil
 
     command = Player.get_command(command.id)
-    assert command.completed?
+    assert command.progress == 100
   end
 end

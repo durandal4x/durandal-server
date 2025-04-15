@@ -252,14 +252,6 @@ defmodule Durandal.Space.ShipQueries do
           {space_ship_transfers,
            to_station: space_stations, to_system_object: space_system_objects}
       ]
-
-    # query = from universes in Durandal.Game.Universe,
-    #   join: teams in assoc(universes, :teams),
-    #   join: team_members in assoc(teams, :team_members),
-    #     where: team_members.user_id == ^user_id,
-    #   where: team_members.enabled? == true,
-    #   preload: [teams: {teams, team_members: team_members}],
-    #   order_by: [asc: universes.name]
   end
 
   def _preload(query, :docked_with) do
@@ -288,7 +280,7 @@ defmodule Durandal.Space.ShipQueries do
       left_join: commands in assoc(ships, :commands),
       on: commands.subject_id == ships.id,
       on: commands.subject_type == "ship",
-      on: commands.completed? == false,
+      on: commands.progress < 100,
       order_by: [asc: commands.ordering],
       preload: [commands: commands]
   end

@@ -251,6 +251,48 @@ defmodule Durandal.Space do
   @spec change_ship_transfer(ShipTransfer.t(), map) :: Ecto.Changeset.t()
   defdelegate change_ship_transfer(ship_transfer, attrs \\ %{}), to: ShipTransferLib
 
+  # StationTransfers
+  alias Durandal.Space.{StationTransfer, StationTransferLib, StationTransferQueries}
+
+  @doc false
+  @spec station_transfer_topic(Durandal.station_transfer_id()) :: String.t()
+  defdelegate station_transfer_topic(station_transfer_id), to: StationTransferLib, as: :topic
+
+  @doc false
+  @spec station_transfer_query(Durandal.query_args()) :: Ecto.Query.t()
+  defdelegate station_transfer_query(args), to: StationTransferQueries
+
+  @doc section: :station_transfer
+  @spec list_station_transfers(Durandal.query_args()) :: [StationTransfer.t()]
+  defdelegate list_station_transfers(args), to: StationTransferLib
+
+  @doc section: :station_transfer
+  @spec get_station_transfer!(StationTransfer.id(), Durandal.query_args()) :: StationTransfer.t()
+  defdelegate get_station_transfer!(station_transfer_id, query_args \\ []), to: StationTransferLib
+
+  @doc section: :station_transfer
+  @spec get_station_transfer(StationTransfer.id(), Durandal.query_args()) ::
+          StationTransfer.t() | nil
+  defdelegate get_station_transfer(station_transfer_id, query_args \\ []), to: StationTransferLib
+
+  @doc section: :station_transfer
+  @spec create_station_transfer(map) :: {:ok, StationTransfer.t()} | {:error, Ecto.Changeset.t()}
+  defdelegate create_station_transfer(attrs), to: StationTransferLib
+
+  @doc section: :station_transfer
+  @spec update_station_transfer(StationTransfer, map) ::
+          {:ok, StationTransfer.t()} | {:error, Ecto.Changeset.t()}
+  defdelegate update_station_transfer(station_transfer, attrs), to: StationTransferLib
+
+  @doc section: :station_transfer
+  @spec delete_station_transfer(StationTransfer.t()) ::
+          {:ok, StationTransfer.t()} | {:error, Ecto.Changeset.t()}
+  defdelegate delete_station_transfer(station_transfer), to: StationTransferLib
+
+  @doc section: :station_transfer
+  @spec change_station_transfer(StationTransfer.t(), map) :: Ecto.Changeset.t()
+  defdelegate change_station_transfer(station_transfer, attrs \\ %{}), to: StationTransferLib
+
   alias Durandal.Space.TransferLib
 
   @doc section: :transfer

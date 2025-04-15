@@ -135,14 +135,6 @@
           "build_progress": 100,
           "health": 100,
           "docked_with": null,
-          "current_transfer": {
-            "origin": [7500, 2500, 0],
-            "to_station": "$station1",
-            "to_system_object": null,
-            "distance": 7905,
-            "progress": 0,
-            "started_tick": 0
-          },
           "commands": [
             {
               "type": "transfer_to_station",
@@ -227,7 +219,7 @@
       "name": "Fighter",
       "max_health": 100,
       "damage": 10,
-      "acceleration": 5,
+      "acceleration": 200,
       "build_time": 100
     },
     {
@@ -235,7 +227,7 @@
       "name": "Builder",
       "max_health": 300,
       "damage": 1,
-      "acceleration": 3,
+      "acceleration": 80,
       "build_time": 200
     }
   ],
