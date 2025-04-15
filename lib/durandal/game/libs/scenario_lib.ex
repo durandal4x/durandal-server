@@ -333,6 +333,8 @@ defmodule Durandal.Game.ScenarioLib do
       data
       |> Enum.filter(fn ship -> Map.get(ship, "current_transfer") != nil end)
       |> Enum.map(fn %{"current_transfer" => transfer} = ship ->
+        raise "Transfers made this way don't work as the command requires a transfer_id, need a way to create them and the command?"
+
         # TODO: It is possible to have a transfer without a valid end-target, this needs to be checked for
         %{
           id: Ecto.UUID.generate(),
@@ -374,6 +376,7 @@ defmodule Durandal.Game.ScenarioLib do
             team_id: Map.fetch!(ids, ship["team"]),
             user_id: Map.fetch!(ids, command["user"]),
             universe_id: Map.fetch!(ids, "$universe"),
+            progress: 0,
             inserted_at: DateTime.utc_now(),
             updated_at: DateTime.utc_now()
           }
@@ -433,6 +436,7 @@ defmodule Durandal.Game.ScenarioLib do
             team_id: Map.fetch!(ids, station["team"]),
             user_id: Map.fetch!(ids, command["user"]),
             universe_id: Map.fetch!(ids, "$universe"),
+            progress: 0,
             inserted_at: DateTime.utc_now(),
             updated_at: DateTime.utc_now()
           }

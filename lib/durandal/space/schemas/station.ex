@@ -28,7 +28,7 @@ defmodule Durandal.Space.Station do
     field(:orbit_clockwise, :boolean)
     field(:orbit_period, :integer)
 
-    # belongs_to(:current_transfer, Durandal.Space.StationTransfer, type: Ecto.UUID)
+    belongs_to(:current_transfer, Durandal.Space.StationTransfer, type: Ecto.UUID)
 
     has_many(:modules, Durandal.Space.StationModule)
     has_many(:docked_ships, Durandal.Space.Ship, foreign_key: :docked_with_id)
@@ -55,7 +55,7 @@ defmodule Durandal.Space.Station do
   #       }
 
   @required_fields ~w(name team_id system_id position velocity universe_id)a
-  @optional_fields ~w(orbiting_id orbit_clockwise orbit_period)a
+  @optional_fields ~w(orbiting_id orbit_clockwise orbit_period current_transfer_id)a
 
   @doc false
   @spec changeset(map(), map()) :: Ecto.Changeset.t()

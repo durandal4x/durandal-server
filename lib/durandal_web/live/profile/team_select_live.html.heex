@@ -3,7 +3,7 @@
   current_team_id = @current_team && @current_team.id %>
 
   <div :if={current_universe_id == nil} class="alert alert-info mt-2">
-    {gettext "No currently selected team"}
+    {gettext("No currently selected team")}
   </div>
 
   <div :for={%{team: team, universe: universe} = membership <- @memberships} class="mb-4">
@@ -21,18 +21,18 @@
 
     <%= if team.id == current_team_id do %>
       <.button phx-click="cancel-team" class="btn-sm btn-warning">
-        <Fontawesome.icon icon="times" style="regular" /> {gettext "Deactivate team"}
+        <Fontawesome.icon icon="times" style="regular" /> {gettext("Deactivate team")}
       </.button>
 
       <a href={~p"/team/dashboard"} class="btn btn-sm btn-secondary">
         <Fontawesome.icon
           icon={StylingHelper.globe_icon(@user_settings["timezone"], @user_settings["language"])}
           style="regular"
-        /> {gettext "Team dashboard"}
+        /> {gettext("Team dashboard")}
       </a>
     <% else %>
       <.button phx-click="select-team" phx-value-team_id={team.id} class="btn-sm btn-primary">
-        <Fontawesome.icon icon="check" style="solid" /> {gettext "Activate team"}
+        <Fontawesome.icon icon="check" style="solid" /> {gettext("Activate team")}
       </.button>
     <% end %>
 

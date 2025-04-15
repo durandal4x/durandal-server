@@ -77,7 +77,7 @@ defmodule Durandal.Engine.CombatSystem do
       if new_health > 0 do
         {:ok, _} = Durandal.Space.update_ship(target, %{health: new_health})
       else
-        Durandal.Space.delete_ship(target)
+        Durandal.Space.DeleteShipTask.perform(target)
       end
     end
   end

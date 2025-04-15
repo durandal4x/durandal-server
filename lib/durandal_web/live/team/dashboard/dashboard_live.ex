@@ -64,8 +64,10 @@ defmodule DurandalWeb.Team.DashboardLive do
   end
 
   def handle_info(%{event: :updated_ship, topic: "Durandal.Player.Team:" <> _} = msg, socket) do
+    ship = Space.get_extended_ship(msg.ship.id)
+
     socket
-    |> stream_insert(:ships, msg.ship)
+    |> stream_insert(:ships, ship)
     |> noreply
   end
 

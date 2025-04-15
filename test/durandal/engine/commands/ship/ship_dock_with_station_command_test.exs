@@ -71,7 +71,7 @@ defmodule Durandal.Engine.Commands.ShipDockWithStationCommandTest do
     assert ship.docked_with_id == station.id
 
     command = Player.get_command(command.id)
-    assert command.completed?
+    assert command.progress == 100
   end
 
   test "docking failure - wrong team", %{
@@ -96,7 +96,7 @@ defmodule Durandal.Engine.Commands.ShipDockWithStationCommandTest do
     assert ship.docked_with_id == nil
 
     command = Player.get_command(command.id)
-    refute command.completed?
+    assert command.progress == 0
   end
 
   test "docking failure - too far away", %{
@@ -117,6 +117,6 @@ defmodule Durandal.Engine.Commands.ShipDockWithStationCommandTest do
     assert ship.docked_with_id == nil
 
     command = Player.get_command(command.id)
-    refute command.completed?
+    assert command.progress == 0
   end
 end

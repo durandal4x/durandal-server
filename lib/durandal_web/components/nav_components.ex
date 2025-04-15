@@ -75,12 +75,16 @@ defmodule DurandalWeb.NavComponents do
           </a>
           <!-- Left links -->
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <.top_nav_item text={gettext "Home"} active={@active == "home"} route={~p"/"} />
-            <.top_nav_item text={gettext "Profile"} active={@active == "profile"} route={~p"/profile"} />
+            <.top_nav_item text={gettext("Home")} active={@active == "home"} route={~p"/"} />
+            <.top_nav_item
+              text={gettext("Profile")}
+              active={@active == "profile"}
+              route={~p"/profile"}
+            />
 
             <.top_nav_item
               :if={@current_team}
-              text={gettext "Team"}
+              text={gettext("Team")}
               active={@active == "team"}
               route={~p"/team"}
             />
@@ -89,12 +93,16 @@ defmodule DurandalWeb.NavComponents do
               <.top_nav_item text="Admin" active={@active == "admin"} route={~p"/admin"} />
 
               <.top_nav_item
-                text={gettext "Accounts"}
+                text={gettext("Accounts")}
                 active={@active == "account"}
                 route={~p"/admin/accounts"}
               />
 
-              <.top_nav_item text={gettext "Games"} active={@active == "game"} route={~p"/admin/games"} />
+              <.top_nav_item
+                text={gettext("Games")}
+                active={@active == "game"}
+                route={~p"/admin/games"}
+              />
             <% end %>
           </ul>
           <!-- Left links -->
@@ -480,8 +488,7 @@ defmodule DurandalWeb.NavComponents do
         style="min-width: 300px; max-width: 500px;"
       >
         <a class="dropdown-item" href={~p"/profile"}>
-          <i class="fa-fw fa-user-circle fa-solid"></i> &nbsp;
-          {gettext "Profile"}
+          <i class="fa-fw fa-user-circle fa-solid"></i> &nbsp; {gettext("Profile")}
         </a>
 
         <hr style="margin: 0;" />
@@ -497,8 +504,8 @@ defmodule DurandalWeb.NavComponents do
             onclick="$('#signout-form').submit();"
             id="signout-link"
           >
-            <i class="fa-regular fa-sign-out fa-fw"></i> &nbsp;
-            {gettext("Sign out %{name}", name: @current_user.name)}
+            <i class="fa-regular fa-sign-out fa-fw"></i>
+            &nbsp; {gettext("Sign out %{name}", name: @current_user.name)}
           </a>
         </form>
       </div>

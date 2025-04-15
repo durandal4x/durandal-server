@@ -34,6 +34,24 @@ defmodule DurandalWeb.Player.ShipCommandListComponent do
             Map.get(@command_types, command.command_type, "N/A (#{command.command_type})")
           )}
         </:col>
+        <:col :let={command} label="Progress">
+          <div
+            class="progress"
+            role="progressbar"
+            aria-label="Command progress"
+            aria-valuenow={command.progress}
+            aria-valuemin="0"
+            aria-valuemax="100"
+            style="height: 20px;"
+          >
+            <div
+              class="progress-bar progress-bar-striped bg-info"
+              style={"width: #{command.progress}%"}
+            >
+            </div>
+            &nbsp;{command.progress}%
+          </div>
+        </:col>
         <:col :let={command} label="Contents">
           <span :if={command.command_type == "transfer_to_system_object"}>
             {gettext("Target")}: {@system_object_lookup[command.contents["system_object_id"]].name} &nbsp;&nbsp;&nbsp; {gettext(

@@ -45,6 +45,32 @@
                 <td>Velocity</td>
                 <td><.vector_string value={@station.velocity} /></td>
               </tr>
+              <%= cond do %>
+                <% @station.current_transfer_id == nil -> %>
+                  <tr>
+                    <td colspan="2">No transfer</td>
+                  </tr>
+                <% @station.current_transfer.to_station_id -> %>
+                  <tr>
+                    <td>{gettext("Transfer target")}</td>
+                    <td>{@station.current_transfer.to_station.name}</td>
+                  </tr>
+                <% @station.current_transfer.to_system_object_id -> %>
+                  <tr>
+                    <td>{gettext("Transfer target")}</td>
+                    <td>{@station.current_transfer.to_system_object.name}</td>
+                  </tr>
+              <% end %>
+              <%= if @station.current_transfer_id != nil do %>
+                <tr>
+                  <td>{gettext("Progress")}</td>
+                  <td>
+                    {normalize(@station.current_transfer.progress)} / {normalize(
+                      @station.current_transfer.distance
+                    )} ({round(@station.current_transfer.progress_percentage)}%)
+                  </td>
+                </tr>
+              <% end %>
             </tbody>
           </table>
         </div>

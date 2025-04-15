@@ -61,16 +61,6 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
                 label={gettext("Orbit distance")}
               />
             </div>
-            <div :if={@command_type == "orbit_system_object"}>
-              <.input
-                field={@form[:contents]}
-                type="in_map"
-                key="system_object_id"
-                actual_type="select"
-                label={gettext("System object")}
-                options={@target_list}
-              />
-            </div>
 
             <%!-- Moving relative to Stations --%>
             <div :if={@command_type == "transfer_to_station"}>

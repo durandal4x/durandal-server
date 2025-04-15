@@ -5,6 +5,8 @@ defmodule DurandalWeb.Team.StationLive do
 
   @impl true
   def mount(%{"station_id" => station_id}, _session, socket) when is_connected?(socket) do
+    :ok = Durandal.subscribe(Space.station_topic(station_id))
+
     socket =
       socket
       |> assign(:station_id, station_id)
@@ -43,11 +45,27 @@ defmodule DurandalWeb.Team.StationLive do
     |> noreply
   end
 
+  def handle_event("command-lower-order", %{"command_id" => id}, socket) do
+    Player.CommandLib.decrease_command_ordering(id, socket.assigns.ship_id)
+
+    socket
+    |> get_station
+    |> noreply
+  end
+
+  def handle_event("command-higher-order", %{"command_id" => id}, socket) do
+    Player.CommandLib.increase_command_ordering(id, socket.assigns.ship_id)
+
+    socket
+    |> get_station
+    |> noreply
+  end
+
   @impl true
   # Station updates
   def handle_info(%{event: :updated_station, topic: "Durandal.Space.Station:" <> _} = msg, socket) do
     socket
-    |> assign(:station, msg.station)
+    |> get_station
     |> noreply
   end
 
@@ -73,10 +91,7 @@ defmodule DurandalWeb.Team.StationLive do
     # We don't know for certain this will be a uuid, this allows us
     # to only have UUIDs
     uuids =
-      [
-        Map.get(cmd.contents, "target", nil),
-        Map.get(cmd.contents, "type", nil)
-      ]
+      Map.values(cmd.contents || %{})
       |> Enum.reject(&is_nil(&1))
       |> Enum.filter(fn maybe_uuid ->
         case Ecto.UUID.cast(maybe_uuid) do
@@ -94,7 +109,7 @@ defmodule DurandalWeb.Team.StationLive do
   @spec get_station(Phoenix.Socket.t()) :: Phoenix.Socket.t()
   defp get_station(%{assigns: %{station_id: station_id}} = socket) do
     station =
-      Space.get_station!(station_id, preload: [:team, :system, :orbiting, :incomplete_commands])
+      Space.get_station!(station_id, preload: [:team, :system, :orbiting, :incomplete_commands, :transfer_with_destination])
 
     station_modules =
       Durandal.Space.list_station_modules(
@@ -120,15 +135,7 @@ defmodule DurandalWeb.Team.StationLive do
   defp initial_uuid_lookup(%{assigns: %{station: station}} = socket) do
     uuids =
       station.commands
-      |> Enum.map(fn cmd ->
-        [
-          Map.get(cmd.contents, "target", nil),
-          Map.get(cmd.contents, "station_id", nil),
-          Map.get(cmd.contents, "type", nil),
-          Map.get(cmd.contents, "ship_id", nil),
-          Map.get(cmd.contents, "system_object_id", nil)
-        ]
-      end)
+      |> Enum.map(fn cmd -> Map.values(cmd.contents || %{}) end)
       |> List.flatten()
       |> Enum.reject(&is_nil(&1))
       |> Enum.filter(fn maybe_uuid ->

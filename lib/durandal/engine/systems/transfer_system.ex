@@ -13,10 +13,10 @@ defmodule Durandal.Engine.TransferSystem do
   def execute(%{universe_id: universe_id} = context) do
     # For all objects needing to move, move them
     ships = update_ships(universe_id)
-    # update_stations(universe_id)
+    stations = update_stations(universe_id)
     # update_system_objects(universe_id)
 
-    Engine.add_systems_logs(context, name(), %{ships: ships})
+    Engine.add_systems_logs(context, name(), %{ships: ships, stations: stations})
   end
 
   defp update_ships(universe_id) do
@@ -38,7 +38,26 @@ defmodule Durandal.Engine.TransferSystem do
     |> Enum.group_by(fn {key, _} -> key end, fn {_, value} -> value end)
   end
 
-  defp complete_transfer(%{current_transfer: ship_transfer} = ship) do
+  defp update_stations(universe_id) do
+    Space.list_stations(
+      where: [universe_id: universe_id, transferring?: true],
+      preload: [:transfer_with_destination]
+    )
+    |> Enum.map(fn %{current_transfer: station_transfer} = station ->
+      remaining = station_transfer.distance - station_transfer.progress
+
+      if remaining < Space.StationLib.station_acceleration() do
+        complete_transfer(station)
+        {:complete, station.id}
+      else
+        progress_transfer(station)
+        {:progress, station.id}
+      end
+    end)
+    |> Enum.group_by(fn {key, _} -> key end, fn {_, value} -> value end)
+  end
+
+  defp complete_transfer(%Space.Ship{current_transfer: ship_transfer} = ship) do
     destination = ship_transfer.to_station || ship_transfer.to_system_object
 
     {:ok, _} =
@@ -51,7 +70,20 @@ defmodule Durandal.Engine.TransferSystem do
       })
   end
 
-  defp progress_transfer(%{current_transfer: ship_transfer} = ship) do
+  defp complete_transfer(%Space.Station{current_transfer: station_transfer} = station) do
+    destination = station_transfer.to_station || station_transfer.to_system_object
+
+    {:ok, _} =
+      Space.update_station(station, %{position: destination.position, current_transfer_id: nil})
+
+    {:ok, _} =
+      Space.update_station_transfer(station_transfer, %{
+        progress: station_transfer.distance,
+        status: "complete"
+      })
+  end
+
+  defp progress_transfer(%Space.Ship{current_transfer: ship_transfer} = ship) do
     # TODO: Update the ship velocity based on the acceleration and use that instead
     new_progress = ship_transfer.progress + ship.type.acceleration
     progress_percentage = new_progress / ship_transfer.distance
@@ -63,6 +95,20 @@ defmodule Durandal.Engine.TransferSystem do
 
     {:ok, _} = Space.update_ship(ship, %{position: new_position})
     {:ok, _} = Space.update_ship_transfer(ship_transfer, %{progress: new_progress})
+  end
+
+  defp progress_transfer(%Space.Station{current_transfer: station_transfer} = station) do
+    # TODO: Update the station velocity based on the acceleration and use that instead
+    new_progress = station_transfer.progress + Space.StationLib.station_acceleration()
+    progress_percentage = new_progress / station_transfer.distance
+
+    destination = station_transfer.to_station || station_transfer.to_system_object
+
+    new_position =
+      Space.calculate_midpoint(station_transfer.origin, destination.position, progress_percentage)
+
+    {:ok, _} = Space.update_station(station, %{position: new_position})
+    {:ok, _} = Space.update_station_transfer(station_transfer, %{progress: new_progress})
   end
 
   # defp update_system_objects(universe_id) do

@@ -5,6 +5,9 @@ defmodule Durandal.Space.StationLib do
   use DurandalMacros, :library
   alias Durandal.Space.{Station, StationQueries}
 
+  # TODO: Remove the hard-coding of station acceleration
+  def station_acceleration(), do: 100
+
   @spec topic(Durandal.station_id()) :: String.t()
   def topic(station_id), do: "Durandal.Space.Station:#{station_id}"
 
@@ -83,7 +86,7 @@ defmodule Durandal.Space.StationLib do
   @spec get_extended_station(Station.id()) :: Station.t() | nil
   def get_extended_station(station_id) do
     get_station(station_id,
-      preload: [:type, :orbiting, :modules_with_types, :docked_ships_with_types]
+      preload: [:orbiting, :modules_with_types, :transfer]
     )
   end
 

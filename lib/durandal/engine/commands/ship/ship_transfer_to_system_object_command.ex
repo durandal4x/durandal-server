@@ -56,7 +56,12 @@ defmodule Durandal.Engine.ShipTransferToSystemObjectCommand do
         }
       })
 
-    {:ok, _ship} = Space.update_ship(ship, %{current_transfer_id: transfer.id})
+    {:ok, _ship} =
+      Space.update_ship(ship, %{
+        orbiting_id: nil,
+        docked_with_id: nil,
+        current_transfer_id: transfer.id
+      })
 
     context
   end
@@ -68,7 +73,7 @@ defmodule Durandal.Engine.ShipTransferToSystemObjectCommand do
 
   # Not currently in a transfer
   defp do_maybe_complete(context, command, %{current_transfer_id: nil} = ship) do
-    transfer = Space.get_ship_transfer(command.contents["transfer_id"])
+    transfer = Space.get_ship_transfer(command.outcome["transfer_id"])
 
     case transfer do
       %{status: "complete"} ->
@@ -78,7 +83,7 @@ defmodule Durandal.Engine.ShipTransferToSystemObjectCommand do
           })
 
         {:ok, _command} =
-          Player.update_command(command, %{completed?: true, outcome: new_outcome})
+          Player.update_command(command, %{progress: 100, outcome: new_outcome})
 
         {:ok, _ship} = Space.update_ship(ship, %{current_transfer_id: nil})
 
@@ -110,7 +115,18 @@ defmodule Durandal.Engine.ShipTransferToSystemObjectCommand do
     end
   end
 
-  defp do_maybe_complete(context, _command, _ship) do
+  defp do_maybe_complete(context, command, _ship) do
+    if command.outcome["transfer_id"] do
+      # In a transfer, lets update our progress
+      transfer = Space.get_ship_transfer(command.outcome["transfer_id"])
+
+      # It's in progress, we want to update the command to show the new progress
+      {:ok, _command} =
+        Player.update_command(command, %{
+          progress: :math.floor(transfer.progress_percentage) |> round
+        })
+    end
+
     context
   end
 end

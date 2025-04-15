@@ -66,7 +66,7 @@ defmodule Durandal.Engine.ShipDockWithStationCommand do
         stop_tick: context.tick
       })
 
-    {:ok, _command} = Player.update_command(command, %{completed?: true, outcome: new_outcome})
+    {:ok, _command} = Player.update_command(command, %{progress: 100, outcome: new_outcome})
     context
   end
 

@@ -27,6 +27,19 @@ defmodule Durandal.Game.DeleteUniverseTask do
       query = "DELETE FROM player_commands WHERE universe_id = $1"
       {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])
 
+      # Transfers
+      query = "UPDATE space_ships SET current_transfer_id = null WHERE universe_id = $1"
+      {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])
+
+      query = "DELETE FROM space_ship_transfers WHERE universe_id = $1"
+      {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])
+
+      query = "UPDATE space_stations SET current_transfer_id = null WHERE universe_id = $1"
+      {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])
+
+      query = "DELETE FROM space_station_transfers WHERE universe_id = $1"
+      {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])
+
       # Ships
       query = "DELETE FROM space_ships WHERE system_id IN (#{system_query})"
       {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])

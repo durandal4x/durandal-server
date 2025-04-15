@@ -56,6 +56,9 @@
               </tr>
               <%= cond do %>
                 <% @ship.current_transfer_id == nil -> %>
+                  <tr>
+                    <td colspan="2">No transfer</td>
+                  </tr>
                 <% @ship.current_transfer.to_station_id -> %>
                   <tr>
                     <td>{gettext("Transfer target")}</td>
