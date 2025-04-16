@@ -63,7 +63,10 @@ defmodule DurandalWeb.Team.StationLive do
 
   @impl true
   # Station updates
-  def handle_info(%{event: :updated_station, topic: "Durandal.Space.Station:" <> _} = msg, socket) do
+  def handle_info(
+        %{event: :updated_station, topic: "Durandal.Space.Station:" <> _} = _msg,
+        socket
+      ) do
     socket
     |> get_station
     |> noreply
@@ -72,6 +75,24 @@ defmodule DurandalWeb.Team.StationLive do
   def handle_info(%{event: :deleted_station, topic: "Durandal.Space.Station" <> _} = _msg, socket) do
     socket
     |> redirect(to: ~p"/team/dashboard")
+    |> noreply
+  end
+
+  def handle_info(
+        %{event: :created_station_module, topic: "Durandal.Space.Station" <> _} = _msg,
+        socket
+      ) do
+    socket
+    |> get_station
+    |> noreply
+  end
+
+  def handle_info(
+        %{event: :updated_station_module, topic: "Durandal.Space.Station" <> _} = _msg,
+        socket
+      ) do
+    socket
+    |> get_station
     |> noreply
   end
 
@@ -109,7 +130,9 @@ defmodule DurandalWeb.Team.StationLive do
   @spec get_station(Phoenix.Socket.t()) :: Phoenix.Socket.t()
   defp get_station(%{assigns: %{station_id: station_id}} = socket) do
     station =
-      Space.get_station!(station_id, preload: [:team, :system, :orbiting, :incomplete_commands, :transfer_with_destination])
+      Space.get_station!(station_id,
+        preload: [:team, :system, :orbiting, :incomplete_commands, :transfer_with_destination]
+      )
 
     station_modules =
       Durandal.Space.list_station_modules(

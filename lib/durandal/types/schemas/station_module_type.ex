@@ -10,6 +10,7 @@ defmodule Durandal.Types.StationModuleType do
   import Ecto.Changeset
 
   @primary_key {:id, Ecto.UUID, autogenerate: true}
+  @derive {Jason.Encoder, only: ~w(name universe_id build_time max_health damage)a}
   schema "station_module_types" do
     field(:name, :string)
     belongs_to(:universe, Durandal.Game.Universe, type: Ecto.UUID)

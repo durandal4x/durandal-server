@@ -64,14 +64,14 @@
             {
               "type": "build_module",
               "contents": {
-                "type": "$sm-solar"
+                "module_type_id": "$sm-solar"
               },
               "user": "@leader1"
             },
             {
               "type": "build_ship",
               "contents": {
-                "type": "$ship-fighter"
+                "ship_type_id": "$ship-fighter"
               },
               "user": "@leader1"
             }
@@ -107,14 +107,14 @@
             {
               "type": "build_module",
               "contents": {
-                "type": "$sm-solar"
+                "module_type_id": "$sm-solar"
               },
               "user": "@leader2"
             },
             {
               "type": "build_ship",
               "contents": {
-                "type": "$ship-fighter"
+                "ship_type_id": "$ship-fighter"
               },
               "user": "@leader2"
             }
