@@ -167,10 +167,12 @@ defmodule DurandalWeb.Player.StationCommandAddComponent do
 
     changeset =
       assigns.command
-      |> Player.change_command(%{"contents" => %{
-        "system_object_id" => nil,
-        "orbit_distance" => 1000
-      }})
+      |> Player.change_command(%{
+        "contents" => %{
+          "system_object_id" => nil,
+          "orbit_distance" => 1000
+        }
+      })
 
     socket
     |> assign(:target_list, target_list)
