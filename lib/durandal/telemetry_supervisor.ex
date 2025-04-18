@@ -1,4 +1,5 @@
 defmodule Durandal.TelemetrySupervisor do
+  @moduledoc false
   use Supervisor
   import Telemetry.Metrics
 
@@ -13,13 +14,18 @@ defmodule Durandal.TelemetrySupervisor do
       # every 10_000ms. Learn more here: https://hexdocs.pm/telemetry_metrics
       {:telemetry_poller, measurements: periodic_measurements(), period: 10_000}
       # Add reporters as children of your supervision tree.
-      # {Telemetry.Metrics.ConsoleReporter, metrics: metrics()}
+      # {Telemetry.Metrics.ConsoleReporter, metrics: durandal_metrics()}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
   end
 
+  @spec metrics() :: list()
   def metrics do
+    phoenix_metrics() ++ repo_metrics() ++ vm_metrics() ++ durandal_metrics()
+  end
+
+  def phoenix_metrics do
     [
       # Phoenix Metrics
       summary("phoenix.endpoint.start.system_time",
@@ -49,9 +55,12 @@ defmodule Durandal.TelemetrySupervisor do
       summary("phoenix.channel_handled_in.duration",
         tags: [:event],
         unit: {:native, :millisecond}
-      ),
+      )
+    ]
+  end
 
-      # Database Metrics
+  defp repo_metrics() do
+    [
       summary("durandal.repo.query.total_time",
         unit: {:native, :millisecond},
         description: "The sum of the other measurements"
@@ -72,13 +81,24 @@ defmodule Durandal.TelemetrySupervisor do
         unit: {:native, :millisecond},
         description:
           "The time the connection spent waiting before being checked out for the query"
-      ),
+      )
+    ]
+  end
 
-      # VM Metrics
+  defp vm_metrics() do
+    [
       summary("vm.memory.total", unit: {:byte, :kilobyte}),
       summary("vm.total_run_queue_lengths.total"),
       summary("vm.total_run_queue_lengths.cpu"),
       summary("vm.total_run_queue_lengths.io")
+    ]
+  end
+
+  defp durandal_metrics() do
+    [
+      summary("durandal.engine.tick.stop.duration", description: "Ticks duration"),
+      summary("durandal.engine.stage.stop.duration", description: "Stages"),
+      summary("durandal.engine.system.stop.duration", description: "Systems")
     ]
   end
 

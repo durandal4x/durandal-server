@@ -46,6 +46,15 @@
                     </a>
                   </td>
                 </tr>
+                <tr :if={@ship.docked_with}>
+                  <td>Docked with</td>
+                  <td>{@ship.docked_with.name}</td>
+                  <td>
+                    <a href={~p"/admin/stations/#{@ship.docked_with_id}"}>
+                      <Fontawesome.icon icon="link" style="regular" />
+                    </a>
+                  </td>
+                </tr>
                 <tr>
                   <td>Type</td>
                   <td>{@ship.type.name}</td>
@@ -64,11 +73,11 @@
               <tbody>
                 <tr>
                   <td>Position</td>
-                  <td>{format_vector(@ship.position)}</td>
+                  <td><.vector_string value={@ship.position} /></td>
                 </tr>
                 <tr>
                   <td>Velocity</td>
-                  <td>{format_vector(@ship.velocity)}</td>
+                  <td><.vector_string value={@ship.velocity} /></td>
                 </tr>
                 <tr>
                   <td>Health</td>
@@ -91,7 +100,10 @@
                 </tr>
                 <tr>
                   <td>Distance</td>
-                  <td>{@ship.orbit_distance}</td>
+                  <td>
+                    {Durandal.Engine.Maths.distance(@ship.orbiting.position, @ship.position)
+                    |> abs}
+                  </td>
                 </tr>
                 <tr>
                   <td>Clockwise?</td>

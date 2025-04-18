@@ -1,7 +1,7 @@
 defmodule Durandal.UniverseLibTest do
   @moduledoc false
-  alias Durandal.Game.Universe
   alias Durandal.Game
+  alias Durandal.Game.{Universe}
   use Durandal.DataCase, async: true
 
   alias Durandal.GameFixtures
@@ -9,21 +9,33 @@ defmodule Durandal.UniverseLibTest do
   defp valid_attrs do
     %{
       name: "some name",
-      active?: true
+      active?: true,
+      last_tick: ~U[2021-01-01 00:00:00Z],
+      next_tick: ~U[2021-01-01 00:00:00Z],
+      tick_schedule: "5 hours",
+      tick_seconds: 18000
     }
   end
 
   defp update_attrs do
     %{
       name: "some updated name",
-      active?: false
+      active?: false,
+      last_tick: ~U[2025-05-05 00:00:00Z],
+      next_tick: ~U[2025-05-05 00:00:00Z],
+      tick_schedule: "5 minutes",
+      tick_seconds: 24000
     }
   end
 
   defp invalid_attrs do
     %{
       name: nil,
-      active?: nil
+      active?: nil,
+      last_tick: nil,
+      next_tick: nil,
+      tick_schedule: nil,
+      tick_seconds: nil
     }
   end
 
@@ -93,6 +105,24 @@ defmodule Durandal.UniverseLibTest do
     test "change_universe/1 returns a universe changeset" do
       universe = GameFixtures.universe_fixture()
       assert %Ecto.Changeset{} = Game.change_universe(universe)
+    end
+  end
+
+  describe "schema functions" do
+    test "parse_schedule_string/1" do
+      [
+        {"5 hours", 18000},
+        {"5 minutes", 300},
+        {"5 seconds", 5},
+        {"7 seconds 3 minutes and 1 hour", 3787}
+      ]
+      |> Enum.each(fn {input_string, expected_output} ->
+        result = Universe.parse_schedule_string(input_string)
+
+        assert result == expected_output,
+          message:
+            "Expected #{inspect(expected_output)}, got #{inspect(result)} for input string '#{input_string}'"
+      end)
     end
   end
 end

@@ -67,6 +67,25 @@ defmodule Durandal.Space.ShipLib do
   end
 
   @doc """
+  Gets a single ship complete with relevant preloads in place.
+
+  Returns nil if the Ship does not exist.
+
+  ## Examples
+
+      iex> get_ship("005f5e0b-ee46-4c07-9f81-2d565c2ade30")
+      %Ship{}
+
+      iex> get_ship("c11a487b-16a2-4806-bd7a-dcf110d16b61")
+      nil
+
+  """
+  @spec get_extended_ship(Ship.id()) :: Ship.t() | nil
+  def get_extended_ship(ship_id) do
+    get_ship(ship_id, preload: [:type, :orbiting, :transfer, :docked_with])
+  end
+
+  @doc """
   Creates a ship.
 
   ## Examples

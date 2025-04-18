@@ -45,6 +45,11 @@ defmodule Durandal.Player.TeamMemberQueries do
     )
   end
 
+  def _where(query, :enabled?, enabled?) do
+    from team_members in query,
+      where: team_members.enabled? in ^List.wrap(enabled?)
+  end
+
   def _where(query, :team_id, team_id) do
     from team_members in query,
       where: team_members.team_id in ^List.wrap(team_id)
@@ -53,6 +58,11 @@ defmodule Durandal.Player.TeamMemberQueries do
   def _where(query, :user_id, user_id) do
     from team_members in query,
       where: team_members.user_id in ^List.wrap(user_id)
+  end
+
+  def _where(query, :universe_id, universe_id) do
+    from team_members in query,
+      where: team_members.universe_id in ^List.wrap(universe_id)
   end
 
   def _where(query, :inserted_after, timestamp) do
@@ -88,6 +98,16 @@ defmodule Durandal.Player.TeamMemberQueries do
 
   @spec _order_by(Ecto.Query.t(), any()) :: Ecto.Query.t()
 
+  def _order_by(query, "Enabled") do
+    from team_members in query,
+      order_by: [desc: team_members.enabled?]
+  end
+
+  def _order_by(query, "Disabled") do
+    from team_members in query,
+      order_by: [asc: team_members.enabled?]
+  end
+
   def _order_by(query, "Newest first") do
     from team_members in query,
       order_by: [desc: team_members.inserted_at]
@@ -119,5 +139,33 @@ defmodule Durandal.Player.TeamMemberQueries do
     from team_members in query,
       left_join: account_users in assoc(team_members, :user),
       preload: [user: account_users]
+  end
+
+  def count_team_members(team_id, args \\ []) do
+    query = team_member_query([team_id: team_id] ++ args)
+    Repo.aggregate(query, :count)
+  end
+
+  def list_all_enabled_team_memberships(nil), do: []
+
+  def list_all_enabled_team_memberships(user_id) do
+    # query = from universes in Durandal.Game.Universe,
+    #   join: teams in assoc(universes, :teams),
+    #   join: team_members in assoc(teams, :team_members),
+    #     where: team_members.user_id == ^user_id,
+    #   where: team_members.enabled? == true,
+    #   preload: [teams: {teams, team_members: team_members}],
+    #   order_by: [asc: universes.name]
+
+    query =
+      from team_members in TeamMember,
+        join: teams in assoc(team_members, :team),
+        join: universes in assoc(team_members, :universe),
+        where: team_members.user_id == ^user_id,
+        where: team_members.enabled? == true,
+        preload: [team: teams, universe: universes],
+        order_by: [asc: universes.name]
+
+    Repo.all(query)
   end
 end

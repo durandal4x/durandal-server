@@ -1,7 +1,7 @@
 defmodule Durandal.ServerSettingTest do
   @moduledoc false
   alias Durandal.Settings.ServerSetting
-  use Durandal.DataCase, async: false
+  use Durandal.DataCase, async: true
 
   alias Durandal.Settings
   alias Durandal.SettingsFixtures

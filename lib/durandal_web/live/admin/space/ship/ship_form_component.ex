@@ -1,7 +1,6 @@
 defmodule DurandalWeb.Space.ShipFormComponent do
   @moduledoc false
   use DurandalWeb, :live_component
-  # import Durandal.Helper.ColourHelper, only: [rgba_css: 2]
 
   alias Durandal.Space
 

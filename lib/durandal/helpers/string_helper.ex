@@ -10,29 +10,33 @@ defmodule Durandal.Helper.StringHelper do
     > "10,000.5"
 
   """
-  def format_number(nil), do: nil
-  def format_number(%Decimal{} = v), do: v |> Decimal.to_string() |> format_number
-  def format_number(v) when v < 1000, do: v
+  def format_number(x), do: format_number(x, ",")
 
-  def format_number(v) when is_integer(v) do
+  def format_number(nil, _), do: nil
+
+  def format_number(%Decimal{} = v, separator),
+    do: v |> Decimal.to_string() |> format_number(separator)
+
+  def format_number(v, _) when v < 1000, do: v
+
+  def format_number(v, separator) when is_integer(v) do
     v
     |> Integer.to_string()
-    |> format_number
+    |> format_number(separator)
   end
 
-  def format_number(v) when is_float(v) do
+  def format_number(v, separator) when is_float(v) do
     v
     |> Float.to_string()
-    |> format_number
+    |> format_number(separator)
   end
 
-  def format_number(v) do
+  def format_number(v, separator) do
     v
-    |> String.replace(~r/[0-9](?=(?:[0-9]{3})+(?![0-9]))/, "\\0,")
+    |> String.replace(~r/[0-9](?=(?:[0-9]{3})+(?![0-9]))/, "\\0#{separator}")
   end
 
-  def format_vector(v) do
-    v
-    |> Enum.map_join(" - ", &format_number/1)
+  def md5(s) do
+    :crypto.hash(:md5, s) |> Base.encode16()
   end
 end

@@ -5,6 +5,8 @@ defmodule Durandal.Space.StationModuleLib do
   use DurandalMacros, :library
   alias Durandal.Space.{StationModule, StationModuleQueries}
 
+  def rate_of_progress(), do: 10
+
   @spec topic(Durandal.station_module_id()) :: String.t()
   def topic(station_module_id), do: "Durandal.Space.StationModule:#{station_module_id}"
 

@@ -33,22 +33,30 @@ defmodule Durandal.Application do
       Durandal.Caches.ServerSettingCache,
       Durandal.Caches.LoginCountCache,
       Durandal.Caches.TypeLookupCache,
+      Durandal.Caches.MetadataCache,
+      Durandal.Caches.UserCache,
+      Durandal.Caches.GameCache,
 
-      # Cachex caches
-      add_cache(:user_token_identifier_cache, ttl: :timer.minutes(5)),
-      add_cache(:durandal_metadata),
-      add_cache(:one_time_login_code, ttl: :timer.seconds(30)),
-      add_cache(:user_by_user_id_cache, ttl: :timer.minutes(5)),
-
-      # Login rate limiting
-      add_cache(:login_count_ip, ttl: :timer.minutes(5)),
-      add_cache(:login_count_user, ttl: :timer.minutes(5))
+      # Game
+      {DynamicSupervisor, strategy: :one_for_one, name: Durandal.GameSupervisor},
+      {Horde.Registry, [keys: :unique, members: :auto, name: Durandal.GameRegistry]},
+      {Horde.Registry, [keys: :unique, members: :auto, name: Durandal.UniverseServerRegistry]}
     ]
+
+    # Some stuff we don't want running during tests (unless we specifically want it)
+    non_test_children =
+      if Application.get_env(:durandal, :test) do
+        []
+      else
+        [
+          {Durandal.Game.WatcherServer, name: Durandal.Game.WatcherServer}
+        ]
+      end
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Durandal.Supervisor]
-    start_result = Supervisor.start_link(children, opts)
+    start_result = Supervisor.start_link(children ++ non_test_children, opts)
 
     Logger.info("Durandal.Supervisor start result: #{Kernel.inspect(start_result)}")
 
@@ -61,21 +69,9 @@ defmodule Durandal.Application do
 
   defp startup() do
     Durandal.System.StartupLib.perform()
+    Durandal.Engine.build_system_lookup()
+    Durandal.Player.CommandLib.build_command_lookup()
     :ok
-  end
-
-  @spec add_cache(atom) :: map()
-  @spec add_cache(atom, list) :: map()
-  defp add_cache(name, opts \\ []) when is_atom(name) do
-    %{
-      id: name,
-      start:
-        {Cachex, :start_link,
-         [
-           name,
-           opts
-         ]}
-    }
   end
 
   # Tell Phoenix to update the endpoint configuration

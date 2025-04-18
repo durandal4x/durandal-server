@@ -7,7 +7,7 @@ defmodule DurandalWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_durandal_key",
-    signing_salt: "8Oe2uwhE",
+    signing_salt: "8Oe2uWHE",
     same_site: "Lax"
   ]
 

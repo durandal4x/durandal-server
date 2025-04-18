@@ -17,7 +17,6 @@ defmodule Durandal.StationLibTest do
       position: [123, 456],
       velocity: [123, 456],
       orbiting_id: nil,
-      orbit_distance: 123,
       orbit_clockwise: true,
       orbit_period: 123
     }
@@ -32,7 +31,6 @@ defmodule Durandal.StationLibTest do
       position: [123, 456, 789],
       velocity: [123, 456, 789],
       orbiting_id: nil,
-      orbit_distance: 456,
       orbit_clockwise: false,
       orbit_period: 456
     }
@@ -47,7 +45,6 @@ defmodule Durandal.StationLibTest do
       position: nil,
       velocity: nil,
       orbiting_id: nil,
-      orbit_distance: nil,
       orbit_clockwise: nil,
       orbit_period: nil
     }
@@ -83,7 +80,6 @@ defmodule Durandal.StationLibTest do
       assert station.name == "some name"
       assert station.position == [123, 456]
       assert station.velocity == [123, 456]
-      assert station.orbit_distance == 123
       assert station.orbit_period == 123
     end
 
@@ -100,7 +96,6 @@ defmodule Durandal.StationLibTest do
       assert station.name == "some updated name"
       assert station.position == [123, 456, 789]
       assert station.velocity == [123, 456, 789]
-      assert station.orbit_distance == 456
       assert station.orbit_period == 456
     end
 

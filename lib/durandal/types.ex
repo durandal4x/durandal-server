@@ -122,6 +122,10 @@ defmodule Durandal.Types do
   defdelegate get_ship_type(ship_type_id, query_args \\ []), to: ShipTypeLib
 
   @doc section: :ship_type
+  @spec get_ship_type_by_id(ShipType.id()) :: ShipType.t() | nil
+  defdelegate get_ship_type_by_id(ship_type_id), to: ShipTypeLib
+
+  @doc section: :ship_type
   @spec create_ship_type(map) :: {:ok, ShipType.t()} | {:error, Ecto.Changeset.t()}
   defdelegate create_ship_type(attrs), to: ShipTypeLib
 

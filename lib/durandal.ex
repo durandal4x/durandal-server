@@ -12,7 +12,15 @@ defmodule Durandal do
   @type system_id :: Durandal.Space.System.id()
   @type system_object_id :: Durandal.Space.SystemObject.id()
   @type station_id :: Durandal.Space.Station.id()
+  @type station_module_id :: Durandal.Space.StationModule.id()
   @type ship_id :: Durandal.Space.Ship.id()
+
+  @type station_module_type_id :: Durandal.Types.StationModuleType.id()
+  @type system_object_type_id :: Durandal.Types.SystemObjectType.id()
+  @type ship_type_id :: Durandal.Types.ShipType.id()
+
+  @type positional_entity ::
+          Durandal.Space.Ship.t() | Durandal.Space.Station.t() | Durandal.Space.SystemObject.t()
 
   @type query_args ::
           keyword(
@@ -51,4 +59,19 @@ defmodule Durandal do
   # Cluster cache delegation
   @spec invalidate_cache(atom, any) :: :ok
   defdelegate invalidate_cache(table, key_or_keys), to: Durandal.CacheClusterServer
+
+  @spec invalidate_cache_on_ok(any, atom) :: any
+  defdelegate invalidate_cache_on_ok(value, table), to: Durandal.CacheClusterServer
+
+  @spec invalidate_cache_on_ok(any, atom, atom) :: any
+  defdelegate invalidate_cache_on_ok(value, table, id_field), to: Durandal.CacheClusterServer
+
+  def translate_internal_name(msg, opts \\ []) do
+    # Same as translate_error but for internal names
+    if count = opts[:count] do
+      Gettext.dngettext(DurandalWeb.Gettext, "internals", msg, msg, count, opts)
+    else
+      Gettext.dgettext(DurandalWeb.Gettext, "internals", msg, opts)
+    end
+  end
 end

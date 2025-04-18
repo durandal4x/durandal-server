@@ -189,7 +189,7 @@ defmodule Durandal.Account.UserLib do
   def update_user(%User{} = user, attrs) do
     User.changeset(user, attrs, :full)
     |> Durandal.Repo.update()
-    |> maybe_decache_user()
+    |> Durandal.invalidate_cache_on_ok(:user_by_user_id_cache)
   end
 
   @spec update_user_admin_set_password(User.t(), map) ::
@@ -197,17 +197,8 @@ defmodule Durandal.Account.UserLib do
   def update_user_admin_set_password(%User{} = user, attrs) do
     User.changeset(user, attrs, :admin_set_password)
     |> Durandal.Repo.update()
-    |> maybe_decache_user()
+    |> Durandal.invalidate_cache_on_ok(:user_by_user_id_cache)
   end
-
-  # Clears the cache for a user after a successful database option
-  @spec maybe_decache_user(any()) :: any()
-  defp maybe_decache_user({:ok, user}) do
-    Durandal.invalidate_cache(:user_by_user_id_cache, user.id)
-    {:ok, user}
-  end
-
-  defp maybe_decache_user(v), do: v
 
   @doc """
   Updates a user's password.
@@ -225,7 +216,7 @@ defmodule Durandal.Account.UserLib do
   def update_password(%User{} = user, attrs) do
     User.changeset(user, attrs, :change_password)
     |> Durandal.Repo.update()
-    |> maybe_decache_user()
+    |> Durandal.invalidate_cache_on_ok(:user_by_user_id_cache)
   end
 
   @doc """
@@ -244,7 +235,7 @@ defmodule Durandal.Account.UserLib do
   def update_limited_user(%User{} = user, attrs) do
     User.changeset(user, attrs, :user_form)
     |> Durandal.Repo.update()
-    |> maybe_decache_user()
+    |> Durandal.invalidate_cache_on_ok(:user_by_user_id_cache)
   end
 
   @doc """
@@ -262,7 +253,7 @@ defmodule Durandal.Account.UserLib do
   @spec delete_user(User.t()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   def delete_user(%User{} = user) do
     Durandal.Repo.delete(user)
-    |> maybe_decache_user()
+    |> Durandal.invalidate_cache_on_ok(:user_by_user_id_cache)
   end
 
   @doc """
@@ -299,8 +290,8 @@ defmodule Durandal.Account.UserLib do
   def register_failed_login(nil, _, _), do: :ok
 
   def register_failed_login(user_id, ip, reason) do
-    Cachex.incr(:ts_login_count_ip, ip)
-    Cachex.incr(:ts_login_count_user, user_id)
+    Cachex.incr(:login_count_ip, ip)
+    Cachex.incr(:login_count_user, user_id)
 
     :telemetry.execute(
       [:durandal, :user, :failed_login],

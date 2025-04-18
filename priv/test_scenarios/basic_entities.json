@@ -1,0 +1,291 @@
+{
+  "systems": [
+    {
+      "id": "$solar-system",
+      "name": "Solar System",
+      "type": "system",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "size": 1000,
+      "objects": [
+        {
+          "id": "$sun",
+          "name": "Sun",
+          "type": "$so-star",
+          
+          "position": [0, 0, 0],
+          "velocity": [0, 0, 0],
+          
+          "orbiting": null,
+          "orbit_clockwise": true,
+          "orbit_period": 0
+        },
+        {
+          "id": "$earth",
+          "name": "Earth",
+          "type": "$so-planet",
+          "position": [10000, 0, 0],
+          "velocity": [0, 0, 0],
+          "orbiting": "$sun",
+          "orbit_clockwise": true,
+          "orbit_period": 3600
+        }
+      ],
+      "stations": [
+        {
+          "id": "$station1",
+          "name": "Station 1",
+          "team": "$team1",
+          "position": [12500, 0, 0],
+          "velocity": [0, 0, 0],
+          "orbiting": "$earth",
+          "orbit_clockwise": true,
+          "orbit_period": 900,
+          "modules": [
+            {
+              "type": "$sm-solar",
+              "build_progress": 100,
+              "health": 100
+            },
+            {
+              "type": "$sm-shipyard",
+              "build_progress": 100,
+              "health": 100
+            },
+            {
+              "type": "$sm-laser-turret",
+              "build_progress": 100,
+              "health": 100
+            }
+          ],
+          "commands": [
+            {
+              "type": "build_module",
+              "contents": {
+                "type": "$sm-solar"
+              },
+              "user": "@leader1"
+            },
+            {
+              "type": "build_ship",
+              "contents": {
+                "type": "$ship-fighter"
+              },
+              "user": "@leader1"
+            }
+          ]
+        },
+        {
+          "id": "$station2",
+          "name": "Station 2",
+          "team": "$team2",
+          "position": [7500, 0, 0],
+          "velocity": [0, 0, 0],
+          "orbiting": "$earth",
+          "orbit_clockwise": false,
+          "orbit_period": 900,
+          "modules": [
+            {
+              "type": "$sm-solar",
+              "build_progress": 100,
+              "health": 100
+            },
+            {
+              "type": "$sm-shipyard",
+              "build_progress": 100,
+              "health": 100
+            },
+            {
+              "type": "$sm-laser-turret",
+              "build_progress": 100,
+              "health": 100
+            }
+          ],
+          "commands": [
+            {
+              "type": "build_module",
+              "contents": {
+                "type": "$sm-solar"
+              },
+              "user": "@leader2"
+            },
+            {
+              "type": "build_ship",
+              "contents": {
+                "type": "$ship-fighter"
+              },
+              "user": "@leader2"
+            }
+          ]
+        }
+      ],
+      "ships": [
+        {
+          "id": "$team1fighter",
+          "name": "Team 1 fighter",
+          "team": "$team1",
+          "type": "$ship-fighter",
+          "position": [7500, 2500, 0],
+          "velocity": [-10, 0, 0],
+          "orbiting": null,
+          "orbit_clockwise": null,
+          "orbit_period": null,
+          "build_progress": 100,
+          "health": 100,
+          "docked_with": null,
+          "commands": [
+            {
+              "type": "transfer_to_station",
+              "contents": {
+                "target": "$station1"
+              },
+              "user": "@leader1"
+            },
+            {
+              "type": "dock_at_station",
+              "contents": {
+                "target": "$station1"
+              },
+              "user": "@leader1"
+            }
+          ]
+        },
+        {
+          "id": "$team2fighter",
+          "name": "Team 2 fighter",
+          "team": "$team2",
+          "type": "$ship-fighter",
+          "position": [7000, 2500, 0],
+          "velocity": [10, 0, 0],
+          "orbiting": null,
+          "orbit_clockwise": null,
+          "orbit_period": null,
+          "build_progress": 100,
+          "health": 100,
+          "docked_with": null,
+          "commands": [
+            {
+              "type": "transfer_to_station",
+              "contents": {
+                "target": "$station2"
+              },
+              "user": "@leader2"
+            },
+            {
+              "type": "dock_at_station",
+              "contents": {
+                "target": "$station2"
+              },
+              "user": "@leader2"
+            }
+          ]
+        },
+        {
+          "id": "$team1builder",
+          "name": "Team 1 builder",
+          "team": "$team1",
+          "type": "$ship-builder",
+          "position": [12600, 0, 0],
+          "velocity": [0, 0, 0],
+          "orbiting": null,
+          "orbit_clockwise": null,
+          "orbit_period": null,
+          "build_progress": 100,
+          "health": 100,
+          "docked_with": "$station1"
+        },
+        {
+          "id": "$team2builder",
+          "name": "Team 2 builder",
+          "team": "$team2",
+          "type": "$ship-builder",
+          "position": [-7500, 2500, 0],
+          "velocity": [0, 0, 0],
+          "orbiting": null,
+          "orbit_clockwise": null,
+          "orbit_period": null,
+          "build_progress": 100,
+          "health": 100,
+          "docked_with": "$station2"
+        }
+      ]
+    }
+  ],
+  "ship_types": [
+    {
+      "id": "$ship-fighter",
+      "name": "Fighter",
+      "max_health": 100,
+      "damage": 10,
+      "acceleration": 5,
+      "build_time": 100
+    },
+    {
+      "id": "$ship-builder",
+      "name": "Builder",
+      "max_health": 300,
+      "damage": 1,
+      "acceleration": 3,
+      "build_time": 200
+    }
+  ],
+  "station_module_types": [
+    {
+      "id": "$sm-solar",
+      "name": "Solar panels",
+      "max_health": 100,
+      "damage": 0,
+      "build_time": 100
+    },
+    {
+      "id": "$sm-shipyard",
+      "name": "Shipyard",
+      "max_health": 100,
+      "damage": 0,
+      "build_time": 100
+    },
+    {
+      "id": "$sm-laser-turret",
+      "name": "Laser turret",
+      "max_health": 100,
+      "damage": 10,
+      "build_time": 100
+    }
+  ],
+  "system_object_types": [
+    {
+      "id": "$so-star",
+      "name": "Star"
+    },
+    {
+      "id": "$so-planet",
+      "name": "Planet"
+    }
+  ],
+  "teams": [
+    {
+      "id": "$team1",
+      "name": "Team 1",
+      "members": [
+        {
+          "id": "@leader1",
+          "default-name": "Raghna",
+          "roles": []
+        }
+      ]
+    },
+    {
+      "id": "$team2",
+      "name": "Team 2",
+      "members": [
+        {
+          "id": "@leader2",
+          "default-name": "Teifion",
+          "roles": ["r1", "r2"]
+        }
+      ]
+    }
+  ]
+}

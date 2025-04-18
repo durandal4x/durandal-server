@@ -2,6 +2,9 @@ defmodule DurandalWeb.Admin.Game.Universe.ShowLive do
   @moduledoc false
   use DurandalWeb, :live_view
   alias Durandal.{Game, Space, Player}
+  alias Durandal.Game.UniverseLib
+
+  @restart_wait_time_ms 100
 
   @impl true
   def mount(%{"universe_id" => universe_id}, _session, socket) when is_connected?(socket) do
@@ -56,7 +59,36 @@ defmodule DurandalWeb.Admin.Game.Universe.ShowLive do
     |> noreply
   end
 
+  # Calls the relevant shutdown and then starts a loop to await the shutdown being complete
+  def handle_event("restart", _params, socket) do
+    {:ok, universe} = Durandal.Game.update_universe(socket.assigns.universe, %{active?: false})
+    :timer.send_after(@restart_wait_time_ms, self(), :await_shutdown)
+
+    socket
+    |> assign(:universe, universe)
+    |> assign(:supervisor_pid, nil)
+    |> assign(:server_pid, nil)
+    |> noreply
+  end
+
   @impl true
+  def handle_info(:await_shutdown, %{assigns: %{universe: universe}} = socket) do
+    case UniverseLib.get_game_supervisor_pid(universe.id) do
+      # No pid, it's shutdown
+      nil ->
+        {:ok, universe} = Durandal.Game.update_universe(universe, %{active?: true})
+
+        socket
+        |> assign(:universe, universe)
+
+      # Not stopped yet, wait a bit longer
+      _ ->
+        :timer.send_after(@restart_wait_time_ms, self(), :await_shutdown)
+        socket
+    end
+    |> noreply
+  end
+
   # Universe updates
   def handle_info(
         %{event: :updated_universe, topic: "Durandal.Game.Universe:" <> _} = msg,
@@ -64,6 +96,7 @@ defmodule DurandalWeb.Admin.Game.Universe.ShowLive do
       ) do
     socket
     |> assign(:universe, msg.universe)
+    |> get_server_state
     |> noreply
   end
 
@@ -73,6 +106,24 @@ defmodule DurandalWeb.Admin.Game.Universe.ShowLive do
       ) do
     socket
     |> redirect(to: ~p"/admin/universes")
+    |> noreply
+  end
+
+  def handle_info(
+        %{event: :started_tick, topic: "Durandal.Game.Universe:" <> _} = _msg,
+        socket
+      ) do
+    socket
+    |> assign(:tick_in_progress, true)
+    |> noreply
+  end
+
+  def handle_info(
+        %{event: :completed_tick, topic: "Durandal.Game.Universe:" <> _} = _msg,
+        socket
+      ) do
+    socket
+    |> assign(:tick_in_progress, false)
     |> noreply
   end
 
@@ -132,5 +183,24 @@ defmodule DurandalWeb.Admin.Game.Universe.ShowLive do
     |> assign(:universe, universe)
     |> stream(:teams, teams, reset: true)
     |> stream(:systems, systems, reset: true)
+    |> get_server_state
+  end
+
+  defp get_server_state(%{assigns: %{universe_id: universe_id}} = socket) do
+    :timer.sleep(50)
+    p = UniverseLib.get_universe_server_pid(universe_id)
+
+    universe_server_state =
+      if p != nil && Process.alive?(p) do
+        :sys.get_state(p, 100)
+      end
+
+    supervisor_pid = UniverseLib.get_game_supervisor_pid(universe_id)
+    server_pid = supervisor_pid && UniverseLib.get_universe_server_pid(universe_id)
+
+    socket
+    |> assign(:universe_server_state, universe_server_state)
+    |> assign(:supervisor_pid, supervisor_pid)
+    |> assign(:server_pid, server_pid)
   end
 end

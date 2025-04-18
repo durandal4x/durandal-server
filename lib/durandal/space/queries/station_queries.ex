@@ -37,6 +37,11 @@ defmodule Durandal.Space.StationQueries do
       where: stations.id in ^List.wrap(id)
   end
 
+  def _where(query, :id_not, id) do
+    from stations in query,
+      where: stations.id not in ^List.wrap(id)
+  end
+
   def _where(query, :name, name) do
     from stations in query,
       where: stations.name in ^List.wrap(name)
@@ -45,6 +50,16 @@ defmodule Durandal.Space.StationQueries do
   def _where(query, :team_id, team_id) do
     from stations in query,
       where: stations.team_id in ^List.wrap(team_id)
+  end
+
+  def _where(query, :transferring?, true) do
+    from stations in query,
+      where: not is_nil(stations.current_transfer_id)
+  end
+
+  def _where(query, :transferring?, false) do
+    from stations in query,
+      where: is_nil(stations.current_transfer_id)
   end
 
   def _where(query, :universe_id, universe_id) do
@@ -81,14 +96,19 @@ defmodule Durandal.Space.StationQueries do
     )
   end
 
+  def _where(query, :orbiting_id, :not_nil) do
+    from stations in query,
+      where: not is_nil(stations.orbiting_id)
+  end
+
+  def _where(query, :orbiting_id, :is_nil) do
+    from stations in query,
+      where: is_nil(stations.orbiting_id)
+  end
+
   def _where(query, :orbiting_id, orbiting_id) do
     from stations in query,
       where: stations.orbiting_id in ^List.wrap(orbiting_id)
-  end
-
-  def _where(query, :orbit_distance, orbit_distance) do
-    from stations in query,
-      where: stations.orbit_distance in ^List.wrap(orbit_distance)
   end
 
   def _where(query, :orbit_clockwise, orbit_clockwise) do
@@ -193,9 +213,52 @@ defmodule Durandal.Space.StationQueries do
     )
   end
 
+  def _preload(query, :docked_ships_with_types) do
+    from(stations in query,
+      left_join: docked_ships in assoc(stations, :docked_ships),
+      left_join: types in assoc(docked_ships, :type),
+      preload: [docked_ships: {docked_ships, type: types}]
+    )
+  end
+
+  def _preload(query, :transfer) do
+    from stations in query,
+      left_join: space_station_transfers in assoc(stations, :current_transfer),
+      preload: [current_transfer: space_station_transfers]
+  end
+
+  def _preload(query, :transfer_with_destination) do
+    from stations in query,
+      left_join: space_station_transfers in assoc(stations, :current_transfer),
+      left_join: space_stations in assoc(space_station_transfers, :to_station),
+      left_join: space_system_objects in assoc(space_station_transfers, :to_system_object),
+      preload: [
+        current_transfer:
+          {space_station_transfers,
+           to_station: space_stations, to_system_object: space_system_objects}
+      ]
+  end
+
   def _preload(query, :universe) do
     from stations in query,
       left_join: game_universes in assoc(stations, :universe),
       preload: [universe: game_universes]
+  end
+
+  def _preload(query, :all_commands) do
+    from stations in query,
+      left_join: commands in assoc(stations, :commands),
+      on: commands.subject_id == stations.id,
+      on: commands.subject_type == "station",
+      preload: [commands: commands]
+  end
+
+  def _preload(query, :incomplete_commands) do
+    from stations in query,
+      left_join: commands in assoc(stations, :commands),
+      on: commands.subject_id == stations.id,
+      on: commands.subject_type == "station",
+      on: commands.progress < 100,
+      preload: [commands: commands]
   end
 end

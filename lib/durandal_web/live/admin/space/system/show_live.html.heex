@@ -4,7 +4,10 @@
     assigns[:edit_mode] == true and @system != nil and @system.id != nil -> "edit"
     true -> "new"
   end %>
-<DurandalWeb.SystemComponents.filter_bar selected={selected} />
+<DurandalWeb.SystemComponents.filter_bar
+  universe_id={@system && @system.universe_id}
+  selected={selected}
+/>
 
 <div :if={assigns[:edit_mode] != true}>
   <div class="row my-4">
@@ -33,6 +36,7 @@
         <h4>System objects</h4>
         <.table id="objects" rows={@streams.system_objects} table_class="table-sm table-hover">
           <:col :let={{_id, object}} label="Name">{object.name}</:col>
+          <:col :let={{_id, object}} label="Pos"><.vector_string value={object.position} /></:col>
           <:action :let={{_id, object}}>
             <.link navigate={~p"/admin/system_objects/#{object}"} class="btn btn-sm btn-secondary">
               Show
@@ -46,6 +50,9 @@
         <h4>Stations</h4>
         <.table id="stations" rows={@streams.stations} table_class="table-sm table-hover">
           <:col :let={{_id, station}} label="Name">{station.name}</:col>
+          <:col :let={{_id, station}} label="Pos">
+            <.vector_string value={station.position} />
+          </:col>
           <:action :let={{_id, station}}>
             <.link navigate={~p"/admin/stations/#{station}"} class="btn btn-sm btn-secondary">
               Show
@@ -60,6 +67,8 @@
         <h4>Ships</h4>
         <.table id="ships" rows={@streams.ships} table_class="table-sm table-hover">
           <:col :let={{_id, ship}} label="Name">{ship.name}</:col>
+          <:col :let={{_id, ship}} label="Pos"><.vector_string value={ship.position} /></:col>
+          <:col :let={{_id, ship}} label="HP">{ship.health}</:col>
           <:action :let={{_id, ship}}>
             <.link navigate={~p"/admin/ships/#{ship}"} class="btn btn-sm btn-secondary">
               Show

@@ -5,11 +5,6 @@ defmodule Durandal.CacheClusterServer do
   use GenServer
   alias Phoenix.PubSub
 
-  @spec start_link(list) :: :ignore | {:error, any} | {:ok, pid}
-  def start_link(opts \\ []) do
-    GenServer.start_link(__MODULE__, nil, opts)
-  end
-
   @spec invalidate_cache(atom, any) :: :ok
   def invalidate_cache(table, key_or_keys) do
     key_or_keys
@@ -23,6 +18,37 @@ defmodule Durandal.CacheClusterServer do
       "cache_cluster",
       {:cache_cluster, :delete, Node.self(), table, key_or_keys}
     )
+  end
+
+  @spec invalidate_cache_on_ok(any, atom) :: any
+  def invalidate_cache_on_ok(v, table), do: invalidate_cache_on_ok(v, table, :id)
+
+  @spec invalidate_cache_on_ok(any, atom, atom) :: any
+  def invalidate_cache_on_ok({:ok, value}, table, id_field) do
+    id_value = Map.get(value, id_field)
+
+    invalidate_cache(table, id_value)
+    {:ok, value}
+  end
+
+  def invalidate_cache_on_ok(v, _, _), do: v
+
+  @spec add_cache(atom, list) :: map()
+  def add_cache(name, opts \\ []) when is_atom(name) do
+    %{
+      id: name,
+      start:
+        {Cachex, :start_link,
+         [
+           name,
+           opts
+         ]}
+    }
+  end
+
+  @spec start_link(list) :: :ignore | {:error, any} | {:ok, pid}
+  def start_link(opts \\ []) do
+    GenServer.start_link(__MODULE__, nil, opts)
   end
 
   @impl true

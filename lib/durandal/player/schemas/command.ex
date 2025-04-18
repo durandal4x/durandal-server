@@ -20,11 +20,15 @@ defmodule Durandal.Player.Command do
     field(:command_type, :string)
     field(:subject_type, :string)
     field(:subject_id, Ecto.UUID)
-    belongs_to(:universe, Durandal.Game.Universe, type: Ecto.UUID)
     field(:ordering, :integer)
-    field(:contents, :map)
+    field(:contents, :map, default: %{})
+
+    field(:progress, :integer, default: 0)
+    field(:outcome, :map)
+
     belongs_to(:team, Durandal.Player.Team, type: Ecto.UUID)
     belongs_to(:user, Durandal.Account.User, type: Ecto.UUID)
+    belongs_to(:universe, Durandal.Game.Universe, type: Ecto.UUID)
 
     timestamps(type: :utc_datetime_usec)
   end
@@ -44,8 +48,8 @@ defmodule Durandal.Player.Command do
   #         updated_at: DateTime.t()
   #       }
 
-  @required_fields ~w(command_type subject_type subject_id ordering contents team_id user_id universe_id)a
-  @optional_fields ~w()a
+  @required_fields ~w(command_type subject_type subject_id team_id user_id universe_id)a
+  @optional_fields ~w(contents ordering progress outcome)a
 
   @doc false
   @spec changeset(map(), map()) :: Ecto.Changeset.t()
