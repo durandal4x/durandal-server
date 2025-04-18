@@ -1,6 +1,8 @@
 defmodule Durandal.BlogTest do
   @moduledoc false
+  alias Durandal.AccountFixtures
   use Durandal.DataCase
+
   alias Durandal.Blog
 
   describe "tags" do
@@ -222,20 +224,20 @@ defmodule Durandal.BlogTest do
 
       valid_attrs = %{
         disabled_posters: [
-          "a00fc119-d16a-408b-a669-c1e632a7dec8",
-          "94b4b4c4-1a0d-4031-b1c6-eea6dd9a91bd"
+          "06091a57-a8a3-4fd4-b908-47f3a26fd14d",
+          "0011504a-b287-48e1-ab13-b557c87862a2"
         ],
         disabled_tags: [
-          "4a61cac4-6946-4c2e-81eb-eb3691b59e9d",
-          "bbd9fe2d-f019-4186-bb63-57e3caf1cfe4"
+          "d7aae596-191a-4459-aa47-f542ec3c9000",
+          "7f8825c8-af54-461c-9795-22fd682d2be1"
         ],
         enabled_posters: [
-          "c8872aa8-ec19-4eac-83f8-183c860f6556",
-          "5d9591ee-f55f-4252-af78-e9d154109f39"
+          "3cfa3d52-7412-41e4-91ec-61aaedbf6830",
+          "414d317a-08aa-4d6e-b593-66eff607e85b"
         ],
         enabled_tags: [
-          "c7a02e74-63f3-400b-9403-f22fc8ff983d",
-          "3f5ef2cd-0091-4ddf-9fc1-60111dcc35f7"
+          "58f1fd23-23d1-430f-9087-1a422afe0bfa",
+          "9a62e557-5d97-49cb-b07d-89d1473a83ae"
         ],
         tag_mode: "some tag_mode",
         user_id: user.id
@@ -245,23 +247,23 @@ defmodule Durandal.BlogTest do
                Blog.create_user_preference(valid_attrs)
 
       assert user_preference.disabled_posters == [
-               "a00fc119-d16a-408b-a669-c1e632a7dec8",
-               "94b4b4c4-1a0d-4031-b1c6-eea6dd9a91bd"
+               "06091a57-a8a3-4fd4-b908-47f3a26fd14d",
+               "0011504a-b287-48e1-ab13-b557c87862a2"
              ]
 
       assert user_preference.disabled_tags == [
-               "4a61cac4-6946-4c2e-81eb-eb3691b59e9d",
-               "bbd9fe2d-f019-4186-bb63-57e3caf1cfe4"
+               "d7aae596-191a-4459-aa47-f542ec3c9000",
+               "7f8825c8-af54-461c-9795-22fd682d2be1"
              ]
 
       assert user_preference.enabled_posters == [
-               "c8872aa8-ec19-4eac-83f8-183c860f6556",
-               "5d9591ee-f55f-4252-af78-e9d154109f39"
+               "3cfa3d52-7412-41e4-91ec-61aaedbf6830",
+               "414d317a-08aa-4d6e-b593-66eff607e85b"
              ]
 
       assert user_preference.enabled_tags == [
-               "c7a02e74-63f3-400b-9403-f22fc8ff983d",
-               "3f5ef2cd-0091-4ddf-9fc1-60111dcc35f7"
+               "58f1fd23-23d1-430f-9087-1a422afe0bfa",
+               "9a62e557-5d97-49cb-b07d-89d1473a83ae"
              ]
 
       assert user_preference.tag_mode == "some tag_mode"
@@ -275,20 +277,20 @@ defmodule Durandal.BlogTest do
       user_preference = user_preference_fixture()
 
       update_attrs = %{
-        disabled_posters: ["d9e76d50-88ee-4d18-91df-c403796fe732"],
-        disabled_tags: ["1fd70a27-fb9e-4d5d-a09b-3596de251f8c"],
-        enabled_posters: ["d785865f-ffb8-4f4e-a958-9cf7a88e77fc"],
-        enabled_tags: ["449fcf42-9259-4060-8e75-4cf019d9d35a"],
+        disabled_posters: ["75487c91-5d6b-4821-956a-7b25acbfcdf8"],
+        disabled_tags: ["14e9a6ad-29ac-4801-aa5a-609ad38c35f3"],
+        enabled_posters: ["c0d094d6-f4ce-4880-bf3f-f506a6527ccb"],
+        enabled_tags: ["86e64b79-f76b-4e8b-9225-d0a1cdbc723e"],
         tag_mode: "some updated tag_mode"
       }
 
       assert {:ok, %UserPreference{} = user_preference} =
                Blog.update_user_preference(user_preference, update_attrs)
 
-      assert user_preference.disabled_posters == ["d9e76d50-88ee-4d18-91df-c403796fe732"]
-      assert user_preference.disabled_tags == ["1fd70a27-fb9e-4d5d-a09b-3596de251f8c"]
-      assert user_preference.enabled_posters == ["d785865f-ffb8-4f4e-a958-9cf7a88e77fc"]
-      assert user_preference.enabled_tags == ["449fcf42-9259-4060-8e75-4cf019d9d35a"]
+      assert user_preference.disabled_posters == ["75487c91-5d6b-4821-956a-7b25acbfcdf8"]
+      assert user_preference.disabled_tags == ["14e9a6ad-29ac-4801-aa5a-609ad38c35f3"]
+      assert user_preference.enabled_posters == ["c0d094d6-f4ce-4880-bf3f-f506a6527ccb"]
+      assert user_preference.enabled_tags == ["86e64b79-f76b-4e8b-9225-d0a1cdbc723e"]
       assert user_preference.tag_mode == "some updated tag_mode"
     end
 
@@ -313,6 +315,141 @@ defmodule Durandal.BlogTest do
     test "change_user_preference/1 returns a user_preference changeset" do
       user_preference = user_preference_fixture()
       assert %Ecto.Changeset{} = Blog.change_user_preference(user_preference)
+    end
+  end
+
+  describe "poll_responses" do
+    alias Durandal.Blog.PollResponse
+
+    import Durandal.BlogFixtures
+
+    @invalid_attrs %{post_id: nil, tag_id: nil}
+
+    test "list_poll_responses/0 returns all poll_responses" do
+      poll_response = poll_response_fixture()
+      assert Blog.list_poll_responses() == [poll_response]
+    end
+
+    test "get_poll_response/1 returns the poll_response with given id" do
+      poll_response = poll_response_fixture()
+      assert Blog.get_poll_response(poll_response.user_id, poll_response.post_id) == poll_response
+    end
+
+    test "create_poll_response/1 with valid data creates a poll_response" do
+      post = post_fixture()
+      user = AccountFixtures.user_fixture()
+      valid_attrs = %{post_id: post.id, user_id: user.id, response: "A"}
+
+      assert {:ok, %PollResponse{} = _poll_response} = Blog.create_poll_response(valid_attrs)
+    end
+
+    test "create_poll_response/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Blog.create_poll_response(@invalid_attrs)
+    end
+
+    test "update_poll_response/2 with valid data updates the poll_response" do
+      poll_response = poll_response_fixture()
+      update_attrs = %{}
+
+      assert {:ok, %PollResponse{} = _poll_response} =
+               Blog.update_poll_response(poll_response, update_attrs)
+    end
+
+    test "update_poll_response/2 with invalid data returns error changeset" do
+      poll_response = poll_response_fixture()
+
+      assert {:error, %Ecto.Changeset{}} =
+               Blog.update_poll_response(poll_response, @invalid_attrs)
+
+      assert poll_response == Blog.get_poll_response(poll_response.user_id, poll_response.post_id)
+    end
+
+    test "delete_poll_response/1 deletes the poll_response" do
+      poll_response = poll_response_fixture()
+      assert {:ok, %PollResponse{}} = Blog.delete_poll_response(poll_response)
+
+      assert Blog.get_poll_response(poll_response.user_id, poll_response.post_id) == nil
+    end
+
+    test "change_poll_response/1 returns a poll_response changeset" do
+      poll_response = poll_response_fixture()
+      assert %Ecto.Changeset{} = Blog.change_poll_response(poll_response)
+    end
+  end
+
+  describe "uploads" do
+    alias Durandal.Blog.Upload
+
+    import Durandal.{AccountFixtures, BlogFixtures}
+
+    @invalid_attrs %{
+      filename: nil,
+      type: nil,
+      file_size: nil
+    }
+
+    test "list_uploads/0 returns all uploads" do
+      upload = upload_fixture()
+      assert Blog.list_uploads() == [upload]
+    end
+
+    test "get_upload!/1 returns the upload with given id" do
+      upload = upload_fixture()
+      assert Blog.get_upload!(upload.id) == upload
+    end
+
+    test "create_upload/1 with valid data creates a upload" do
+      user = user_fixture()
+
+      valid_attrs = %{
+        filename: "some contents",
+        type: "some title",
+        file_size: 42,
+        uploader_id: user.id
+      }
+
+      assert {:ok, %Upload{} = upload} = Blog.create_upload(valid_attrs)
+      assert upload.filename == "some contents"
+      assert upload.type == "some title"
+      assert upload.file_size == 42
+    end
+
+    test "create_upload/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Blog.create_upload(@invalid_attrs)
+    end
+
+    test "update_upload/2 with valid data updates the upload" do
+      upload = upload_fixture()
+      user = user_fixture()
+
+      update_attrs = %{
+        filename: "some updated contents",
+        type: "some updated title",
+        file_size: 43,
+        uploader_id: user.id
+      }
+
+      assert {:ok, %Upload{} = upload} = Blog.update_upload(upload, update_attrs)
+      assert upload.filename == "some updated contents"
+      assert upload.type == "some updated title"
+      assert upload.file_size == 43
+    end
+
+    test "update_upload/2 with invalid data returns error changeset" do
+      upload = upload_fixture()
+      assert {:error, %Ecto.Changeset{}} = Blog.update_upload(upload, @invalid_attrs)
+      assert upload == Blog.get_upload!(upload.id)
+    end
+
+    test "delete_upload/1 deletes the upload" do
+      upload = upload_fixture()
+      assert {:ok, %Upload{}} = Blog.delete_upload(upload)
+      assert_raise Ecto.NoResultsError, fn -> Blog.get_upload!(upload.id) end
+    end
+
+    test "change_upload/1 returns a upload changeset" do
+      upload = upload_fixture()
+      assert %Ecto.Changeset{} = Blog.change_upload(upload)
     end
   end
 end

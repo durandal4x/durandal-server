@@ -10,17 +10,21 @@ defmodule DurandalWeb.Admin.Blog.PostLive.Index do
 
   @impl true
   def handle_params(params, _url, socket) do
-    case allow?(socket.assigns[:current_user], "admin") do
+    cond do
+      not allow?(socket.assigns[:current_user], "admin") ->
+        socket
+        |> redirect(to: ~p"/blog")
+
+      Enum.empty?(Blog.list_tags(limit: 1)) ->
+        socket
+        |> put_flash(:info, "You must have at least one tag before you can make posts")
+        |> redirect(to: ~p"/admin/blog/tags")
+
       true ->
         socket
         |> apply_action(socket.assigns.live_action, params)
-        |> noreply
-
-      false ->
-        socket
-        |> redirect(to: ~p"/blog")
-        |> noreply
     end
+    |> noreply
   end
 
   defp apply_action(socket, _action, _params) do

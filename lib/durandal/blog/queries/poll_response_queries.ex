@@ -10,8 +10,6 @@ defmodule Durandal.Blog.PollResponseQueries do
 
     query
     |> do_where(args[:where])
-    # |> do_preload(args[:preload])
-    |> do_order_by(args[:order_by])
     |> QueryHelper.query_select(args[:select])
     |> QueryHelper.limit_query(args[:limit])
   end
@@ -44,60 +42,6 @@ defmodule Durandal.Blog.PollResponseQueries do
     from poll_responses in query,
       where: poll_responses.post_id in ^List.wrap(post_id)
   end
-
-  @spec do_order_by(Ecto.Query.t(), list | nil) :: Ecto.Query.t()
-  defp do_order_by(query, nil), do: query
-
-  defp do_order_by(query, params) when is_list(params) do
-    params
-    |> Enum.reduce(query, fn key, query_acc ->
-      _order_by(query_acc, key)
-    end)
-  end
-
-  defp do_order_by(query, params) when is_bitstring(params), do: do_order_by(query, [params])
-
-  defp _order_by(query, nil), do: query
-
-  defp _order_by(query, "Newest first") do
-    from poll_responses in query,
-      order_by: [desc: poll_responses.inserted_at]
-  end
-
-  defp _order_by(query, "Oldest first") do
-    from poll_responses in query,
-      order_by: [asc: poll_responses.inserted_at]
-  end
-
-  # @spec do_preload(Ecto.Query.t(), List.t() | nil) :: Ecto.Query.t()
-  # defp do_preload(query, nil), do: query
-
-  # defp do_preload(query, preloads) do
-  #   preloads
-  #   |> Enum.reduce(query, fn key, query_acc ->
-  #     _preload(query_acc, key)
-  #   end)
-  # end
-
-  # defp _preload(query, :poll_responseer) do
-  #   from poll_responses in query,
-  #     left_join: poll_responseers in assoc(poll_responses, :poll_responseer),
-  #     preload: [poll_responseer: poll_responseers]
-  # end
-
-  # # This just grabs the tags
-  # defp _preload(query, :tags) do
-  #   from poll_responses in query,
-  #     join: tags in assoc(poll_responses, :tags),
-  #     preload: [tags: tags]
-  # end
-
-  # # This applies filtering on which poll_responses we get based on possession of tags
-  # defp _preload(query, {:tags, [], []}) do
-  #   from poll_responses in query,
-  #     join: tags in assoc(poll_responses, :tags),
-  #     preload: [tags: tags]
-  # end
 
   def responses_by_choice(post_id) do
     from poll_responses in PollResponse,

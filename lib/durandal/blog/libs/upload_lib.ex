@@ -110,7 +110,7 @@ defmodule Durandal.Blog.UploadLib do
 
   """
   def delete_upload(%Upload{} = upload) do
-    File.rm!(upload.filename)
+    File.rm(upload.filename)
     Repo.delete(upload)
   end
 

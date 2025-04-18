@@ -11,7 +11,10 @@ defmodule DurandalWeb.Blog.BlogLive.Show do
     post = Blog.get_post!(post_id_str, preload: [:poster, :tags])
     Blog.increment_post_view_count(post.id)
 
-    response = Blog.get_poll_response(socket.assigns.current_user.id, post.id)
+    response =
+      if socket.assigns.current_user do
+        Blog.get_poll_response(socket.assigns.current_user.id, post.id)
+      end
 
     socket
     |> assign(:post, post)
@@ -80,6 +83,11 @@ defmodule DurandalWeb.Blog.BlogLive.Show do
     else
       {:noreply, socket}
     end
+  end
+
+  def handle_event("poll-choice", _, %{assigns: %{current_user: nil}} = socket) do
+    socket
+    |> noreply
   end
 
   def handle_event("poll-choice", %{"choice" => choice}, %{assigns: assigns} = socket) do

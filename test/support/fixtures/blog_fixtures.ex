@@ -25,15 +25,19 @@ defmodule Durandal.BlogFixtures do
   Generate a post.
   """
   def post_fixture(attrs \\ %{}) do
-    user = AccountFixtures.user_fixture()
+    poll_result_cache =
+      (attrs[:poll_choices] || [])
+      |> Map.new(fn c -> {c, 0} end)
 
     {:ok, post} =
       attrs
       |> Enum.into(%{
-        poster_id: user.id,
+        poster_id: AccountFixtures.user_fixture().id,
         contents: "some contents",
         title: "some title",
-        view_count: 42
+        view_count: 42,
+        poll_choices: attrs[:poll_choices] || "",
+        poll_result_cache: poll_result_cache
       })
       |> Blog.create_post()
 
@@ -78,6 +82,39 @@ defmodule Durandal.BlogFixtures do
       |> Blog.create_post_tag()
 
     post_tag
+  end
+
+  @doc """
+  Generate a poll_response.
+  """
+  def poll_response_fixture(attrs \\ %{}) do
+    {:ok, poll_response} =
+      attrs
+      |> Enum.into(%{
+        post_id: post_fixture().id,
+        user_id: AccountFixtures.user_fixture().id,
+        response: "A"
+      })
+      |> Blog.create_poll_response()
+
+    poll_response
+  end
+
+  @doc """
+  Generate an upload.
+  """
+  def upload_fixture(attrs \\ %{}) do
+    {:ok, upload} =
+      attrs
+      |> Enum.into(%{
+        uploader_id: AccountFixtures.user_fixture().id,
+        filename: "filename",
+        type: "image",
+        file_size: 123
+      })
+      |> Blog.create_upload()
+
+    upload
   end
 
   @doc """

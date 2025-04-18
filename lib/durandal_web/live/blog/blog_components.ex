@@ -80,7 +80,7 @@ defmodule DurandalWeb.BlogComponents do
 
   def post_preview_small(assigns) do
     ~H"""
-    <div id="post-preview" class="mt-4">
+    <div id="post-preview-small" class="mt-4">
       <hr />
       <h5 style="text-align: center;">--- Small preview ---</h5>
 
@@ -110,7 +110,7 @@ defmodule DurandalWeb.BlogComponents do
 
   def post_preview_full(assigns) do
     ~H"""
-    <div id="post-preview" class="mt-4">
+    <div id="post-preview-full" class="mt-4">
       <hr />
       <h5 style="text-align: center;">--- Full preview ---</h5>
 
@@ -218,6 +218,7 @@ defmodule DurandalWeb.BlogComponents do
 
     ~H"""
     <div>
+      <h4>Vote in the poll</h4>
       <div
         :for={choice <- @post.poll_choices}
         phx-click="poll-choice"

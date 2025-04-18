@@ -54,7 +54,11 @@
             Posted at {Durandal.Helper.DateTimeHelper.strftime(post.inserted_at, :ymd_hms)}
             <br /><br />
 
-            {post.summary}
+            <div class="blog-post-content">
+              {(post.summary || post.contents |> String.split("\n") |> hd)
+              |> MDEx.to_html!()
+              |> raw}
+            </div>
             <br /><br />
             <em>Click for more details</em>
 

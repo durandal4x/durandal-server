@@ -1,10 +1,4 @@
 <div class="row" style="padding-top: 5vh;" id="main-blog-div">
-  <style type="text/css">
-    #post-content img {
-      max-width: 100%;
-    }
-  </style>
-
   <div
     :if={@post}
     class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2 col-xl-6 offset-xl-3 col-xxl-4 offset-xxl-4"
@@ -14,7 +8,7 @@
         <.tag_badge tag={tag} />
       <% end %>
       &nbsp;&nbsp;&nbsp;
-      <span class="badge badge-sm rounded-pill me-4" style="font-size: 1em;">
+      <span class="badge bg-primary rounded-pill" style="font-size: 1em;">
         {@post.poster.name}
       </span>
     </div>
@@ -22,7 +16,7 @@
       {@post.title} - {Calendar.strftime(@post.inserted_at, "%Y-%m-%d %H:%M:%S")}
     </h3>
 
-    <div id="post-content">
+    <div id="post-content" class="blog-post-content">
       {@post.contents |> MDEx.to_html!() |> raw}
     </div>
     <br /><br />
