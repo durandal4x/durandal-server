@@ -74,7 +74,8 @@ defmodule Durandal.MixProject do
       {:igniter, "~> 0.5", only: [:dev, :test]},
       {:progress_bar, "~> 3.0", only: [:dev, :test]},
       {:db_cluster, "~> 0.0.3"},
-      {:oban, "~> 2.19"}
+      {:oban, "~> 2.19"},
+      {:mdex, "~> 0.2"}
     ]
   end
 

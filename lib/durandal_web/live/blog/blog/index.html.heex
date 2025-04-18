@@ -1,0 +1,73 @@
+<div class="row" style="padding-top: 5vh;" id="main-blog-div">
+  <div class="col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2 col-xl-6 offset-xl-3 col-xxl-4 offset-xxl-4">
+    <div class="float-end">
+      <a
+        :if={@user_preference && @live_action != :all}
+        href={~p"/blog/all"}
+        class="btn btn-info btn-sm mx-1"
+      >
+        <Fontawesome.icon icon="filter-slash" style="regular" /> Show all posts
+      </a>
+
+      <a
+        :if={@user_preference && @live_action == :all}
+        href={~p"/blog"}
+        class="btn btn-info btn-sm mx-1"
+      >
+        <Fontawesome.icon icon="filter" style="regular" /> Use filters
+      </a>
+
+      <a :if={@current_user} href={~p"/blog/preferences"} class="btn btn-primary2 btn-sm mx-1">
+        <Fontawesome.icon icon="cog" style="solid" /> Preferences
+      </a>
+
+      <a
+        :if={allow?(@current_user, "admin")}
+        href={~p"/admin/blog/posts"}
+        class="btn btn-primary btn-sm mx-1"
+      >
+        <Fontawesome.icon icon="fa-user-crown" style="solid" /> Blog admin
+      </a>
+    </div>
+
+    <h3>Blog</h3>
+    <div class="row" id="sub-blog-div">
+      <div class="col" id="blog-posts-div">
+        <.table
+          id="post-table"
+          rows={@streams.posts}
+          row_click={fn {_id, post} -> JS.navigate(~p"/blog/show/#{post.id}") end}
+        >
+          <:col :let={{_id, post}}>
+            <div class="float-end">
+              <.tag_badge :for={tag <- post.tags} tag={tag} />
+            </div>
+            <h5>
+              <span :if={post.poll_choices && not Enum.empty?(post.poll_choices)} class="me-2">
+                <Fontawesome.icon icon="square-poll-horizontal" style="solid" />
+              </span>
+              {post.title}
+              <span class="ms-4">
+                {post.poster.name}
+              </span>
+            </h5>
+            Posted at {Durandal.Helper.DateTimeHelper.strftime(post.inserted_at, :ymd_hms)}
+            <br /><br />
+
+            <div class="blog-post-content">
+              {(post.summary || post.contents |> String.split("\n") |> hd)
+              |> MDEx.to_html!()
+              |> raw}
+            </div>
+            <br /><br />
+            <em>Click for more details</em>
+
+            <div class="sr-only">
+              <.link navigate={~p"/blog/show/#{post.id}"}>Show</.link>
+            </div>
+          </:col>
+        </.table>
+      </div>
+    </div>
+  </div>
+</div>

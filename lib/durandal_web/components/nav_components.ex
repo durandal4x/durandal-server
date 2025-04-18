@@ -72,6 +72,8 @@ defmodule DurandalWeb.NavComponents do
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <.top_nav_item text="Home" active={@active == "home"} route={~p"/"} />
 
+            <.top_nav_item text="Blog" active={@active == "blog"} route={~p"/blog"} />
+
             <%= if allow?(@current_user, ~w(admin)) do %>
               <.top_nav_item text="Admin" active={@active == "admin"} route={~p"/admin"} />
 

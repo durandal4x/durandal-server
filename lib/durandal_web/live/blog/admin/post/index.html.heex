@@ -1,0 +1,24 @@
+<DurandalWeb.BlogComponents.sub_menu active="posts" current_user={@current_user} />
+
+<div class="row mt-4">
+  <div class="col">
+    <.live_component
+      module={DurandalWeb.Blog.PostFormComponent}
+      id={:new}
+      action={:new}
+      post={%Durandal.Blog.Post{}}
+      patch={~p"/admin/blog/posts"}
+      title="New post"
+      current_user={@current_user}
+    />
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col">
+    <DurandalWeb.BlogComponents.post_preview_small post={@post} />
+  </div>
+  <div class="col">
+    <DurandalWeb.BlogComponents.post_preview_full post={@post} />
+  </div>
+</div>

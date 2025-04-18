@@ -10,6 +10,9 @@ import Config
 config :durandal,
   ecto_repos: [Durandal.Repo],
   scenario_path: "priv/scenarios",
+  blog_allow_upload: true,
+  blog_upload_path: "zignore/uploads",
+  blog_upload_extensions: ~w(.jpg .jpeg .png),
   site_icon: "moon-over-sun",
   generators: [
     timestamp_type: :utc_datetime
