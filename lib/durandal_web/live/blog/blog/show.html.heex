@@ -13,7 +13,10 @@
       </span>
     </div>
     <h3>
-      {@post.title} - {Calendar.strftime(@post.inserted_at, "%Y-%m-%d %H:%M:%S")}
+      {@post.title}
+      <span style="font-size: 0.7em; padding-left: 10px;">
+        {Calendar.strftime(@post.inserted_at, "%Y-%m-%d %H:%M:%S")}
+      </span>
     </h3>
 
     <div id="post-content" class="blog-post-content">

@@ -22,6 +22,28 @@ defmodule Durandal.Helpers.SchemaHelper do
     end)
   end
 
+  # @spec replace_spaces(map, list | atom) :: map
+  @spec replace_spaces(map, list | atom, String.t()) :: map
+  def replace_spaces(params, fields, replacement \\ "_") do
+    fields =
+      fields
+      |> List.wrap()
+      |> Enum.map(&Atom.to_string/1)
+
+    params
+    |> Map.new(fn {k, v} ->
+      if Enum.member?(fields, k) do
+        if v == nil do
+          {k, nil}
+        else
+          {k, String.replace(v, " ", replacement)}
+        end
+      else
+        {k, v}
+      end
+    end)
+  end
+
   @doc """
   Given params and a pair of fields,
   ensures the lower value of the two is assigned to the first

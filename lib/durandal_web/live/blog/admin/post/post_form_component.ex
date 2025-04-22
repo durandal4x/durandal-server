@@ -112,19 +112,22 @@ defmodule DurandalWeb.Blog.PostFormComponent do
       <.form for={@form} phx-target={@myself} phx-change="validate" phx-submit="save" id="post-form">
         <div class="row mb-4">
           <div class="col-md-12 col-lg-8 col-xl-6">
-            <label for="post_title" class="control-label">Title:</label>
-            <.input field={@form[:title]} type="text" autofocus="autofocus" phx-debounce="100" />
+            <.input
+              field={@form[:title]}
+              type="text"
+              autofocus="autofocus"
+              phx-debounce="100"
+              label="Title:"
+            />
             <br />
 
-            <label for="post_contents" class="control-label">Summary:</label>
-            <em class="float-end">Plain text, 1-3 lines</em>
-            <textarea
-              name="post[summary]"
-              id="post_summary"
-              rows="3"
+            <.input
+              field={@form[:summary]}
+              type="textarea"
               phx-debounce="100"
-              class="form-control"
-            ><%= @form[:summary].value %></textarea>
+              label="Summary:"
+              rows="3"
+            />
             <br />
 
             <label for="post_contents" class="control-label">Contents:</label>
@@ -137,13 +140,15 @@ defmodule DurandalWeb.Blog.PostFormComponent do
               &nbsp;&nbsp;
               [Link text](url)
             </span>
-            <textarea
-              name="post[contents]"
-              id="post_contents"
-              rows="12"
+            <.input field={@form[:contents]} type="textarea" phx-debounce="100" rows="12" />
+            <br />
+
+            <.input
+              field={@form[:url_slug]}
+              type="text"
               phx-debounce="100"
-              class="form-control"
-            ><%= @form[:contents].value %></textarea>
+              label="URL slug key (optional)"
+            />
           </div>
           <div class="col">
             <h4>Tags ({Enum.count(@selected_tags)})</h4>
@@ -191,7 +196,10 @@ defmodule DurandalWeb.Blog.PostFormComponent do
         <%= if @post.id do %>
           <div class="row">
             <div class="col">
-              <a href={~p"/blog/show/#{@post.id}"} class="btn btn-secondary btn-block">
+              <a
+                href={~p"/blog/show/#{@post.url_slug || @post.id}"}
+                class="btn btn-secondary btn-block"
+              >
                 Cancel
               </a>
             </div>

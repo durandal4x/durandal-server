@@ -36,7 +36,9 @@
         <.table
           id="post-table"
           rows={@streams.posts}
-          row_click={fn {_id, post} -> JS.navigate(~p"/blog/show/#{post.id}") end}
+          row_click={
+            fn {_id, post} -> JS.navigate(~p"/blog/show/#{post.url_slug || post.id}") end
+          }
         >
           <:col :let={{_id, post}}>
             <div class="float-end">
@@ -63,7 +65,7 @@
             <em>Click for more details</em>
 
             <div class="sr-only">
-              <.link navigate={~p"/blog/show/#{post.id}"}>Show</.link>
+              <.link navigate={~p"/blog/show/#{post.url_slug || post.id}"}>Show</.link>
             </div>
           </:col>
         </.table>

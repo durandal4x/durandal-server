@@ -368,10 +368,18 @@ input[type="color"] {
   font-weight: bold;
 }
 
-.autumn-hl {
-  padding: 4px 4px 4px 12px;
-}
-
-.blog-post-content img {
-  max-width: 100%;
+.blog-post-content {
+  .autumn-hl,
+    .athl {
+      padding: 4px 4px 4px 12px;
+      margin-top: -12px;
+    }
+  
+    img {
+      max-width: 100%;
+    }
+    
+    h1, h2, h3, h4, h5 {
+      margin-bottom: 0px;
+    }
 }
