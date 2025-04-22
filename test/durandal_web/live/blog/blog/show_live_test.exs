@@ -26,7 +26,7 @@ defmodule DurandalWeb.Blog.Blog.ShowLiveTest do
     setup [:filler_post]
 
     test "viewing the blog", %{conn: conn, post: post} do
-      {:ok, show_live, html} = live(conn, ~p"/blog/show/#{post.id}")
+      {:ok, show_live, html} = live(conn, ~p"/blog/show/#{post.url_slug || post.id}")
 
       assert html =~ "Post 1 title"
       assert html =~ "Post 1 line1"
@@ -40,7 +40,7 @@ defmodule DurandalWeb.Blog.Blog.ShowLiveTest do
       render_click(show_live, "poll-choice", %{"choice" => "PollOpt 1"})
 
       # Due to the delays in various pub-sub parts this won't update right away so we'll just call the page again
-      {:ok, _show_live, html} = live(conn, ~p"/blog/show/#{post.id}")
+      {:ok, _show_live, html} = live(conn, ~p"/blog/show/#{post.url_slug || post.id}")
 
       refute html =~ "Vote in the poll"
       assert html =~ "PollOpt 1 - 0"
@@ -53,7 +53,7 @@ defmodule DurandalWeb.Blog.Blog.ShowLiveTest do
     setup [:filler_post, :auth]
 
     test "User", %{conn: conn, user: _user, post: post} do
-      {:ok, show_live, html} = live(conn, ~p"/blog/show/#{post.id}")
+      {:ok, show_live, html} = live(conn, ~p"/blog/show/#{post.url_slug || post.id}")
 
       assert html =~ "Post 1 title"
       assert html =~ "Post 1 line1"
@@ -66,7 +66,7 @@ defmodule DurandalWeb.Blog.Blog.ShowLiveTest do
       # Now click a poll button, should have no effect because we're not logged in
       render_click(show_live, "poll-choice", %{"choice" => "PollOpt 1"})
       # Due to the delays in various pub-sub parts this won't update right away
-      {:ok, _show_live, html} = live(conn, ~p"/blog/show/#{post.id}")
+      {:ok, _show_live, html} = live(conn, ~p"/blog/show/#{post.url_slug || post.id}")
 
       assert html =~ "Vote in the poll"
       assert html =~ "PollOpt 1 - 1"
@@ -76,7 +76,7 @@ defmodule DurandalWeb.Blog.Blog.ShowLiveTest do
       # Now lets change our vote
       render_click(show_live, "poll-choice", %{"choice" => "PollOpt 2"})
       # Due to the delays in various pub-sub parts this won't update right away
-      {:ok, _show_live, html} = live(conn, ~p"/blog/show/#{post.id}")
+      {:ok, _show_live, html} = live(conn, ~p"/blog/show/#{post.url_slug || post.id}")
 
       assert html =~ "Vote in the poll"
       assert html =~ "PollOpt 1 - 0"

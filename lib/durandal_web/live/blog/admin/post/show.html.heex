@@ -8,7 +8,7 @@
       title="Edit post"
       action={:edit}
       post={@post}
-      patch={~p"/admin/blog/posts/#{@post.id}"}
+      patch={~p"/admin/blog/posts/#{@post.url_slug || @post.id}"}
       selected_tags={@selected_tags}
       current_user={@current_user}
     />

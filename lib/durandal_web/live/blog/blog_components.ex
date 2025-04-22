@@ -96,11 +96,13 @@ defmodule DurandalWeb.BlogComponents do
           :hms_or_ymd
         )}
       </h4>
-      {Map.get(@post, :contents, "")
-      |> String.split("\n\n")
-      |> hd
-      |> MDEx.to_html!()
-      |> Phoenix.HTML.raw()}
+      <div class="blog-post-content">
+        {Map.get(@post, :contents, "")
+        |> String.split("\n\n")
+        |> hd
+        |> MDEx.to_html!()
+        |> Phoenix.HTML.raw()}
+      </div>
       <br />
     </div>
     """
@@ -126,7 +128,9 @@ defmodule DurandalWeb.BlogComponents do
           :hms_or_ymd
         )}
       </h4>
-      {Map.get(@post, :contents, "") |> MDEx.to_html!() |> Phoenix.HTML.raw()}
+      <div class="blog-post-content">
+        {Map.get(@post, :contents, "") |> MDEx.to_html!() |> Phoenix.HTML.raw()}
+      </div>
       <br />
     </div>
     """

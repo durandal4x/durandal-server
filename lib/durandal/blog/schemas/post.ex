@@ -7,6 +7,7 @@ defmodule Durandal.Blog.Post do
     belongs_to :poster, Durandal.Account.User, type: Ecto.UUID
 
     field :title, :string
+    field :url_slug, :string
     field :summary, :string
     field :contents, :string
     field :view_count, :integer, default: 0
@@ -24,7 +25,7 @@ defmodule Durandal.Blog.Post do
   end
 
   @required_fields ~w(poster_id title contents)a
-  @optional_fields ~w(summary view_count poll_choices poll_result_cache)a
+  @optional_fields ~w(url_slug summary view_count poll_choices poll_result_cache)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -38,13 +39,15 @@ defmodule Durandal.Blog.Post do
 
     params =
       params
-      |> trim_strings(~w(title summary contents)a)
+      |> trim_strings(~w(title summary contents url_slug)a)
+      |> replace_spaces([:url_slug])
       |> convert_poll_choices
 
     struct
     |> cast(params, @required_fields ++ @optional_fields)
     |> cast_assoc(:post_tags, tag_ids)
     |> validate_required(@required_fields)
+    |> unique_constraint([:url_slug])
   end
 
   defp convert_poll_choices(%{poll_choices: pc} = p) when is_list(pc), do: p

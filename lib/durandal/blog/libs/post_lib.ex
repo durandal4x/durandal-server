@@ -71,30 +71,30 @@ defmodule Durandal.Blog.PostLib do
       ** (Ecto.NoResultsError)
 
   """
-  @spec get_post!(non_neg_integer()) :: Post.t()
+  @spec get_post!(Ecto.UUID.t() | String.t()) :: Post.t()
   def get_post!(post_id) do
-    [id: post_id]
+    [id_or_slug: post_id]
     |> PostQueries.query_posts()
     |> Repo.one!()
   end
 
-  @spec get_post!(non_neg_integer(), list) :: Post.t()
+  @spec get_post!(Ecto.UUID.t() | String.t(), list) :: Post.t()
   def get_post!(post_id, args) do
-    ([id: post_id] ++ args)
+    ([id_or_slug: post_id] ++ args)
     |> PostQueries.query_posts()
     |> Repo.one!()
   end
 
-  @spec get_post(non_neg_integer()) :: Post.t() | nil
+  @spec get_post(Ecto.UUID.t() | String.t()) :: Post.t() | nil
   def get_post(post_id) do
-    [id: post_id]
+    [id_or_slug: post_id]
     |> PostQueries.query_posts()
     |> Repo.one()
   end
 
-  @spec get_post(non_neg_integer(), list) :: Post.t() | nil
+  @spec get_post(Ecto.UUID.t() | String.t(), list) :: Post.t() | nil
   def get_post(post_id, args) do
-    ([id: post_id] ++ args)
+    ([id_or_slug: post_id] ++ args)
     |> PostQueries.query_posts()
     |> Repo.one()
   end

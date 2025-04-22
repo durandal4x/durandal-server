@@ -9,7 +9,7 @@ defmodule Durandal.Blog.PostQueries do
     query = from(posts in Post)
 
     query
-    |> do_where(id: args[:id])
+    |> do_where(id_or_slug: args[:id_or_slug])
     |> do_where(args[:where])
     |> do_preload(args[:preload])
     |> do_order_by(args[:order_by])
@@ -29,6 +29,18 @@ defmodule Durandal.Blog.PostQueries do
   @spec _where(Ecto.Query.t(), Atom.t(), any()) :: Ecto.Query.t()
   defp _where(query, _, ""), do: query
   defp _where(query, _, nil), do: query
+
+  defp _where(query, :id_or_slug, id_or_slug) do
+    case Ecto.UUID.cast(id_or_slug) do
+      {:ok, _} ->
+        from posts in query,
+          where: posts.id == ^id_or_slug
+
+      _ ->
+        from posts in query,
+          where: posts.url_slug == ^id_or_slug
+    end
+  end
 
   defp _where(query, :id, id) do
     from posts in query,
