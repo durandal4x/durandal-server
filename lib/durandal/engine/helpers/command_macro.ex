@@ -26,11 +26,6 @@ defmodule Durandal.Engine.CommandMacro do
   """
   @callback execute(map(), Command.t()) :: map()
 
-  @doc """
-
-  """
-  @callback maybe_complete(map(), Command.t()) :: map()
-
   defmacro __using__(_opts) do
     quote do
       @behaviour Durandal.Engine.CommandMacro

@@ -82,7 +82,7 @@ defmodule Durandal.Space.ShipLib do
   """
   @spec get_extended_ship(Ship.id()) :: Ship.t() | nil
   def get_extended_ship(ship_id) do
-    get_ship(ship_id, preload: [:type, :orbiting, :transfer, :docked_with])
+    get_ship(ship_id, preload: [:type, :orbiting, :docked_with])
   end
 
   @doc """

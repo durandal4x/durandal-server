@@ -1,7 +1,7 @@
 defmodule Durandal.Engine.Commands.StationTransferToSystemObjectCommandTest do
   use Durandal.SimCase
   alias Durandal.Engine.StationTransferToSystemObjectCommand
-  alias Durandal.{Space, Player, Engine}
+  alias Durandal.{Space, Player}
 
   setup do
     universe = start_universe("empty", [])
@@ -50,60 +50,71 @@ defmodule Durandal.Engine.Commands.StationTransferToSystemObjectCommandTest do
   test "perform transfer - 100 orbit distance", %{
     station: station,
     universe: universe,
-    system_object: system_object
+    system_object: system_object,
+    command: command
   } do
     assert station.velocity == [0, 0, 0]
     assert station.position == [0, 0, 0]
     assert station.universe_id == universe.id
-    assert station.current_transfer_id == nil
 
     [result] = tick_universe(universe.id)
+    assert result.command_logs[command.id] == ["Progressed transfer of #{station.id}"]
+    command = Player.get_command!(command.id)
+    assert command.progress == 7
+    assert command.outcome["transfer"]["progress"] == 100
 
-    assert result.systems_logs["Transfer"][:stations] == %{progress: [station.id]}
-
-    station = Space.get_station!(station.id, preload: [:transfer])
-    assert station.velocity == [0, 0, 0]
-    assert station.position == [141, 141, 0]
-    refute station.current_transfer_id == nil
-    assert station.current_transfer.progress == Space.StationLib.station_acceleration() + 100
-    assert round(station.current_transfer.progress_percentage) == 14
+    station = Space.get_station!(station.id)
+    assert station.velocity == [71, 71, 0]
+    assert station.position == [71, 71, 0]
 
     # Now tick nine more times
-    tick_universe(universe.id, 8)
+    tick_universe(universe.id, 9)
+    assert result.command_logs[command.id] == ["Progressed transfer of #{station.id}"]
+    command = Player.get_command!(command.id)
+    assert command.progress == 70
+    assert command.outcome["transfer"]["progress"] == 1000
 
-    station = Space.get_station!(station.id, preload: [:transfer])
-    assert station.velocity == [0, 0, 0]
+    station = Space.get_station!(station.id)
+    assert station.velocity == [71, 71, 0]
     assert station.position == [707, 707, 0]
-    refute station.current_transfer_id == nil
-    assert station.current_transfer.progress == Space.StationLib.station_acceleration() * 10
-    assert round(station.current_transfer.progress_percentage) == 71
 
     # And then X more to get it 1 tick before the arrival
-    tick_universe(universe.id, 4)
+    tick_universe(universe.id, 3)
+    assert result.command_logs[command.id] == ["Progressed transfer of #{station.id}"]
+    command = Player.get_command!(command.id)
+    assert command.progress == 91
+    assert command.outcome["transfer"]["progress"] == 1300
 
-    station = Space.get_station!(station.id, preload: [:transfer])
-    assert station.velocity == [0, 0, 0]
-    assert station.position == [990, 990, 0]
-    refute station.current_transfer_id == nil
-    assert_in_delta(station.current_transfer.progress_percentage, 99, 0.1)
+    station = Space.get_station!(station.id)
+    assert station.velocity == [70, 70, 0]
+    assert station.position == [919, 919, 0]
 
-    # Now with that one extra tick, should no longer be transferring
+    # Now with that one extra tick, should be on the final stage of transfer
     [result] = tick_universe(universe.id)
+    assert result.command_logs[command.id] == ["Nearly completed transfer of #{station.id}"]
 
-    assert result.systems_logs["Transfer"][:stations] == %{complete: [station.id]}
+    command = Player.get_command!(command.id)
+    assert command.progress == 99
+    assert command.outcome["transfer"]["progress"] == 1414
 
-    station = Space.get_station!(station.id, preload: [:transfer, :incomplete_commands])
-    assert station.velocity == [0, 0, 0]
+    station = Space.get_station!(station.id)
+    assert station.velocity == [10, 10, 0]
     assert station.position == [929, 929, 0]
-    assert station.current_transfer_id == nil
-    assert_in_delta(Engine.Maths.distance(station.position, system_object.position), 100, 1)
+
+    # One more tick to kill the command and velocity
+    [result] = tick_universe(universe.id)
+    assert result.command_logs[command.id] == ["Completed transfer of #{station.id}"]
+
+    command = Player.get_command!(command.id)
+    assert command.progress == 100
+    station = Space.get_station!(station.id)
+    assert station.velocity == [0, 0, 0]
+    assert station.position == [934, 925, 0]
+    assert station.orbiting_id == system_object.id
 
     # At this stage the station should have no commands
-    assert Enum.empty?(station.commands)
-
-    # Tick again, we expect no transfers
-    [result] = tick_universe(universe.id)
-    assert result.systems_logs["Transfer"][:stations] == %{}
+    station_command = Player.current_command_for_subject(station.id)
+    assert station_command == nil
   end
 
   test "perform transfer - no orbit distance", %{
@@ -117,53 +128,63 @@ defmodule Durandal.Engine.Commands.StationTransferToSystemObjectCommandTest do
     assert station.velocity == [0, 0, 0]
     assert station.position == [0, 0, 0]
     assert station.universe_id == universe.id
-    assert station.current_transfer_id == nil
 
     [result] = tick_universe(universe.id)
+    assert result.command_logs[command.id] == ["Progressed transfer of #{station.id}"]
+    command = Player.get_command!(command.id)
+    assert command.progress == 7
+    assert command.outcome["transfer"]["progress"] == 100
 
-    assert result.systems_logs["Transfer"][:stations] == %{progress: [station.id]}
-
-    station = Space.get_station!(station.id, preload: [:transfer])
-    assert station.velocity == [0, 0, 0]
+    station = Space.get_station!(station.id)
+    assert station.velocity == [71, 71, 0]
     assert station.position == [71, 71, 0]
-    refute station.current_transfer_id == nil
-    assert station.current_transfer.progress == Space.StationLib.station_acceleration()
-    assert round(station.current_transfer.progress_percentage) == 7
 
     # Now tick nine more times
     tick_universe(universe.id, 9)
+    assert result.command_logs[command.id] == ["Progressed transfer of #{station.id}"]
+    command = Player.get_command!(command.id)
+    assert command.progress == 70
+    assert command.outcome["transfer"]["progress"] == 1000
 
-    station = Space.get_station!(station.id, preload: [:transfer])
-    assert station.velocity == [0, 0, 0]
+    station = Space.get_station!(station.id)
+    assert station.velocity == [71, 71, 0]
     assert station.position == [707, 707, 0]
-    refute station.current_transfer_id == nil
-    assert station.current_transfer.progress == Space.StationLib.station_acceleration() * 10
-    assert round(station.current_transfer.progress_percentage) == 71
 
     # And then X more to get it 1 tick before the arrival
     tick_universe(universe.id, 4)
+    assert result.command_logs[command.id] == ["Progressed transfer of #{station.id}"]
+    command = Player.get_command!(command.id)
+    assert command.progress == 99
+    assert command.outcome["transfer"]["progress"] == 1400
 
-    station = Space.get_station!(station.id, preload: [:transfer])
-    assert station.velocity == [0, 0, 0]
+    station = Space.get_station!(station.id)
+    assert station.velocity == [71, 71, 0]
     assert station.position == [990, 990, 0]
-    refute station.current_transfer_id == nil
-    assert_in_delta(station.current_transfer.progress_percentage, 99, 0.1)
 
-    # Now with that one extra tick, should no longer be transferring
+    # Now with that one extra tick, should be on the final stage of transfer
     [result] = tick_universe(universe.id)
+    assert result.command_logs[command.id] == ["Nearly completed transfer of #{station.id}"]
 
-    assert result.systems_logs["Transfer"][:stations] == %{complete: [station.id]}
+    command = Player.get_command!(command.id)
+    assert command.progress == 99
+    assert command.outcome["transfer"]["progress"] == 1414
 
-    station = Space.get_station!(station.id, preload: [:transfer, :incomplete_commands])
+    station = Space.get_station!(station.id)
+    assert station.velocity == [10, 10, 0]
+    assert station.position == [1_000, 1_000, 0]
+
+    # One more tick to kill the command and velocity
+    [result] = tick_universe(universe.id)
+    assert result.command_logs[command.id] == ["Completed transfer of #{station.id}"]
+
+    command = Player.get_command!(command.id)
+    assert command.progress == 100
+    station = Space.get_station!(station.id)
     assert station.velocity == [0, 0, 0]
     assert station.position == [1_000, 1_000, 0]
-    assert station.current_transfer_id == nil
 
     # At this stage the station should have no commands
-    assert Enum.empty?(station.commands)
-
-    # Tick again, we expect no transfers
-    [result] = tick_universe(universe.id)
-    assert result.systems_logs["Transfer"][:stations] == %{}
+    station_command = Player.current_command_for_subject(station.id)
+    assert station_command == nil
   end
 end

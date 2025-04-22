@@ -2,70 +2,6 @@ defmodule Durandal.Repo.Migrations.EngineMigrations do
   use Ecto.Migration
 
   def change do
-    create_if_not_exists table(:space_ship_transfers, primary_key: false) do
-      add(:id, :uuid, primary_key: true, null: false)
-
-      add(:ship_id, references(:space_ships, on_delete: :nothing, type: :uuid), type: :uuid)
-
-      add(:origin, {:array, :bigint})
-
-      add(:to_station_id, references(:space_stations, on_delete: :nothing, type: :uuid),
-        type: :uuid
-      )
-
-      add(
-        :to_system_object_id,
-        references(:space_system_objects, on_delete: :nothing, type: :uuid),
-        type: :uuid
-      )
-
-      add(:universe_id, references(:game_universes, on_delete: :nothing, type: :uuid),
-        type: :uuid
-      )
-
-      add(:owner_id, :uuid)
-      add(:distance, :bigint)
-      add(:progress, :bigint)
-      add(:progress_percentage, :float)
-      add(:status, :string)
-      add(:started_tick, :integer)
-      add(:completed_tick, :integer)
-
-      timestamps(type: :utc_datetime_usec)
-    end
-
-    create_if_not_exists table(:space_station_transfers, primary_key: false) do
-      add(:id, :uuid, primary_key: true, null: false)
-
-      add(:station_id, references(:space_stations, on_delete: :nothing, type: :uuid), type: :uuid)
-
-      add(:origin, {:array, :bigint})
-
-      add(:to_station_id, references(:space_stations, on_delete: :nothing, type: :uuid),
-        type: :uuid
-      )
-
-      add(
-        :to_system_object_id,
-        references(:space_system_objects, on_delete: :nothing, type: :uuid),
-        type: :uuid
-      )
-
-      add(:universe_id, references(:game_universes, on_delete: :nothing, type: :uuid),
-        type: :uuid
-      )
-
-      add(:owner_id, :uuid)
-      add(:distance, :bigint)
-      add(:progress, :bigint)
-      add(:progress_percentage, :float)
-      add(:status, :string)
-      add(:started_tick, :integer)
-      add(:completed_tick, :integer)
-
-      timestamps(type: :utc_datetime_usec)
-    end
-
     alter table(:game_universes) do
       add :last_tick, :utc_datetime_usec
       add :next_tick, :utc_datetime_usec
@@ -92,12 +28,6 @@ defmodule Durandal.Repo.Migrations.EngineMigrations do
         type: :uuid
       )
 
-      add(
-        :current_transfer_id,
-        references(:space_ship_transfers, on_delete: :nothing, type: :uuid),
-        type: :uuid
-      )
-
       remove(:position)
       add(:position, {:array, :bigint})
     end
@@ -108,12 +38,6 @@ defmodule Durandal.Repo.Migrations.EngineMigrations do
       remove :orbit_distance
       remove(:position)
       add(:position, {:array, :bigint})
-
-      add(
-        :current_transfer_id,
-        references(:space_station_transfers, on_delete: :nothing, type: :uuid),
-        type: :uuid
-      )
     end
 
     alter table(:space_system_objects) do

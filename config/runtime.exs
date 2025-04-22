@@ -42,7 +42,7 @@ if config_env() == :prod do
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
   config :durandal,
-    blog_allow_upload: true,
+    blog_allow_upload: System.get_env("BLOG_ALLOW_UPLOAD") == "TRUE",
     blog_upload_path: System.get_env("BLOG_UPLOAD_PATH"),
     blog_upload_extensions:
       System.get_env("BLOG_UPLOAD_EXTENSIONS", ".jpg .jpeg .png") |> String.split(" ")

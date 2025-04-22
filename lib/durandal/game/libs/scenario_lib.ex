@@ -19,7 +19,6 @@ defmodule Durandal.Game.ScenarioLib do
 
   """
   alias Durandal.{Repo, Game, Account}
-  alias Durandal.Space.TransferLib
 
   @spec uuid() :: Ecto.UUID.t()
   defp uuid(), do: Ecto.UUID.generate()
@@ -324,38 +323,7 @@ defmodule Durandal.Game.ScenarioLib do
       end)
 
     Repo.insert_all(Durandal.Space.Ship, rows)
-    build_ship_transfers(data, ids)
     build_ship_commands(data, ids)
-  end
-
-  defp build_ship_transfers(data, ids) do
-    rows =
-      data
-      |> Enum.filter(fn ship -> Map.get(ship, "current_transfer") != nil end)
-      |> Enum.map(fn %{"current_transfer" => transfer} = ship ->
-        raise "Transfers made this way don't work as the command requires a transfer_id, need a way to create them and the command?"
-
-        # TODO: It is possible to have a transfer without a valid end-target, this needs to be checked for
-        %{
-          id: Ecto.UUID.generate(),
-          ship_id: Map.fetch!(ids, ship["id"]),
-          origin: transfer["origin"],
-          to_station_id: Map.get(ids, transfer["to_station"]),
-          to_system_object_id: Map.get(ids, transfer["to_system_object"]),
-          distance: transfer["distance"],
-          progress: transfer["progress"],
-          progress_percentage:
-            TransferLib.calculate_progress_percentage(transfer["progress"], transfer["distance"]),
-          status: "in progress",
-          started_tick: transfer["started_tick"] || 0,
-          universe_id: Map.fetch!(ids, "$universe"),
-          inserted_at: DateTime.utc_now(),
-          updated_at: DateTime.utc_now()
-        }
-      end)
-      |> List.flatten()
-
-    Repo.insert_all(Durandal.Space.ShipTransfer, rows)
   end
 
   defp build_ship_commands(data, ids) do

@@ -242,7 +242,8 @@ defmodule DurandalWeb.CoreComponents do
 
   attr :type, :string,
     default: "text",
-    values: ~w(checkbox color date datetime-local email file hidden month number password
+    values:
+      ~w(checkbox color date datetime-local email file hidden month number password
                range radio search select tel text textarea textarea-array time url week in_map 3dvector)
 
   attr :field, Phoenix.HTML.FormField,

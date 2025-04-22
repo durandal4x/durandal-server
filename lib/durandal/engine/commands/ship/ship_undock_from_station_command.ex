@@ -40,31 +40,14 @@ defmodule Durandal.Engine.ShipUndockFromStationCommand do
     {:ok, _command} =
       Player.update_command(command, %{
         outcome: %{
-          "start_tick" => context.tick
-        }
+          "start_tick" => context.tick,
+          "stop_tick" => context.tick
+        },
+        progress: 100
       })
 
     Engine.add_command_logs(context, command.id, [
       "Undocked #{ship.id} from #{ship.docked_with_id}"
     ])
-  end
-
-  def maybe_complete(context, command) do
-    ship = Space.get_extended_ship(command.subject_id)
-    do_maybe_complete(context, command, ship)
-  end
-
-  defp do_maybe_complete(context, command, %{docked_with_id: nil} = _ship) do
-    new_outcome =
-      Map.merge(command.outcome || %{}, %{
-        stop_tick: context.tick
-      })
-
-    {:ok, _command} = Player.update_command(command, %{progress: 100, outcome: new_outcome})
-    context
-  end
-
-  defp do_maybe_complete(context, _command, _ship) do
-    context
   end
 end

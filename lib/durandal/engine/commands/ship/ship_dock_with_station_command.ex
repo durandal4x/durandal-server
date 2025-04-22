@@ -30,8 +30,10 @@ defmodule Durandal.Engine.ShipDockWithStationCommand do
         {:ok, _command} =
           Player.update_command(command, %{
             outcome: %{
-              "start_tick" => context.tick
-            }
+              "start_tick" => context.tick,
+              "stop_tick" => context.tick
+            },
+            progress: 100
           })
 
         Engine.add_command_logs(context, command.id, [
@@ -49,25 +51,6 @@ defmodule Durandal.Engine.ShipDockWithStationCommand do
     Engine.add_command_logs(context, command.id, [
       "Unable to dock #{ship.id} with #{command.contents["station_id"]} as already docked at #{ship.docked_with_id}"
     ])
-  end
-
-  def maybe_complete(context, command) do
-    ship = Space.get_extended_ship(command.subject_id)
-    do_maybe_complete(context, command, ship)
-  end
-
-  defp do_maybe_complete(context, _command, %{docked_with_id: nil} = _ship) do
-    context
-  end
-
-  defp do_maybe_complete(context, command, _ship) do
-    new_outcome =
-      Map.merge(command.outcome || %{}, %{
-        stop_tick: context.tick
-      })
-
-    {:ok, _command} = Player.update_command(command, %{progress: 100, outcome: new_outcome})
-    context
   end
 
   defp can_dock?(ship, station) do

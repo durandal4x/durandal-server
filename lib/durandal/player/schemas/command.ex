@@ -21,10 +21,14 @@ defmodule Durandal.Player.Command do
     field(:subject_type, :string)
     field(:subject_id, Ecto.UUID)
     field(:ordering, :integer)
+
+    # Contents refers to things the user puts in
     field(:contents, :map, default: %{})
 
-    field(:progress, :integer, default: 0)
+    # Outcome is used to store things from the execution of the command, can serve as a cache
     field(:outcome, :map)
+
+    field(:progress, :integer, default: 0)
 
     belongs_to(:team, Durandal.Player.Team, type: Ecto.UUID)
     belongs_to(:user, Durandal.Account.User, type: Ecto.UUID)

@@ -1,7 +1,7 @@
 defmodule Durandal.Engine.Commands.ShipTransferToStationCommandTest do
   use Durandal.SimCase
   alias Durandal.Engine.ShipTransferToStationCommand
-  alias Durandal.Space
+  alias Durandal.{Space, Player}
 
   setup do
     universe = start_universe("empty", [])
@@ -55,57 +55,67 @@ defmodule Durandal.Engine.Commands.ShipTransferToStationCommandTest do
      universe: universe, ship: ship, station: station, ship_type: ship_type, command: command}
   end
 
-  test "perform transfer", %{ship: ship, universe: universe, ship_type: ship_type} do
+  test "perform transfer", %{ship: ship, universe: universe, command: command} do
     assert ship.velocity == [0, 0, 0]
     assert ship.position == [0, 0, 0]
     assert ship.universe_id == universe.id
-    assert ship.current_transfer_id == nil
 
     [result] = tick_universe(universe.id)
+    assert result.command_logs[command.id] == ["Progressed transfer of #{ship.id}"]
+    command = Player.get_command!(command.id)
+    assert command.progress == 7
+    assert command.outcome["transfer"]["progress"] == 100
 
-    assert result.systems_logs["Transfer"][:ships] == %{progress: [ship.id]}
-
-    ship = Space.get_ship!(ship.id, preload: [:transfer])
-    assert ship.velocity == [0, 0, 0]
+    ship = Space.get_ship!(ship.id)
+    assert ship.velocity == [71, 71, 0]
     assert ship.position == [71, 71, 0]
-    refute ship.current_transfer_id == nil
-    assert ship.current_transfer.progress == ship_type.acceleration
-    assert round(ship.current_transfer.progress_percentage) == 7
 
     # Now tick nine more times
     tick_universe(universe.id, 9)
+    assert result.command_logs[command.id] == ["Progressed transfer of #{ship.id}"]
+    command = Player.get_command!(command.id)
+    assert command.progress == 70
+    assert command.outcome["transfer"]["progress"] == 1000
 
-    ship = Space.get_ship!(ship.id, preload: [:transfer])
-    assert ship.velocity == [0, 0, 0]
+    ship = Space.get_ship!(ship.id)
+    assert ship.velocity == [71, 71, 0]
     assert ship.position == [707, 707, 0]
-    refute ship.current_transfer_id == nil
-    assert ship.current_transfer.progress == ship_type.acceleration * 10
-    assert round(ship.current_transfer.progress_percentage) == 71
 
     # And then X more to get it 1 tick before the arrival
     tick_universe(universe.id, 4)
+    assert result.command_logs[command.id] == ["Progressed transfer of #{ship.id}"]
+    command = Player.get_command!(command.id)
+    assert command.progress == 99
+    assert command.outcome["transfer"]["progress"] == 1400
 
-    ship = Space.get_ship!(ship.id, preload: [:transfer])
-    assert ship.velocity == [0, 0, 0]
+    ship = Space.get_ship!(ship.id)
+    assert ship.velocity == [71, 71, 0]
     assert ship.position == [990, 990, 0]
-    refute ship.current_transfer_id == nil
-    assert_in_delta(ship.current_transfer.progress_percentage, 99, 0.1)
 
-    # Now with that one extra tick, should no longer be transferring
+    # Now with that one extra tick, should be on the final stage of transfer
     [result] = tick_universe(universe.id)
+    assert result.command_logs[command.id] == ["Nearly completed transfer of #{ship.id}"]
 
-    assert result.systems_logs["Transfer"][:ships] == %{complete: [ship.id]}
+    command = Player.get_command!(command.id)
+    assert command.progress == 99
+    assert command.outcome["transfer"]["progress"] == 1414
 
-    ship = Space.get_ship!(ship.id, preload: [:transfer, :incomplete_commands])
+    ship = Space.get_ship!(ship.id)
+    assert ship.velocity == [10, 10, 0]
+    assert ship.position == [1_000, 1_000, 0]
+
+    # One more tick to kill the command and velocity
+    [result] = tick_universe(universe.id)
+    assert result.command_logs[command.id] == ["Completed transfer of #{ship.id}"]
+
+    command = Player.get_command!(command.id)
+    assert command.progress == 100
+    ship = Space.get_ship!(ship.id)
     assert ship.velocity == [0, 0, 0]
     assert ship.position == [1_000, 1_000, 0]
-    assert ship.current_transfer_id == nil
 
     # At this stage the ship should have no commands
-    assert Enum.empty?(ship.commands)
-
-    # Tick again, we expect no transfers
-    [result] = tick_universe(universe.id)
-    assert result.systems_logs["Transfer"][:ships] == %{}
+    ship_command = Player.current_command_for_subject(ship.id)
+    assert ship_command == nil
   end
 end

@@ -18,100 +18,133 @@ defmodule Durandal.Engine.ShipTransferToStationCommand do
     do_execute(context, command, ship)
   end
 
-  # Not currently in a transfer
-  defp do_execute(context, command, %{current_transfer: nil} = ship) do
-    new_transfer(context, command, ship)
+  # In a transfer, hopefully this one!
+  defp do_execute(context, %{outcome: %{"transfer" => _transfer}} = command, ship) do
+    context
+    |> do_transfer(command, ship)
   end
 
-  # In a transfer, hopefully this one!
-  defp do_execute(context, _command, %{current_transfer: %{status: "in progress"}} = _ship) do
-    context
+  # Current command does not have transfer data, we need to make a new one
+  defp do_execute(context, command, ship) do
+    {context, command, ship} = new_transfer(context, command, ship)
+    do_transfer(context, command, ship)
   end
 
   defp new_transfer(context, command, ship) do
     station = Space.get_station!(command.contents["station_id"])
     distance = Space.calculate_distance(ship, station)
 
-    {:ok, transfer} =
-      Space.create_ship_transfer(%{
-        universe_id: ship.universe_id,
-        ship_id: ship.id,
-        origin: ship.position,
-        to_station_id: station.id,
-        progress: 0,
-        status: "in progress",
-        started_tick: context.tick,
-        distance: distance
-      })
+    transfer = %{
+      "origin" => ship.position,
+      "distance" => distance,
+      "progress" => 0
+    }
 
     # Update the command so it has a reference of the transfer
-    {:ok, _command} =
+    {:ok, command} =
       Player.update_command(command, %{
         outcome: %{
-          "transfer_id" => transfer.id,
+          "transfer" => transfer,
           "start_tick" => context.tick
         }
       })
 
-    {:ok, _ship} =
+    # Ship must be made to no longer be docked or orbiting
+    {:ok, ship} =
       Space.update_ship(ship, %{
         orbiting_id: nil,
-        docked_with_id: nil,
-        current_transfer_id: transfer.id
+        docked_with_id: nil
+      })
+
+    # Need to get the extended ship
+    ship = Space.get_extended_ship(ship.id)
+
+    {context, command, ship}
+  end
+
+  defp do_transfer(context, %{outcome: %{"transfer" => transfer}} = command, ship) do
+    remaining = transfer["distance"] - transfer["progress"]
+
+    cond do
+      remaining == 0 ->
+        complete_transfer(context, command, ship)
+
+      remaining < ship.type.acceleration ->
+        partial_progress_transfer(context, command, ship)
+
+      true ->
+        progress_transfer(context, command, ship)
+    end
+  end
+
+  # Transfer completed, stop the ship velocity
+  defp complete_transfer(context, %{outcome: %{"transfer" => _transfer}} = command, ship) do
+    station = Space.get_station!(command.contents["station_id"])
+
+    new_outcome =
+      Map.merge(command.outcome || %{}, %{
+        stop_tick: context.tick
+      })
+
+    {:ok, _command} =
+      Player.update_command(command, %{progress: 100, outcome: new_outcome})
+
+    {:ok, _ship} =
+      Space.update_ship(ship, %{
+        current_transfer_id: nil,
+        velocity: station.velocity,
+        orbiting_id: station.orbiting_id,
+        orbit_clockwise: station.orbit_clockwise,
+        orbit_period: station.orbit_period
       })
 
     context
+    |> Engine.add_command_logs(command.id, ["Completed transfer of #{ship.id}"])
   end
 
-  def maybe_complete(context, command) do
-    ship = Space.get_extended_ship(command.subject_id)
-    do_maybe_complete(context, command, ship)
-  end
+  # Transfer nearly completed, move just enough we can stop next time
+  defp partial_progress_transfer(context, %{outcome: %{"transfer" => transfer}} = command, ship) do
+    station = Space.get_station!(command.contents["station_id"])
 
-  # Not currently in a transfer
-  defp do_maybe_complete(context, command, %{current_transfer_id: nil} = ship) do
-    transfer = Space.get_ship_transfer(command.outcome["transfer_id"])
+    velocity = Engine.Maths.sub_vector(station.position, ship.position)
 
-    case transfer do
-      %{status: "complete"} ->
-        new_outcome =
-          Map.merge(command.outcome || %{}, %{
-            stop_tick: context.tick
-          })
+    {:ok, _} = Space.update_ship(ship, %{velocity: velocity})
 
-        {:ok, _command} =
-          Player.update_command(command, %{progress: 100, outcome: new_outcome})
+    new_outcome =
+      command.outcome
+      |> put_in(~w(transfer progress), transfer["distance"])
 
-        station = Space.get_station!(transfer.to_station_id)
-
-        {:ok, _ship} =
-          Space.update_ship(ship, %{
-            current_transfer_id: nil,
-            velocity: station.velocity,
-            orbiting_id: station.orbiting_id,
-            orbit_clockwise: station.orbit_clockwise,
-            orbit_period: station.orbit_period
-          })
-
-        context
-
-      _ ->
-        context
-    end
-  end
-
-  defp do_maybe_complete(context, command, _ship) do
-    if command.outcome["transfer_id"] do
-      # In a transfer, lets update our progress
-      transfer = Space.get_ship_transfer(command.outcome["transfer_id"])
-
-      # It's in progress, we want to update the command to show the new progress
-      {:ok, _command} =
-        Player.update_command(command, %{
-          progress: :math.floor(transfer.progress_percentage) |> round
-        })
-    end
+    # We set it to 99 because if set to 100 it means the command is completed
+    {:ok, _} = Player.update_command(command, %{outcome: new_outcome, progress: 99})
 
     context
+    |> Engine.add_command_logs(command.id, ["Nearly completed transfer of #{ship.id}"])
+  end
+
+  # Standard progression of transfer
+  defp progress_transfer(context, %{outcome: %{"transfer" => transfer}} = command, ship) do
+    # TODO: Update the ship velocity based on the acceleration and use that instead
+    new_progress = (transfer["progress"] || 0) + ship.type.acceleration
+    progress_percentage = new_progress / transfer["distance"]
+    station = Space.get_station!(command.contents["station_id"])
+
+    new_position =
+      Space.calculate_midpoint(transfer["origin"], station.position, progress_percentage)
+
+    velocity = Engine.Maths.sub_vector(new_position, ship.position)
+
+    {:ok, _} = Space.update_ship(ship, %{velocity: velocity})
+
+    new_outcome =
+      command.outcome
+      |> put_in(~w(transfer progress), new_progress)
+
+    progress_percentage_int = (progress_percentage * 100) |> :math.floor() |> round()
+
+    {:ok, _} =
+      Player.update_command(command, %{outcome: new_outcome, progress: progress_percentage_int})
+
+    context
+    |> Engine.add_command_logs(command.id, ["Progressed transfer of #{ship.id}"])
   end
 end

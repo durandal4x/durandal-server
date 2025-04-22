@@ -100,6 +100,11 @@ defmodule Durandal.Player do
   defdelegate list_commands(args), to: CommandLib
 
   @doc section: :command
+  @spec current_command_for_subject(Durandal.ship_id() | Durandal.station_id()) ::
+          Command.t() | nil
+  defdelegate current_command_for_subject(subject_id), to: CommandQueries
+
+  @doc section: :command
   @spec get_command!(Command.id(), Durandal.query_args()) :: Command.t()
   defdelegate get_command!(command_id, query_args \\ []), to: CommandLib
 

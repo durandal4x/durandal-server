@@ -120,42 +120,4 @@ defmodule Durandal.SpaceFixtures do
     )
     |> Durandal.Repo.insert!()
   end
-
-  alias Durandal.Space.ShipTransfer
-
-  @spec ship_transfer_fixture(map) :: ShipTransfer.t()
-  def ship_transfer_fixture(data \\ %{}) do
-    r = :rand.uniform(999_999_999)
-
-    ship =
-      Durandal.Space.get_ship(data["ship_id"]) || ship_fixture()
-
-    to_params =
-      if data["to_station_id"] do
-        %{
-          to_station_id: data["to_station_id"],
-          to_system_object_id: nil
-        }
-      else
-        %{
-          to_station_id: nil,
-          to_system_object_id: data["to_system_object_id"] || system_object_fixture().id
-        }
-      end
-
-    ShipTransfer.changeset(
-      %ShipTransfer{},
-      Map.merge(to_params, %{
-        universe_id: ship.universe_id,
-        ship_id: ship.id,
-        origin: data["origin"] || [r, r, r],
-        distance: data["distance"] || r,
-        progress: data["progress"] || 50,
-        status: data["status"] || "in progress",
-        started_tick: data["started_tick"] || r,
-        completed_tick: data["completed_tick"]
-      })
-    )
-    |> Durandal.Repo.insert!()
-  end
 end

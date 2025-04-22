@@ -86,7 +86,7 @@ defmodule Durandal.Space.StationLib do
   @spec get_extended_station(Station.id()) :: Station.t() | nil
   def get_extended_station(station_id) do
     get_station(station_id,
-      preload: [:orbiting, :modules_with_types, :transfer]
+      preload: [:orbiting, :modules_with_types]
     )
   end
 

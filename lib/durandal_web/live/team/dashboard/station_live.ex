@@ -131,7 +131,7 @@ defmodule DurandalWeb.Team.StationLive do
   defp get_station(%{assigns: %{station_id: station_id}} = socket) do
     station =
       Space.get_station!(station_id,
-        preload: [:team, :system, :orbiting, :incomplete_commands, :transfer_with_destination]
+        preload: [:team, :system, :orbiting, :incomplete_commands]
       )
 
     station_modules =

@@ -18,114 +18,155 @@ defmodule Durandal.Engine.StationTransferToSystemObjectCommand do
     do_execute(context, command, station)
   end
 
-  # Not currently in a transfer
-  defp do_execute(context, command, %{current_transfer: nil} = station) do
-    new_transfer(context, command, station)
+  # In a transfer, hopefully this one!
+  defp do_execute(context, %{outcome: %{"transfer" => _transfer}} = command, station) do
+    context
+    |> do_transfer(command, station)
   end
 
-  # In a transfer, hopefully this one!
-  defp do_execute(context, _command, %{current_transfer: %{status: "in progress"}} = _station) do
-    context
+  # Current command does not have transfer data, we need to make a new one
+  defp do_execute(context, command, station) do
+    {context, command, station} = new_transfer(context, command, station)
+    do_transfer(context, command, station)
   end
 
   defp new_transfer(context, command, station) do
     system_object = Space.get_system_object!(command.contents["system_object_id"])
     distance = Space.calculate_distance(station, system_object)
-
-    {:ok, transfer} =
-      Space.create_station_transfer(%{
-        universe_id: station.universe_id,
-        station_id: station.id,
-        origin: station.position,
-        to_system_object_id: system_object.id,
-        progress: command.contents["orbit_distance"],
-        status: "in progress",
-        started_tick: context.tick,
-        distance: distance
-      })
-
     direction = Engine.Maths.calculate_angle(system_object.position, station.position)
 
+    transfer = %{
+      "origin" => station.position,
+      "distance" => distance,
+      "progress" => 0,
+      "initial_direction_from_system_object" => direction
+    }
+
     # Update the command so it has a reference of the transfer
-    {:ok, _command} =
+    {:ok, command} =
       Player.update_command(command, %{
         outcome: %{
-          "transfer_id" => transfer.id,
-          "start_tick" => context.tick,
-          "initial_direction_from_system_object" => direction
+          "transfer" => transfer,
+          "start_tick" => context.tick
         }
       })
 
-    {:ok, _station} =
+    # Station must be made to no longer be docked or orbiting
+    {:ok, station} =
       Space.update_station(station, %{
         orbiting_id: nil,
-        current_transfer_id: transfer.id
+        docked_with_id: nil
+      })
+
+    # Need to get the extended station
+    station = Space.get_extended_station(station.id)
+
+    {context, command, station}
+  end
+
+  defp do_transfer(context, %{outcome: %{"transfer" => transfer}} = command, station) do
+    remaining = transfer["distance"] - transfer["progress"] - command.contents["orbit_distance"]
+
+    cond do
+      remaining <= 0 ->
+        complete_transfer(context, command, station)
+
+      remaining < Durandal.Space.StationLib.station_acceleration() ->
+        partial_progress_transfer(context, command, station)
+
+      true ->
+        progress_transfer(context, command, station)
+    end
+  end
+
+  # Transfer completed, stop the station velocity
+  defp complete_transfer(context, %{outcome: %{"transfer" => transfer}} = command, station) do
+    system_object = Space.get_system_object!(command.contents["system_object_id"])
+
+    new_position =
+      Engine.Physics.apply_acceleration(
+        transfer["initial_direction_from_system_object"],
+        command.contents["orbit_distance"]
+      )
+      |> Engine.Maths.add_vector(system_object.position)
+      |> Engine.Maths.round_list()
+
+    new_outcome =
+      Map.merge(command.outcome || %{}, %{
+        stop_tick: context.tick
+      })
+
+    {:ok, _command} =
+      Player.update_command(command, %{progress: 100, outcome: new_outcome})
+
+    {:ok, _station} =
+      Space.update_station(station, %{
+        position: new_position,
+        velocity: system_object.velocity,
+        orbiting_id: system_object.id,
+        orbit_clockwise: true,
+        orbit_period: 100
       })
 
     context
+    |> Engine.add_command_logs(command.id, ["Completed transfer of #{station.id}"])
   end
 
-  def maybe_complete(context, command) do
-    station = Space.get_extended_station(command.subject_id)
-    do_maybe_complete(context, command, station)
-  end
+  # Transfer nearly completed, move just enough we can stop next time
+  defp partial_progress_transfer(
+         context,
+         %{outcome: %{"transfer" => transfer}} = command,
+         station
+       ) do
+    system_object = Space.get_system_object!(command.contents["system_object_id"])
 
-  # Not currently in a transfer
-  defp do_maybe_complete(context, command, %{current_transfer_id: nil} = station) do
-    transfer = Space.get_station_transfer(command.outcome["transfer_id"])
+    new_position =
+      Engine.Physics.apply_acceleration(
+        transfer["initial_direction_from_system_object"],
+        command.contents["orbit_distance"]
+      )
+      |> Engine.Maths.add_vector(system_object.position)
+      |> Engine.Maths.round_list()
 
-    case transfer do
-      %{status: "complete"} ->
-        new_outcome =
-          Map.merge(command.outcome || %{}, %{
-            stop_tick: context.tick
-          })
+    velocity = Engine.Maths.sub_vector(new_position, station.position)
 
-        {:ok, _command} =
-          Player.update_command(command, %{progress: 100, outcome: new_outcome})
+    {:ok, _} = Space.update_station(station, %{velocity: velocity})
 
-        {:ok, _station} = Space.update_station(station, %{current_transfer_id: nil})
+    new_outcome =
+      command.outcome
+      |> put_in(~w(transfer progress), transfer["distance"])
 
-        # Calculate the new orbital setup for our station as it goes around the system object
-        system_object = Space.get_system_object!(transfer.to_system_object_id)
-
-        new_position =
-          Engine.Physics.apply_acceleration(
-            command.outcome["initial_direction_from_system_object"],
-            command.contents["orbit_distance"]
-          )
-          |> Engine.Maths.add_vector(system_object.position)
-          |> Engine.Maths.round_list()
-
-        {:ok, _station} =
-          Space.update_station(station, %{
-            current_transfer_id: nil,
-            position: new_position,
-            velocity: system_object.velocity,
-            orbiting_id: system_object.id,
-            orbit_clockwise: true,
-            orbit_period: 100
-          })
-
-        context
-
-      _ ->
-        context
-    end
-  end
-
-  defp do_maybe_complete(context, command, _station) do
-    if command.outcome["transfer_id"] do
-      # In a transfer, lets update our progress
-      transfer = Space.get_station_transfer(command.outcome["transfer_id"])
-
-      # It's in progress, we want to update the command to show the new progress
-      {:ok, _command} =
-        Player.update_command(command, %{
-          progress: :math.floor(transfer.progress_percentage) |> round
-        })
-    end
+    # We set it to 99 because if set to 100 it means the command is completed
+    {:ok, _} = Player.update_command(command, %{outcome: new_outcome, progress: 99})
 
     context
+    |> Engine.add_command_logs(command.id, ["Nearly completed transfer of #{station.id}"])
+  end
+
+  # Standard progression of transfer
+  defp progress_transfer(context, %{outcome: %{"transfer" => transfer}} = command, station) do
+    # TODO: Update the station velocity based on the acceleration and use that instead
+    new_progress = (transfer["progress"] || 0) + Durandal.Space.StationLib.station_acceleration()
+    progress_percentage = new_progress / transfer["distance"]
+    system_object = Space.get_system_object!(command.contents["system_object_id"])
+
+    new_position =
+      Space.calculate_midpoint(transfer["origin"], system_object.position, progress_percentage)
+
+    velocity = Engine.Maths.sub_vector(new_position, station.position)
+
+    {:ok, _} = Space.update_station(station, %{velocity: velocity})
+
+    new_outcome =
+      command.outcome
+      |> put_in(~w(transfer progress), new_progress)
+
+    progress_percentage_int = (progress_percentage * 100) |> :math.floor() |> round()
+
+    {:ok, _} =
+      Player.update_command(command, %{outcome: new_outcome, progress: progress_percentage_int})
+
+    context
+    |> Engine.add_command_logs(command.id, ["Progressed transfer of #{station.id}"])
   end
 end

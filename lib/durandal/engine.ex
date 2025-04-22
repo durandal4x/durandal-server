@@ -112,6 +112,13 @@ defmodule Durandal.Engine do
     {:ok, lookup}
   end
 
+  @doc """
+  Pass on actions for later systems
+
+  Example:
+
+    add_action(context, ship_id, [:velocity], [])
+  """
   @spec add_action(map(), Ecto.UUID.t(), list(atom()), map()) :: map()
   def add_action(context, subject_id, tags, action) do
     id = Ecto.UUID.generate()
