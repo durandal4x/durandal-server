@@ -1,7 +1,8 @@
 {
   "skip_files": [
     "^test/.*",
-    "lib/durandal/migrations/*"
+    "lib/durandal/migrations/*",
+    "lib/durandal/helpers/fake_data/*"
   ],
   
   "terminal_options": {

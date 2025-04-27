@@ -52,29 +52,3 @@ defmodule Durandal.Repo.Migrations.EngineMigrations do
     end
   end
 end
-
-# Steps to rollback the migration even if partially applied, will be removed from the final merge
-# DELETE FROM schema_migrations WHERE version = '20250303114940';
-# ALTER TABLE game_universes DROP COLUMN last_tick;
-# ALTER TABLE game_universes DROP COLUMN next_tick;
-# ALTER TABLE game_universes DROP COLUMN tick_schedule;
-# ALTER TABLE game_universes DROP COLUMN tick_seconds;
-
-# ALTER TABLE player_teams DROP COLUMN member_count;
-# ALTER TABLE player_team_members DROP COLUMN "active?";
-# ALTER TABLE player_team_members DROP COLUMN "enabled?";
-# ALTER TABLE player_team_members DROP COLUMN universe_id;
-
-# ALTER TABLE player_commands DROP COLUMN "completed?";
-# ALTER TABLE player_commands DROP COLUMN progress;
-# ALTER TABLE player_commands DROP COLUMN outcome;
-
-# ALTER TABLE space_ships DROP COLUMN current_transfer_id;
-# ALTER TABLE space_stations DROP COLUMN current_transfer_id;
-
-# ALTER TABLE space_ships ADD COLUMN orbit_distance INTEGER;
-# ALTER TABLE space_stations ADD COLUMN orbit_distance INTEGER;
-# ALTER TABLE space_system_objects ADD COLUMN orbit_distance INTEGER;
-# DROP TABLE space_ship_transfers;
-
-# ALTER TABLE space_ships DROP COLUMN docked_with_id;
