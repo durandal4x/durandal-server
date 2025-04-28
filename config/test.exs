@@ -1,5 +1,9 @@
 import Config
 
+config :durandal,
+  test: true,
+  scenario_path: "priv/test_scenarios"
+
 # Configure your database
 #
 # The MIX_TEST_PARTITION environment variable can be used
@@ -11,7 +15,8 @@ config :durandal, Durandal.Repo,
   hostname: "localhost",
   database: "durandal_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
-  pool_size: 10
+  pool_size: 20,
+  timeout: 300_000
 
 config :db_cluster,
   enabled: false

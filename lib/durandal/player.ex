@@ -27,6 +27,10 @@ defmodule Durandal.Player do
   defdelegate get_team(team_id, query_args \\ []), to: TeamLib
 
   @doc section: :team
+  @spec get_team_by_id(Durandal.team_id()) :: Team.t() | nil
+  defdelegate get_team_by_id(team_id), to: TeamLib
+
+  @doc section: :team
   @spec create_team(map) :: {:ok, Team.t()} | {:error, Ecto.Changeset.t()}
   defdelegate create_team(attrs), to: TeamLib
 
@@ -63,6 +67,10 @@ defmodule Durandal.Player do
           TeamMember.t() | nil
   defdelegate get_team_member(team_id, user_id, query_args \\ []), to: TeamMemberLib
 
+  @doc section: :team
+  @spec get_team_member_by_id(Durandal.team_id(), Durandal.user_id()) :: TeamMember.t() | nil
+  defdelegate get_team_member_by_id(team_id, user_id), to: TeamMemberLib
+
   @doc section: :team_member
   @spec create_team_member(map) :: {:ok, TeamMember.t()} | {:error, Ecto.Changeset.t()}
   defdelegate create_team_member(attrs), to: TeamMemberLib
@@ -90,6 +98,11 @@ defmodule Durandal.Player do
   @doc section: :command
   @spec list_commands(Durandal.query_args()) :: [Command.t()]
   defdelegate list_commands(args), to: CommandLib
+
+  @doc section: :command
+  @spec current_command_for_subject(Durandal.ship_id() | Durandal.station_id()) ::
+          Command.t() | nil
+  defdelegate current_command_for_subject(subject_id), to: CommandQueries
 
   @doc section: :command
   @spec get_command!(Command.id(), Durandal.query_args()) :: Command.t()

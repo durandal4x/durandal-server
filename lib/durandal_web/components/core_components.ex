@@ -5,7 +5,7 @@ defmodule DurandalWeb.CoreComponents do
 
   use Phoenix.Component
   alias Phoenix.LiveView.JS
-  use Gettext, backend: Durandal.Gettext
+  use Gettext, backend: DurandalWeb.Gettext
   alias Fontawesome
 
   @doc """
@@ -238,11 +238,13 @@ defmodule DurandalWeb.CoreComponents do
   attr :name, :any
   attr :label, :string, default: nil
   attr :value, :any
+  attr :class, :any, default: nil
 
   attr :type, :string,
     default: "text",
-    values: ~w(checkbox color date datetime-local email file hidden month number password
-               range radio search select tel text textarea textarea-array time url week 3dvector)
+    values:
+      ~w(checkbox color date datetime-local email file hidden month number password
+               range radio search select tel text textarea textarea-array time url week in_map 3dvector)
 
   attr :field, Phoenix.HTML.FormField,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
@@ -253,10 +255,13 @@ defmodule DurandalWeb.CoreComponents do
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
 
+  attr :key, :any, default: nil, doc: "used for the in_map type"
+  attr :actual_type, :string, default: nil, doc: "used for the in_map type"
+
   attr :rest, :global,
     include:
       ~w(autocomplete cols disabled form max maxlength min minlength
-                                   pattern placeholder readonly required rows size step show_valid valid_inset)
+                                   pattern placeholder readonly required rows size step show_valid valid_inset extra_classes)
 
   slot :inner_block
 
@@ -299,7 +304,7 @@ defmodule DurandalWeb.CoreComponents do
     ~H"""
     <div phx-feedback-for={@name}>
       <.label :if={@label} for={@id}>{@label}</.label>
-      <select id={@id} name={@name} class="form-control" multiple={@multiple} {@rest}>
+      <select id={@id} name={@name} class={["form-control", @class]} multiple={@multiple} {@rest}>
         <option :if={@prompt} value="">{@prompt}</option>
         {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
@@ -352,20 +357,22 @@ defmodule DurandalWeb.CoreComponents do
     ~H"""
     <div phx-feedback-for={@name}>
       <.label :if={@label} for={@id}>{@label}</.label>
-      <input
-        :for={{v, idx} <- Enum.with_index(@value || assigns[:value])}
-        type={@type}
-        name={"#{@name}[]"}
-        id={@id || "#{@name}_#{idx}"}
-        value={v}
-        style="width: 80px;"
-        class={[
-          "form-control d-inline-block",
-          @errors != [] && "border-danger"
-        ]}
-        {@rest}
-      />
-      <.error :for={msg <- @errors}>{msg}</.error>
+      <div class="input-group">
+        <input
+          :for={{v, idx} <- Enum.with_index(@value || assigns[:value] || ["", "", ""])}
+          type="number"
+          name={"#{@name}[]"}
+          id={@id || "#{@name}_#{idx}"}
+          value={v}
+          style="width: 80px;"
+          class={[
+            "form-control d-inline-block",
+            @errors != [] && "border-danger"
+          ]}
+          {@rest}
+        />
+        <.error :for={msg <- @errors}>{msg}</.error>
+      </div>
     </div>
     """
   end
@@ -379,6 +386,51 @@ defmodule DurandalWeb.CoreComponents do
       value={Phoenix.HTML.Form.normalize_value(@type, @value)}
       {@rest}
     />
+    """
+  end
+
+  def input(%{type: "in_map"} = assigns) do
+    name = assigns[:key] |> List.wrap() |> Enum.map(&"[#{&1}]") |> Enum.join("")
+
+    assigns =
+      Map.merge(assigns, %{
+        name: "#{assigns[:name]}#{name}",
+        type: assigns[:actual_type],
+        value: get_in(assigns[:value], List.wrap(assigns[:key]))
+      })
+
+    input(assigns)
+  end
+
+  def input(%{type: "text-array"} = assigns) do
+    shown_value =
+      case Phoenix.HTML.Form.normalize_value(assigns[:type], assigns[:value]) do
+        nil -> ""
+        "" -> ""
+        v -> List.wrap(v) |> Enum.join(", ")
+      end
+
+    assigns =
+      assigns
+      |> assign(:shown_value, shown_value)
+
+    ~H"""
+    <div phx-feedback-for={@name}>
+      <.label :if={@label} for={@id}>{@label}</.label>
+      <br :if={@label} />
+      <input
+        type={@type}
+        name={@name}
+        id={@id || @name}
+        value={@shown_value}
+        class={[
+          "form-control",
+          @errors != [] && "border-danger"
+        ]}
+        {@rest}
+      />
+      <.error :for={msg <- @errors}>{msg}</.error>
+    </div>
     """
   end
 
@@ -708,11 +760,21 @@ defmodule DurandalWeb.CoreComponents do
     # should be written to the errors.po file. The :count option is
     # set by Ecto and indicates we should also apply plural rules.
     if count = opts[:count] do
-      Gettext.dngettext(Durandal.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(DurandalWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(Durandal.Gettext, "errors", msg, opts)
+      Gettext.dgettext(DurandalWeb.Gettext, "errors", msg, opts)
     end
   end
+
+  defdelegate translate_internal_name(msg), to: Durandal
+  defdelegate translate_internal_name(msg, opts), to: Durandal
+  #   # Same as translate_error but for internal names
+  #   if count = opts[:count] do
+  #     Gettext.dngettext(DurandalWeb.Gettext, "internals", msg, msg, count, opts)
+  #   else
+  #     Gettext.dgettext(DurandalWeb.Gettext, "internals", msg, opts)
+  #   end
+  # end
 
   @doc """
   Translates the errors for a field from a keyword list of errors.

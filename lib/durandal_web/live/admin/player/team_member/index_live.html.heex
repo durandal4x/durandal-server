@@ -1,5 +1,5 @@
 <div id="index-live-wrapper">
-  <DurandalWeb.TeamMemberComponents.filter_bar selected="list">
+  <DurandalWeb.TeamMemberComponents.filter_bar team_id={@team_id} selected="list">
     <div class="col">
       <input
         type="text"
@@ -16,6 +16,10 @@
 
   <.table id="team_members" rows={@streams.team_members} table_class="table-sm table-hover">
     <:col :let={{_id, team_member}} label="Name">{team_member.user.name}</:col>
+    <:col :let={{_id, team_member}} label="Active?">
+      <.boolean_icon value={team_member.active?} true="check" false="times" coloured={true} />
+    </:col>
+    <:col :let={{_id, team_member}} label="Roles">{Enum.join(team_member.roles, ", ")}</:col>
 
     <:action :let={{_id, team_member}}>
       <.link

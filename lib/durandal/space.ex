@@ -66,6 +66,10 @@ defmodule Durandal.Space do
   defdelegate get_station(station_id, query_args \\ []), to: StationLib
 
   @doc section: :station
+  @spec get_extended_station(Station.id()) :: Station.t() | nil
+  defdelegate get_extended_station(station_id), to: StationLib
+
+  @doc section: :station
   @spec create_station(map) :: {:ok, Station.t()} | {:error, Ecto.Changeset.t()}
   defdelegate create_station(attrs), to: StationLib
 
@@ -146,6 +150,10 @@ defmodule Durandal.Space do
   defdelegate get_ship(ship_id, query_args \\ []), to: ShipLib
 
   @doc section: :ship
+  @spec get_extended_ship(Ship.id()) :: Ship.t() | nil
+  defdelegate get_extended_ship(ship_id), to: ShipLib
+
+  @doc section: :ship
   @spec create_ship(map) :: {:ok, Ship.t()} | {:error, Ecto.Changeset.t()}
   defdelegate create_ship(attrs), to: ShipLib
 
@@ -201,4 +209,15 @@ defmodule Durandal.Space do
   @doc section: :system_object
   @spec change_system_object(SystemObject.t(), map) :: Ecto.Changeset.t()
   defdelegate change_system_object(system_object, attrs \\ %{}), to: SystemObjectLib
+
+  alias Durandal.Space.TransferLib
+
+  @doc section: :transfer
+  @spec calculate_distance(Durandal.positional_entity(), Durandal.positional_entity()) ::
+          non_neg_integer()
+  defdelegate calculate_distance(from_entity, to_entity), to: TransferLib
+
+  @doc section: :transfer
+  @spec calculate_midpoint(Maths.vector(), Maths.vector(), number()) :: Maths.vector()
+  defdelegate calculate_midpoint(origin, destination, progress_percentage), to: TransferLib
 end

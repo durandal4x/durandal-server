@@ -1,0 +1,34 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: en_gb\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "build_module"
+msgstr "Build module"
+
+msgid "build_ship"
+msgstr "Build ship"
+
+msgid "dock_at_station"
+msgstr "Dock at station"
+
+#, fuzzy
+msgid "undock_from_station"
+msgstr "Undock from station"
+
+msgid "orbit_system_object"
+msgstr "Orbit system object"
+
+msgid "transfer_to_station"
+msgstr "Transfer to station"
+
+msgid "transfer_to_system_object"
+msgstr "Transfer to system object"

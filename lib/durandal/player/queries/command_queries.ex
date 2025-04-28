@@ -62,6 +62,16 @@ defmodule Durandal.Player.CommandQueries do
       where: commands.ordering in ^List.wrap(ordering)
   end
 
+  # def _where(query, :ordering_gte, ordering) do
+  #   from commands in query,
+  #     where: commands.ordering >= ^ordering
+  # end
+
+  # def _where(query, :ordering_lte, ordering) do
+  #   from commands in query,
+  #     where: commands.ordering <= ^ordering
+  # end
+
   def _where(query, :contents, contents) do
     from commands in query,
       where: commands.contents in ^List.wrap(contents)
@@ -110,6 +120,11 @@ defmodule Durandal.Player.CommandQueries do
 
   @spec _order_by(Ecto.Query.t(), any()) :: Ecto.Query.t()
 
+  def _order_by(query, "Priority") do
+    from commands in query,
+      order_by: [asc: commands.ordering]
+  end
+
   def _order_by(query, "Newest first") do
     from commands in query,
       order_by: [desc: commands.inserted_at]
@@ -147,5 +162,50 @@ defmodule Durandal.Player.CommandQueries do
     from commands in query,
       left_join: game_universes in assoc(commands, :universe),
       preload: [universe: game_universes]
+  end
+
+  @spec next_ordering_for_subject(Durandal.ship_id() | Durandal.station_id()) :: non_neg_integer()
+  def next_ordering_for_subject(subject_id) do
+    query =
+      from commands in Command,
+        where: commands.subject_id == ^subject_id,
+        order_by: [desc: commands.ordering],
+        limit: 1,
+        select: commands.ordering
+
+    (Repo.one(query) || -1) + 1
+  end
+
+  @spec current_command_for_subject(Durandal.ship_id() | Durandal.station_id()) ::
+          Command.t() | nil
+  def current_command_for_subject(subject_id) do
+    query =
+      from commands in Command,
+        where: commands.subject_id == ^subject_id and commands.progress < 100,
+        order_by: [asc: commands.ordering],
+        limit: 1
+
+    Repo.one(query)
+  end
+
+  def pull_most_recent_commands(universe_id) do
+    min_orderings_cte =
+      from(
+        c in Command,
+        group_by: [c.subject_id],
+        where: c.progress < 100 or is_nil(c.progress),
+        select: %{subject_id: c.subject_id, min_ordering: min(c.ordering)}
+      )
+
+    query =
+      from(
+        t1 in Command,
+        join: mo in subquery(min_orderings_cte),
+        on: t1.subject_id == mo.subject_id and t1.ordering == mo.min_ordering,
+        where: t1.universe_id == ^universe_id and (t1.progress < 100 or is_nil(t1.progress)),
+        select: t1
+      )
+
+    Repo.all(query)
   end
 end

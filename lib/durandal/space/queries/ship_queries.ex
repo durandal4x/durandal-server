@@ -37,6 +37,11 @@ defmodule Durandal.Space.ShipQueries do
       where: ships.id in ^List.wrap(id)
   end
 
+  def _where(query, :id_not, id) do
+    from ships in query,
+      where: ships.id not in ^List.wrap(id)
+  end
+
   def _where(query, :name, name) do
     from ships in query,
       where: ships.name in ^List.wrap(name)
@@ -86,14 +91,19 @@ defmodule Durandal.Space.ShipQueries do
     )
   end
 
+  def _where(query, :orbiting_id, :not_nil) do
+    from ships in query,
+      where: not is_nil(ships.orbiting_id)
+  end
+
+  def _where(query, :orbiting_id, :is_nil) do
+    from ships in query,
+      where: is_nil(ships.orbiting_id)
+  end
+
   def _where(query, :orbiting_id, orbiting_id) do
     from ships in query,
       where: ships.orbiting_id in ^List.wrap(orbiting_id)
-  end
-
-  def _where(query, :orbit_distance, orbit_distance) do
-    from ships in query,
-      where: ships.orbit_distance in ^List.wrap(orbit_distance)
   end
 
   def _where(query, :orbit_clockwise, orbit_clockwise) do
@@ -111,9 +121,19 @@ defmodule Durandal.Space.ShipQueries do
       where: ships.build_progress in ^List.wrap(build_progress)
   end
 
-  def _where(query, :health, health) do
+  def _where(query, :docked_with_id, :not_nil) do
     from ships in query,
-      where: ships.health in ^List.wrap(health)
+      where: not is_nil(ships.docked_with_id)
+  end
+
+  def _where(query, :docked_with_id, :is_nil) do
+    from ships in query,
+      where: is_nil(ships.docked_with_id)
+  end
+
+  def _where(query, :docked_with_id, docked_with_id) do
+    from ships in query,
+      where: ships.docked_with_id in ^List.wrap(docked_with_id)
   end
 
   def _where(query, :inserted_after, timestamp) do
@@ -202,13 +222,38 @@ defmodule Durandal.Space.ShipQueries do
 
   def _preload(query, :orbiting) do
     from ships in query,
-      left_join: space_system_ships in assoc(ships, :orbiting),
-      preload: [orbiting: space_system_ships]
+      left_join: space_system_objects in assoc(ships, :orbiting),
+      preload: [orbiting: space_system_objects]
+  end
+
+  def _preload(query, :docked_with) do
+    from ships in query,
+      left_join: space_stations in assoc(ships, :docked_with),
+      preload: [docked_with: space_stations]
   end
 
   def _preload(query, :universe) do
     from ships in query,
       left_join: game_universes in assoc(ships, :universe),
       preload: [universe: game_universes]
+  end
+
+  def _preload(query, :all_commands) do
+    from ships in query,
+      left_join: commands in assoc(ships, :commands),
+      on: commands.subject_id == ships.id,
+      on: commands.subject_type == "ship",
+      order_by: [asc: commands.ordering],
+      preload: [commands: commands]
+  end
+
+  def _preload(query, :incomplete_commands) do
+    from ships in query,
+      left_join: commands in assoc(ships, :commands),
+      on: commands.subject_id == ships.id,
+      on: commands.subject_type == "ship",
+      on: commands.progress < 100,
+      order_by: [asc: commands.ordering],
+      preload: [commands: commands]
   end
 end

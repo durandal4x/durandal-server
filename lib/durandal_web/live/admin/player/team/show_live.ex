@@ -9,6 +9,7 @@ defmodule DurandalWeb.Admin.Player.Team.ShowLive do
       socket
       |> assign(:site_menu_active, "game")
       |> assign(:team_id, team_id)
+      |> stream_configure(:team_members, dom_id: &"team_members-#{&1.team_id}-#{&1.user_id}")
       |> get_team()
 
     if socket.assigns.team do
@@ -25,6 +26,7 @@ defmodule DurandalWeb.Admin.Player.Team.ShowLive do
     |> assign(:site_menu_active, "game")
     |> assign(:team_id, nil)
     |> assign(:team, nil)
+    |> stream_configure(:team_members, dom_id: &"team_members-#{&1.team_id}-#{&1.user_id}")
     |> stream(:team_members, [])
     |> stream(:stations, [])
     |> stream(:ships, [])
@@ -67,6 +69,39 @@ defmodule DurandalWeb.Admin.Player.Team.ShowLive do
   def handle_info(%{event: :deleted_team, topic: "Durandal.Player.Team" <> _} = _msg, socket) do
     socket
     |> redirect(to: ~p"/admin/teams")
+    |> noreply
+  end
+
+  def handle_info(
+        %{event: :created_team_member, topic: "Durandal.Player.Team:" <> _} = msg,
+        socket
+      ) do
+    team_member =
+      Player.get_team_member!(msg.team_member.team_id, msg.team_member.user_id, preload: [:user])
+
+    socket
+    |> stream_insert(:team_members, team_member)
+    |> noreply
+  end
+
+  def handle_info(
+        %{event: :updated_team_member, topic: "Durandal.Player.Team:" <> _} = msg,
+        socket
+      ) do
+    team_member =
+      Player.get_team_member!(msg.team_member.team_id, msg.team_member.user_id, preload: [:user])
+
+    socket
+    |> stream_insert(:team_members, team_member)
+    |> noreply
+  end
+
+  def handle_info(
+        %{event: :deleted_team_member, topic: "Durandal.Player.Team:" <> _} = msg,
+        socket
+      ) do
+    socket
+    |> stream_delete(:team_members, msg.team_member)
     |> noreply
   end
 
@@ -131,9 +166,8 @@ defmodule DurandalWeb.Admin.Player.Team.ShowLive do
       Player.list_team_members(
         where: [team_id: team_id],
         preload: [:user],
-        oorder_by: ["Name (A-Z)"]
+        order_by: ["Enabled"]
       )
-      |> Enum.map(fn tm -> Map.put(tm, :id, tm.user_id) end)
 
     stations = Space.list_stations(where: [team_id: team_id], order_by: ["Name (A-Z)"])
     ships = Space.list_ships(where: [team_id: team_id], order_by: ["Name (A-Z)"])

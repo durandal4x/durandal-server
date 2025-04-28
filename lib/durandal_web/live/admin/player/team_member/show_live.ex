@@ -22,10 +22,10 @@ defmodule DurandalWeb.Admin.Player.TeamMember.ShowLive do
     end
   end
 
-  def mount(_params, _session, socket) do
+  def mount(%{"team_id" => team_id}, _session, socket) do
     socket
     |> assign(:site_menu_active, "game")
-    |> assign(:team_id, nil)
+    |> assign(:team_id, team_id)
     |> assign(:team_member, nil)
     |> stream(:team_member_members, [])
     |> stream(:stations, [])
@@ -100,6 +100,7 @@ defmodule DurandalWeb.Admin.Player.TeamMember.ShowLive do
 
     socket
     |> assign(:team_member, team_member)
+    |> assign(:team, team_member.team)
     |> assign(:universe, universe)
   end
 end

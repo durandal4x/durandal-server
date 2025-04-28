@@ -87,6 +87,10 @@ jobs:
     - name: Install dependencies
       run: mix deps.get
 
+    # Step: Compile
+    - name: Compile
+      run: mix compile
+    
     # Step: Execute the tests.
     - name: Run tests
       run: mix test.ci

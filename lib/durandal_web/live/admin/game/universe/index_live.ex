@@ -3,6 +3,7 @@ defmodule DurandalWeb.Admin.Game.Universe.IndexLive do
   use DurandalWeb, :live_view
 
   alias Durandal.Game
+  alias Durandal.Game.UniverseLib
 
   @impl true
   def mount(_params, _session, socket) when is_connected?(socket) do
@@ -33,19 +34,19 @@ defmodule DurandalWeb.Admin.Game.Universe.IndexLive do
   @impl true
   def handle_info(%{event: :created_universe, topic: "Durandal.Global.Universe"} = msg, socket) do
     socket
-    |> stream_insert(:universes, msg.universe)
+    |> stream_insert(:universes, universe_process_check(msg.universe))
     |> noreply
   end
 
   def handle_info(%{event: :updated_universe, topic: "Durandal.Global.Universe"} = msg, socket) do
     socket
-    |> stream_insert(:universes, msg.universe)
+    |> stream_insert(:universes, universe_process_check(msg.universe))
     |> noreply
   end
 
   def handle_info(%{event: :deleted_universe, topic: "Durandal.Global.Universe"} = msg, socket) do
     socket
-    |> stream_delete(:universes, msg.universe)
+    |> stream_delete(:universes, universe_process_check(msg.universe))
     |> noreply
   end
 
@@ -65,8 +66,16 @@ defmodule DurandalWeb.Admin.Game.Universe.IndexLive do
 
     universes =
       Game.list_universes(where: [name_like: assigns.search_term], order_by: order_by, limit: 50)
+      |> Enum.map(&universe_process_check/1)
 
     socket
     |> stream(:universes, universes, reset: true)
+  end
+
+  defp universe_process_check(%{id: id} = universe) do
+    Map.merge(universe, %{
+      supervisor_pid: UniverseLib.get_game_supervisor_pid(id),
+      server_pid: UniverseLib.get_universe_server_pid(id)
+    })
   end
 end

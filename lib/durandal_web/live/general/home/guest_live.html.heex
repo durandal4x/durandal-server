@@ -1,0 +1,17 @@
+<div style="height: 15px;">&nbsp;</div>
+
+<div class="row">
+  <.menu_card
+    :if={false}
+    icon="fa-user-plus"
+    icon_class="fa-duotone"
+    col_classes="col"
+    url={~p"/users/register"}
+  >
+    {gettext("Register")}
+  </.menu_card>
+
+  <.menu_card icon="fa-sign-in-alt" icon_class="fa-duotone" col_classes="col" url={~p"/login"}>
+    {gettext("Login")}
+  </.menu_card>
+</div>

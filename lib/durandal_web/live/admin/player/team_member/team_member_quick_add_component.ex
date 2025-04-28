@@ -1,7 +1,6 @@
 defmodule DurandalWeb.Player.TeamMemberQuickAddComponent do
   @moduledoc false
   use DurandalWeb, :live_component
-  # import Durandal.Helper.ColourHelper, only: [rgba_css: 2]
 
   alias Durandal.{Account, Player}
 
@@ -17,6 +16,7 @@ defmodule DurandalWeb.Player.TeamMemberQuickAddComponent do
         id="quick_add_team_member-form"
       >
         <div class="row mb-4">
+          <.input field={@form[:universe_id]} type="hidden" />
           <.input field={@form[:team_id]} type="hidden" />
 
           <div class="col-md-10">
@@ -24,7 +24,6 @@ defmodule DurandalWeb.Player.TeamMemberQuickAddComponent do
             <.input
               field={@form[:name]}
               type="text"
-              autofocus="autofocus"
               phx-debounce="200"
               placeholder="User name"
               show_valid={true}
@@ -47,7 +46,7 @@ defmodule DurandalWeb.Player.TeamMemberQuickAddComponent do
     changeset = Player.change_team_member(team_member)
 
     existing_members =
-      Player.list_team_members(where: [team_id: assigns[:team_id]], select: [:user_id])
+      Player.list_team_members(where: [team_id: team_member.team_id], select: [:user_id])
       |> Enum.map(& &1.user_id)
 
     {:ok,
@@ -63,8 +62,6 @@ defmodule DurandalWeb.Player.TeamMemberQuickAddComponent do
     team_member_params =
       convert_params(team_member_params)
       |> maybe_lookup_user_name(socket.assigns.last_name_lookup)
-
-    # socket = maybe_lookup_user_name(socket, team_member_params)
 
     changeset =
       socket.assigns.team_member
@@ -82,17 +79,26 @@ defmodule DurandalWeb.Player.TeamMemberQuickAddComponent do
   def handle_event("save", %{"team_member" => team_member_params}, socket) do
     team_member_params = convert_params(team_member_params)
 
-    case Player.create_team_member(team_member_params) do
-      {:ok, team_member} ->
-        notify_parent({:saved, team_member})
+    if socket.assigns.form.source.valid? do
+      case Player.create_team_member(team_member_params) do
+        {:ok, team_member} ->
+          notify_parent({:saved, team_member})
 
-        {:noreply,
-         socket
-         |> put_flash(:info, "TeamMember created successfully")
-         |> redirect(to: socket.assigns.patch)}
+          socket
+          |> put_flash(:info, "TeamMember created successfully")
+          |> redirect(to: socket.assigns.patch)
+          |> noreply
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:error, %Ecto.Changeset{} = changeset} ->
+          changeset =
+            changeset
+            |> maybe_error_name(socket.assigns.existing_members)
+
+          {:noreply, assign_form(socket, changeset)}
+      end
+    else
+      socket
+      |> noreply
     end
   end
 

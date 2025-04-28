@@ -67,6 +67,40 @@ defmodule Durandal.Types.ShipTypeLib do
   end
 
   @doc """
+  Gets a single ship_type by its id. If no ship_type is found, returns `nil`.
+
+  Makes use of a Cache
+
+  ## Examples
+
+      iex> get_ship_type_by_id("09f4e0d9-13d1-4a32-8121-d52423dd8e7c")
+      %User{}
+
+      iex> get_ship_type_by_id("310dcab9-e7c2-4fc0-acd6-98035376a7be")
+      nil
+  """
+  @spec get_ship_type_by_id(Durandal.ship_type_id()) :: ShipType.t() | nil
+  def get_ship_type_by_id(nil), do: nil
+
+  def get_ship_type_by_id(ship_type_id) do
+    case Cachex.get(:ship_type_by_id_cache, ship_type_id) do
+      {:ok, nil} ->
+        ship_type = do_get_ship_type_by_id(ship_type_id)
+        Cachex.put(:ship_type_by_id_cache, ship_type_id, ship_type)
+        ship_type
+
+      {:ok, value} ->
+        value
+    end
+  end
+
+  @spec do_get_ship_type_by_id(Durandal.ship_type_id()) :: ShipType.t() | nil
+  defp do_get_ship_type_by_id(ship_type_id) do
+    ShipTypeQueries.ship_type_query(id: ship_type_id, limit: 1)
+    |> Repo.one()
+  end
+
+  @doc """
   Creates a ship_type.
 
   ## Examples

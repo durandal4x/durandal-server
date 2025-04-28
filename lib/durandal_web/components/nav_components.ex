@@ -1,6 +1,7 @@
 defmodule DurandalWeb.NavComponents do
   @moduledoc false
   use Phoenix.Component
+  use Gettext, backend: DurandalWeb.Gettext
 
   import Durandal.Account.AuthLib,
     only: [
@@ -42,8 +43,12 @@ defmodule DurandalWeb.NavComponents do
   attr :current_user, :map, required: true
   attr :active, :string, required: true
 
+  # TODO: Convert this to be explicitly admin_universe and admin_team
   attr :universe, :map
   attr :team, :map
+
+  attr :current_universe, :map
+  attr :current_team, :map
 
   def top_navbar(assigns) do
     ~H"""
@@ -70,20 +75,36 @@ defmodule DurandalWeb.NavComponents do
           </a>
           <!-- Left links -->
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <.top_nav_item text="Home" active={@active == "home"} route={~p"/"} />
+            <.top_nav_item text={gettext("Home")} active={@active == "home"} route={~p"/"} />
 
             <.top_nav_item text="Blog" active={@active == "blog"} route={~p"/blog"} />
+            <.top_nav_item
+              text={gettext("Profile")}
+              active={@active == "profile"}
+              route={~p"/profile"}
+            />
+
+            <.top_nav_item
+              :if={@current_team}
+              text={gettext("Team")}
+              active={@active == "team"}
+              route={~p"/team"}
+            />
 
             <%= if allow?(@current_user, ~w(admin)) do %>
               <.top_nav_item text="Admin" active={@active == "admin"} route={~p"/admin"} />
 
               <.top_nav_item
-                text="Accounts"
+                text={gettext("Accounts")}
                 active={@active == "account"}
                 route={~p"/admin/accounts"}
               />
 
-              <.top_nav_item text="Games" active={@active == "game"} route={~p"/admin/games"} />
+              <.top_nav_item
+                text={gettext("Games")}
+                active={@active == "game"}
+                route={~p"/admin/games"}
+              />
             <% end %>
           </ul>
           <!-- Left links -->
@@ -92,23 +113,41 @@ defmodule DurandalWeb.NavComponents do
 
         <!-- Right elements -->
         <div class="d-flex align-items-center">
-          <a
-            :if={@team}
-            class="badge rounded-pill text-bg-info p-2 mx-1"
-            href={~p"/admin/teams/#{@team}"}
-          >
-            <Fontawesome.icon icon="users" style="solid" />
-            {@team.name}
-          </a>
+          <%= if allow?(@current_user, ~w(admin)) do %>
+            <div class="d-inline-block pe-4 me-4" style="border-right: 1px solid #AAA;">
+              <a
+                :if={@universe}
+                class="badge rounded-pill text-bg-secondary p-2 mx-1"
+                href={~p"/admin/universes/#{@universe}"}
+              >
+                <Fontawesome.icon icon="galaxy" style="solid" />
+                {@universe.name}
+              </a>
 
-          <a
-            :if={@universe}
-            class="badge rounded-pill text-bg-info2 p-2 mx-1"
-            href={~p"/admin/universes/#{@universe}"}
-          >
-            <Fontawesome.icon icon="galaxy" style="solid" />
-            {@universe.name}
-          </a>
+              <a
+                :if={@team}
+                class="badge rounded-pill text-bg-secondary p-2 mx-1"
+                href={~p"/admin/teams/#{@team}"}
+              >
+                <Fontawesome.icon icon="users" style="solid" />
+                {@team.name}
+              </a>
+            </div>
+          <% end %>
+
+          <%= if assigns[:current_universe] do %>
+            <%= if assigns[:current_team] do %>
+              <span class="badge rounded-pill text-bg-info p-2 mx-1">
+                <Fontawesome.icon icon="users" style="solid" />
+                {@current_team.name}
+              </span>
+            <% end %>
+
+            <span class="badge rounded-pill text-bg-info2 p-2 mx-1">
+              <Fontawesome.icon icon="galaxy" style="solid" />
+              {@current_universe.name}
+            </span>
+          <% end %>
 
           <%= if @current_user do %>
             <DurandalWeb.NavComponents.recents_dropdown current_user={@current_user} />
@@ -392,7 +431,7 @@ defmodule DurandalWeb.NavComponents do
       |> assign(recents: recents)
 
     ~H"""
-    <div :if={not Enum.empty?(@recents)} class="nav-item dropdown mx-2">
+    <div :if={not Enum.empty?(@recents)} class="nav-item dropdown mx-2 d-inline-block">
       <a
         class="dropdown-toggle dropdown-toggle-icon-only"
         href="#"
@@ -434,7 +473,7 @@ defmodule DurandalWeb.NavComponents do
 
   def account_dropdown(assigns) do
     ~H"""
-    <div class="nav-item dropdown mx-2">
+    <div class="nav-item dropdown mx-2 d-inline-block">
       <a
         class="dropdown-toggle dropdown-toggle-icon-only"
         href="#"
@@ -451,8 +490,7 @@ defmodule DurandalWeb.NavComponents do
         style="min-width: 300px; max-width: 500px;"
       >
         <a class="dropdown-item" href={~p"/profile"}>
-          <i class="fa-fw fa-user-circle fa-solid"></i> &nbsp;
-          Profile
+          <i class="fa-fw fa-user-circle fa-solid"></i> &nbsp; {gettext("Profile")}
         </a>
 
         <hr style="margin: 0;" />
@@ -468,8 +506,8 @@ defmodule DurandalWeb.NavComponents do
             onclick="$('#signout-form').submit();"
             id="signout-link"
           >
-            <i class="fa-regular fa-sign-out fa-fw"></i> &nbsp;
-            Sign out {@current_user.name}
+            <i class="fa-regular fa-sign-out fa-fw"></i>
+            &nbsp; {gettext("Sign out %{name}", name: @current_user.name)}
           </a>
         </form>
       </div>

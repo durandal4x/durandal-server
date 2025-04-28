@@ -43,7 +43,7 @@ defmodule DurandalWeb do
         layouts: [html: DurandalWeb.Layouts]
 
       import Plug.Conn
-      use Gettext, backend: Durandal.Gettext
+      use Gettext, backend: DurandalWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -64,6 +64,13 @@ defmodule DurandalWeb do
       import Durandal.Helpers.QueryMacros
       alias Durandal.Helpers.QueryHelper
       alias Durandal.Repo
+    end
+  end
+
+  def server do
+    quote do
+      def ok(socket), do: {:ok, socket}
+      def noreply(socket), do: {:noreply, socket}
     end
   end
 
@@ -93,10 +100,9 @@ defmodule DurandalWeb do
   def component do
     quote do
       use Phoenix.Component
-      import DurandalWeb.CoreComponents
+      import DurandalWeb.{CoreComponents, FormattingComponents}
 
       alias Durandal.Helper.StylingHelper
-      # import Durandal.Helper.StringHelper, only: [format_number: 1, format_vector: 1]
       unquote(html_helpers())
     end
   end
@@ -141,14 +147,21 @@ defmodule DurandalWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      import DurandalWeb.{CoreComponents, NavComponents, BootstrapComponents}
-      use Gettext, backend: Durandal.Gettext
+      import DurandalWeb.{
+        CoreComponents,
+        NavComponents,
+        BootstrapComponents,
+        FormattingComponents
+      }
+
+      use Gettext, backend: DurandalWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
 
       alias Durandal.Helper.StylingHelper
-      import Durandal.Helper.StringHelper, only: [format_number: 1, format_vector: 1]
+      import Durandal.Helper.StringHelper, only: [format_number: 1]
+      import Durandal.Helper.NumberHelper, only: [normalize: 1]
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())

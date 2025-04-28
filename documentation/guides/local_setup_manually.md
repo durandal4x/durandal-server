@@ -55,6 +55,26 @@ If all goes to plan you should be able to access your site locally at [http://lo
 ### Libraries you need to get yourself
 The site makes use of [FontAwesome](https://fontawesome.com/) so if you are using the site you'll need to download the free version and do the following.
 
+#### Using a script (free version)
+```sh
+# Download and unzip
+wget --output-document fa.zip https://use.fontawesome.com/releases/v6.7.2/fontawesome-free-6.7.2-web.zip
+unzip fa.zip
+
+# Folders we need
+mkdir -p priv/static/css
+mkdir -p priv/static/webfonts
+
+# Move things around
+mv fontawesome-free-6.7.2-web/css/all.min.css priv/static/css/fontawesome.css
+mv fontawesome-free-6.7.2-web/webfonts/* priv/static/webfonts
+
+# Cleanup
+rm -rf fontawesome-free-6.7.2-web
+rm fa.zip
+```
+
+#### Manually
 Note: Ensure you download the Web version, not the desktop version.
 ```bash
 fontawesome/css/all.css -> priv/static/css/fontawesome.css
@@ -72,7 +92,7 @@ Durandal.Account.create_user(%{
 })
 ```
 
-Editing it if you change something later
+#### Editing it if you change something later
 ```elixir
 user = Durandal.Account.get_user_by_email("root@localhost")
 Durandal.Account.update_user(user, %{

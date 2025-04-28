@@ -66,16 +66,21 @@ defmodule Durandal.ShipQueriesTest do
               "5bed6cfe-0ffd-40bf-ad49-4e82ca65c9be"
             ],
             orbiting_id: "fc7cd2d5-004a-4799-8cec-0d198016e292",
-            orbit_distance: [123, 456],
-            orbit_distance: 789,
+            orbiting_id: :is_nil,
+            orbiting_id: :not_nil,
             orbit_clockwise: [true, false],
             orbit_clockwise: true,
             orbit_period: [123, 456],
             orbit_period: 789,
             build_progress: [123, 456],
             build_progress: 789,
-            health: [123, 456],
-            health: 789
+            docked_with_id: [
+              "92a26447-572e-4e3e-893c-42008287a9aa",
+              "5bed6cfe-0ffd-40bf-ad49-4e82ca65c9be"
+            ],
+            docked_with_id: "fc7cd2d5-004a-4799-8cec-0d198016e292",
+            docked_with_id: :is_nil,
+            docked_with_id: :not_nil
           ],
           order_by: [
             "Newest first",
@@ -87,6 +92,7 @@ defmodule Durandal.ShipQueriesTest do
             :team,
             :type,
             :orbiting,
+            :docked_with,
             :universe
           ]
         )

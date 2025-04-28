@@ -1,10 +1,14 @@
 <% selected =
   cond do
     assigns[:edit_mode] != true -> "show"
-    assigns[:edit_mode] == true and @team_member != nil and @team_member.id != nil -> "edit"
+    assigns[:edit_mode] == true and @team_member != nil and @team_member.user_id != nil -> "edit"
     true -> "new"
   end %>
-<DurandalWeb.TeamMemberComponents.filter_bar selected={selected} />
+
+<DurandalWeb.TeamMemberComponents.filter_bar
+  selected={selected}
+  team_id={assigns[:team_id] || @team_member.team_id}
+/>
 
 <div :if={assigns[:edit_mode] != true}>
   <div class="row my-4">
@@ -30,9 +34,31 @@
           {@team_member.user.name}
         </h4>
 
-        <table class="table table-sm">
-          <tbody></tbody>
-        </table>
+        <div class="row">
+          <div class="col">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>Enabled</td>
+                  <td>
+                    <.boolean_icon
+                      value={@team_member.enabled?}
+                      true="check"
+                      false="times"
+                      coloured={true}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>Roles</td>
+                  <td>{Enum.join(@team_member.roles, ", ")}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col"></div>
+        </div>
       </.card>
     </div>
   </div>

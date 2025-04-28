@@ -6,7 +6,7 @@ defmodule DurandalWeb.Profile.PasswordLive do
   def mount(%{"user_id" => user_id}, _session, socket) when is_connected?(socket) do
     socket =
       socket
-      |> assign(:site_menu_active, "account")
+      |> assign(:site_menu_active, "profile")
       |> assign(:user_id, user_id)
       # |> assign(:client, Durandal.Account.get_client(user_id))
       |> get_user
@@ -23,7 +23,7 @@ defmodule DurandalWeb.Profile.PasswordLive do
 
   def mount(_params, _session, socket) do
     socket
-    |> assign(:site_menu_active, "account")
+    |> assign(:site_menu_active, "profile")
     |> assign(:user_id, nil)
     |> assign(:user, nil)
     |> assign(:client, nil)

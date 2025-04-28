@@ -10,7 +10,6 @@ defmodule Durandal.Space.Station do
   * `:position` - field description
   * `:velocity` - field description
   * `:orbiting_id` - space_system_objects field description
-  * `:orbit_distance` - field description
   * `:orbit_clockwise` - field description
   * `:orbit_period` - field description
   """
@@ -26,11 +25,13 @@ defmodule Durandal.Space.Station do
     field(:position, {:array, :integer})
     field(:velocity, {:array, :integer})
     belongs_to(:orbiting, Durandal.Space.SystemObject, type: Ecto.UUID)
-    field(:orbit_distance, :integer)
     field(:orbit_clockwise, :boolean)
     field(:orbit_period, :integer)
 
     has_many(:modules, Durandal.Space.StationModule)
+    has_many(:docked_ships, Durandal.Space.Ship, foreign_key: :docked_with_id)
+
+    has_many(:commands, Durandal.Player.Command, foreign_key: :subject_id)
 
     timestamps(type: :utc_datetime_usec)
   end
@@ -45,7 +46,6 @@ defmodule Durandal.Space.Station do
   #         position: [Integer.t()],
   #         velocity: [Integer.t()],
   #         orbiting_id: Durandal.Space.SystemObject.id(),
-  #         orbit_distance: integer(),
   #         orbit_clockwise: boolean(),
   #         orbit_period: integer(),
   #         inserted_at: DateTime.t(),
@@ -53,7 +53,7 @@ defmodule Durandal.Space.Station do
   #       }
 
   @required_fields ~w(name team_id system_id position velocity universe_id)a
-  @optional_fields ~w(orbiting_id orbit_distance orbit_clockwise orbit_period)a
+  @optional_fields ~w(orbiting_id orbit_clockwise orbit_period)a
 
   @doc false
   @spec changeset(map(), map()) :: Ecto.Changeset.t()

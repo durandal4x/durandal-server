@@ -6,12 +6,14 @@ defmodule Durandal.TeamMemberLibTest do
 
   import Durandal.AccountFixtures, only: [user_fixture: 0]
   alias Durandal.PlayerFixtures
+  alias Durandal.GameFixtures
 
   defp valid_attrs do
     %{
       roles: ["String one", "String two"],
       team_id: PlayerFixtures.team_fixture().id,
-      user_id: user_fixture().id
+      user_id: user_fixture().id,
+      universe_id: GameFixtures.universe_fixture().id
     }
   end
 
@@ -19,7 +21,8 @@ defmodule Durandal.TeamMemberLibTest do
     %{
       roles: ["String one", "String two", "String three"],
       team_id: PlayerFixtures.team_fixture().id,
-      user_id: user_fixture().id
+      user_id: user_fixture().id,
+      universe_id: GameFixtures.universe_fixture().id
     }
   end
 
@@ -27,7 +30,8 @@ defmodule Durandal.TeamMemberLibTest do
     %{
       roles: nil,
       team_id: nil,
-      user_id: nil
+      user_id: nil,
+      universe_id: nil
     }
   end
 

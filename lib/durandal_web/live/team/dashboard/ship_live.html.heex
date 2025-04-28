@@ -1,0 +1,185 @@
+<DurandalWeb.GameUIComponents.game_nav_bar
+  selected="ship"
+  current_universe={@current_universe}
+  current_team={@current_team}
+  current_user={@current_user}
+/>
+
+<div class="row">
+  <div class="col">
+    <.card :if={@ship}>
+      <div class="float-end"></div>
+
+      <h4 class="d-inline-block">
+        {@ship.name}
+      </h4>
+
+      <div class="row">
+        <div class="col">
+          <table class="table table-sm">
+            <tbody>
+              <tr>
+                <td>{gettext("System")}</td>
+                <td>{@ship.system.name}</td>
+              </tr>
+              <tr :if={@ship.docked_with}>
+                <td>{gettext("Docked with")}</td>
+                <td>
+                  {@ship.docked_with.name}
+
+                  <.link
+                    navigate={~p"/team/station/#{@ship.docked_with_id}"}
+                    class="btn btn-sm btn-secondary float-end"
+                  >
+                    Show
+                  </.link>
+                </td>
+              </tr>
+              <tr>
+                <td>{gettext("Type")}</td>
+                <td>{@ship.type.name}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col">
+          <table class="table table-sm">
+            <tbody>
+              <tr>
+                <td>{gettext("Position")}</td>
+                <td><.vector_string value={@ship.position} /></td>
+              </tr>
+              <tr>
+                <td>{gettext("Velocity")}</td>
+                <td><.vector_string value={@ship.velocity} /></td>
+              </tr>
+              <%= cond do %>
+                <% @ship.current_transfer_id == nil -> %>
+                  <tr>
+                    <td colspan="2">No transfer</td>
+                  </tr>
+                <% @ship.current_transfer.to_station_id -> %>
+                  <tr>
+                    <td>{gettext("Transfer target")}</td>
+                    <td>{@ship.current_transfer.to_station.name}</td>
+                  </tr>
+                <% @ship.current_transfer.to_system_object_id -> %>
+                  <tr>
+                    <td>{gettext("Transfer target")}</td>
+                    <td>{@ship.current_transfer.to_system_object.name}</td>
+                  </tr>
+              <% end %>
+              <%= if @ship.current_transfer_id != nil do %>
+                <tr>
+                  <td>{gettext("Progress")}</td>
+                  <td>
+                    {normalize(@ship.current_transfer.progress)} / {normalize(
+                      @ship.current_transfer.distance
+                    )} ({round(@ship.current_transfer.progress_percentage)}%)
+                  </td>
+                </tr>
+              <% end %>
+
+              <tr>
+                <td>{gettext("Health")}</td>
+                <td>{@ship.health}</td>
+              </tr>
+              <tr>
+                <td>{gettext("Build progress")}</td>
+                <td>{@ship.build_progress}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div :if={@ship.orbiting} class="col">
+          <table class="table table-sm">
+            <tbody>
+              <tr>
+                <td>{gettext("Orbiting")}</td>
+                <td>{@ship.orbiting.name}</td>
+              </tr>
+              <tr>
+                <td>{gettext("Distance")}</td>
+                <td>
+                  {Durandal.Engine.Maths.distance(@ship.orbiting.position, @ship.position)
+                  |> abs}
+                </td>
+              </tr>
+              <tr>
+                <td>{gettext("Clockwise?")}</td>
+                <td>{@ship.orbit_clockwise}</td>
+              </tr>
+              <tr>
+                <td>{gettext("Period")}</td>
+                <td>{@ship.orbit_period}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col">
+          <h5>{gettext("Type")}</h5>
+          <table class="table table-sm">
+            <tbody>
+              <tr>
+                <td>{gettext("Build time")}</td>
+                <td>{format_number(@ship.type.build_time)}</td>
+              </tr>
+              <tr>
+                <td>{gettext("Max health")}</td>
+                <td>{format_number(@ship.type.max_health)}</td>
+              </tr>
+              <tr>
+                <td>{gettext("Damage")}</td>
+                <td>{format_number(@ship.type.damage)}</td>
+              </tr>
+              <tr>
+                <td>{gettext("Acceleration")}</td>
+                <td>{format_number(@ship.type.acceleration)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </.card>
+  </div>
+</div>
+
+<div class="row mt-1">
+  <div class="col">
+    <.card :if={@ship}>
+      <h4>{gettext("Commands")}</h4>
+
+      <.live_component
+        id={:commands}
+        module={DurandalWeb.Player.ShipCommandListComponent}
+        ship={@ship}
+        commands={@ship.commands}
+        ship_lookup={@ship_lookup}
+        station_lookup={@station_lookup}
+        system_object_lookup={@system_object_lookup}
+      >
+        <.live_component
+          #
+          user_settings={@user_settings}
+          module={DurandalWeb.Player.ShipCommandAddComponent}
+          id={:command_add}
+          subject={@ship}
+          command={
+            %Durandal.Player.Command{
+              team_id: @current_team.id,
+              universe_id: @current_team.universe_id,
+              user_id: @current_user.id,
+              subject_id: @ship.id,
+              subject_type: "ship",
+              command_type: nil,
+              contents: %{}
+            }
+          }
+        />
+      </.live_component>
+    </.card>
+  </div>
+</div>

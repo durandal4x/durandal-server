@@ -17,7 +17,33 @@
   <.table id="universes" rows={@streams.universes} table_class="table-sm table-hover">
     <:col :let={{_id, universe}} label="Name">{universe.name}</:col>
     <:col :let={{_id, universe}} label="Active?">
-      <.boolean_icon value={universe.active?} true="check" false="times" coloured={true} />
+      <.boolean_icon value={universe.active?} true="database" false="database" coloured={true} />
+
+      <%= if universe.active? do %>
+        <.boolean_icon
+          value={universe.supervisor_pid}
+          true="sitemap"
+          false="sitemap"
+          coloured={true}
+        />
+        <.boolean_icon value={universe.server_pid} true="server" false="server" coloured={true} />
+      <% end %>
+    </:col>
+
+    <:col :let={{_id, universe}} label="Schedule">
+      <%= if universe.active? && universe.tick_seconds == nil do %>
+        <Fontawesome.icon icon="triangle-exclamation" style="solid" class="text-warning" />
+        No schedule
+      <% else %>
+        {universe.tick_schedule}
+      <% end %>
+    </:col>
+
+    <:col :let={{_id, universe}} label="Last tick">
+      {universe.last_tick && Calendar.strftime(universe.last_tick, "%Y-%m-%d %H:%M:%S")}
+    </:col>
+    <:col :let={{_id, universe}} label="Next tick">
+      {universe.next_tick && Calendar.strftime(universe.next_tick, "%Y-%m-%d %H:%M:%S")}
     </:col>
 
     <:action :let={{_id, universe}}>

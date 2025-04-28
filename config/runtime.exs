@@ -31,7 +31,9 @@ if config_env() != :test do
     hostname: System.get_env("POSTGRES_HOSTNAME", "localhost"),
     database: System.get_env("POSTGRES_DB_NAME", "durandal_dev"),
     port: String.to_integer(System.get_env("POSTGRES_PORT", "5432")),
-    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+    stacktrace: true,
+    show_sensitive_data_on_connection_error: true
 end
 
 if config_env() == :prod do
@@ -40,7 +42,7 @@ if config_env() == :prod do
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
   config :durandal,
-    blog_allow_upload: true,
+    blog_allow_upload: System.get_env("BLOG_ALLOW_UPLOAD") == "TRUE",
     blog_upload_path: System.get_env("BLOG_UPLOAD_PATH"),
     blog_upload_extensions:
       System.get_env("BLOG_UPLOAD_EXTENSIONS", ".jpg .jpeg .png") |> String.split(" ")

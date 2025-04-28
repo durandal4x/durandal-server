@@ -32,6 +32,9 @@ defmodule Durandal.Repo.Migrations.CreatePlayerTeamsTable do
       timestamps(type: :utc_datetime_usec)
     end
 
+    create_if_not_exists(index(:player_team_members, [:team_id]))
+    create_if_not_exists(index(:player_team_members, [:user_id]))
+
     create_if_not_exists table(:player_commands, primary_key: false) do
       add(:id, :uuid, primary_key: true, null: false)
 

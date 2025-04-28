@@ -5,17 +5,19 @@ defmodule DurandalWeb.Admin.Space.System.IndexLive do
   alias Durandal.Space
 
   @impl true
-  def mount(_params, _session, socket) when is_connected?(socket) do
+  def mount(%{"universe_id" => universe_id}, _session, socket) when is_connected?(socket) do
     socket
+    |> assign(:universe_id, universe_id)
     |> assign(:site_menu_active, "game")
     |> assign(:search_term, "")
     |> get_systems
     |> ok
   end
 
-  def mount(_params, _session, socket) do
+  def mount(%{"universe_id" => universe_id}, _session, socket) do
     {:ok,
      socket
+     |> assign(:universe_id, universe_id)
      |> assign(:site_menu_active, "game")
      |> assign(:systems, [])}
   end
@@ -43,7 +45,11 @@ defmodule DurandalWeb.Admin.Space.System.IndexLive do
       end
 
     systems =
-      Space.list_systems(where: [name_like: assigns.search_term], order_by: order_by, limit: 50)
+      Space.list_systems(
+        where: [universe_id: assigns.universe_id, name_like: assigns.search_term],
+        order_by: order_by,
+        limit: 50
+      )
 
     socket
     |> assign(:systems, systems)

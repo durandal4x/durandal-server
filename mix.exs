@@ -24,6 +24,15 @@ defmodule Durandal.MixProject do
     ]
   end
 
+  def cli() do
+    [
+      preferred_envs: [
+        "test.translations": :test,
+        "test.ci": :test
+      ]
+    ]
+  end
+
   # Configuration for the OTP application.
   #
   # Type `mix help compile.app` for more information.
@@ -63,6 +72,7 @@ defmodule Durandal.MixProject do
 
       # Extra deps
       {:typedstruct, "~> 0.5.2", runtime: false},
+      {:horde, "~> 0.9"},
       {:ecto_psql_extras, "~> 0.7"},
       {:argon2_elixir, "~> 4.0"},
       {:phoenix_pubsub, "~> 2.0"},
@@ -90,7 +100,8 @@ defmodule Durandal.MixProject do
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      "test.translations": ["test --raise --only translations"],
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test --raise --exclude translations"],
       "test.reset": ["ecto.drop --quiet", "test.setup"],
       "test.setup": ["ecto.create --quiet", "ecto.migrate --quiet"],
       "assets.setup": ["esbuild.install --if-missing"],
@@ -104,7 +115,7 @@ defmodule Durandal.MixProject do
       "test.ci": [
         "format --check-formatted",
         "deps.unlock --check-unused",
-        "test --raise"
+        "test --raise --exclude translations"
       ]
     ]
   end

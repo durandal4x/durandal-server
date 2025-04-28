@@ -30,18 +30,20 @@
               <tbody>
                 <tr>
                   <td>System</td>
-                  <td>{@system_object.system.name}</td>
                   <td>
-                    <a href={~p"/admin/systems/#{@system_object.system_id}"}>
+                    {@system_object.system.name}
+
+                    <a class="float-end" href={~p"/admin/systems/#{@system_object.system_id}"}>
                       <Fontawesome.icon icon="link" style="regular" />
                     </a>
                   </td>
                 </tr>
                 <tr>
                   <td>Type</td>
-                  <td>{@system_object.type.name}</td>
                   <td>
-                    <a href={~p"/admin/system_object_types/#{@system_object.type_id}"}>
+                    {@system_object.type.name}
+
+                    <a class="float-end" href={~p"/admin/systems/#{@system_object.system_id}"}>
                       <Fontawesome.icon icon="link" style="regular" />
                     </a>
                   </td>
@@ -55,11 +57,11 @@
               <tbody>
                 <tr>
                   <td>Position</td>
-                  <td>{format_vector(@system_object.position)}</td>
+                  <td><.vector_string value={@system_object.position} /></td>
                 </tr>
                 <tr>
                   <td>Type</td>
-                  <td>{format_vector(@system_object.velocity)}</td>
+                  <td><.vector_string value={@system_object.velocity} /></td>
                 </tr>
               </tbody>
             </table>
@@ -70,11 +72,26 @@
               <tbody>
                 <tr>
                   <td>Orbiting</td>
-                  <td>{@system_object.orbiting.name}</td>
+                  <td>
+                    {@system_object.orbiting.name}
+
+                    <a
+                      class="float-end"
+                      href={~p"/admin/system_objects/#{@system_object.orbiting_id}"}
+                    >
+                      <Fontawesome.icon icon="link" style="regular" />
+                    </a>
+                  </td>
                 </tr>
                 <tr>
                   <td>Distance</td>
-                  <td>{@system_object.orbit_distance}</td>
+                  <td>
+                    {Durandal.Engine.Maths.distance(
+                      @system_object.orbiting.position,
+                      @system_object.position
+                    )
+                    |> abs}
+                  </td>
                 </tr>
                 <tr>
                   <td>Clockwise?</td>
