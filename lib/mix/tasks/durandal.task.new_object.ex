@@ -426,6 +426,9 @@ if Code.ensure_loaded?(Igniter) do
           [name, "array", "string"] ->
             "#{name}: [\"String one\", \"String two\"]"
 
+          [name, "array", "uuid"] ->
+            "#{name}: [\"9438c3a0-2dd1-4ba3-aae9-bab7f2f7c931\", \"b8bd8449-b15d-4df2-a8e2-d1a71051555a\"]"
+
           [name, "array", "integer"] ->
             "#{name}: [123, 456]"
         end)
@@ -453,6 +456,9 @@ if Code.ensure_loaded?(Igniter) do
 
           [name, "array", "string"] ->
             "#{name}: [\"String one\", \"String two\", \"String three\"]"
+
+          [name, "array", "uuid"] ->
+            "#{name}: [\"6fbaf9d1-7705-46db-a4b1-ab200b2b570a\", \"aead8e5d-bdf3-4cdd-816f-1b282c7a33fc\"]"
 
           [name, "array", "integer"] ->
             "#{name}: [123, 456, 789]"
@@ -664,6 +670,9 @@ if Code.ensure_loaded?(Igniter) do
           [name, "array", "string"] ->
             "add(:#{name}, {:array, :string})"
 
+          [name, "array", "uuid"] ->
+            "add(:#{name}, {:array, Ecto.UUID})"
+
           [name, "array", "integer"] ->
             "add(:#{name}, {:array, :integer})"
 
@@ -731,6 +740,9 @@ if Code.ensure_loaded?(Igniter) do
           [name, "array", "string"] ->
             "#{name}: data[\"#{name}\"] || [\"$object_#{name}_\#{r}_1\", \"$object_#{name}_\#{r}_2\"]"
 
+          [name, "array", "uuid"] ->
+            "#{name}: data[\"#{name}\"] || [\"65e90589-5dbe-4b4c-a3e4-5f2fd889bead\", \"006dd7a9-a4b9-40a0-a80f-5f197620d2cb\"]"
+
           [name, "array", "integer"] ->
             "#{name}: data[\"#{name}\"] || [r, r + 1]"
         end)
@@ -776,8 +788,8 @@ if Code.ensure_loaded?(Igniter) do
       |> queries_file()
       |> library_test_file()
       |> queries_test_file()
-      |> create_migration()
       |> test_fixtures_file()
+      |> create_migration()
     end
   end
 else

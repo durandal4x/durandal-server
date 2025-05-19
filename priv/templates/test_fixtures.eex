@@ -1,5 +1,5 @@
 
-  alias Durandal.Context.$Object
+  alias $Application.$Context.$Object
 
   @spec $object_fixture(map) :: $Object.t()
   def $object_fixture(data \\ %{}) do
