@@ -69,18 +69,10 @@ defmodule Durandal.Resources.CompositeStationModuleInstanceQueries do
       where: resources_composite_station_module_instances.quantity in ^List.wrap(quantity)
   end
 
-  def _where(query, :combined_mass, combined_mass) do
+  def _where(query, :averaged_mass, averaged_mass) do
     from resources_composite_station_module_instances in query,
       where:
-        resources_composite_station_module_instances.combined_mass in ^List.wrap(combined_mass)
-  end
-
-  def _where(query, :combined_volume, combined_volume) do
-    from resources_composite_station_module_instances in query,
-      where:
-        resources_composite_station_module_instances.combined_volume in ^List.wrap(
-          combined_volume
-        )
+        resources_composite_station_module_instances.averaged_mass in ^List.wrap(averaged_mass)
   end
 
   def _where(query, :universe_id, :not_nil) do

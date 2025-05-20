@@ -92,8 +92,7 @@ defmodule Durandal.ResourcesFixtures do
         type_id: data["type_id"] || composite_type_fixture().id,
         ratios: data["ratios"] || [r, r + 1],
         quantity: data["quantity"] || r,
-        combined_mass: data["combined_mass"] || r,
-        combined_volume: data["combined_volume"] || r,
+        averaged_mass: data["averaged_mass"] || r,
         universe_id: data["universe_id"] || universe_fixture().id,
         station_module_id: data["station_module_id"] || station_module_fixture().id,
         team_id: data["team_id"] || team_fixture().id
@@ -114,8 +113,7 @@ defmodule Durandal.ResourcesFixtures do
         type_id: data["type_id"] || composite_type_fixture().id,
         ratios: data["ratios"] || [r, r + 1],
         quantity: data["quantity"] || r,
-        combined_mass: data["combined_mass"] || r,
-        combined_volume: data["combined_volume"] || r,
+        averaged_mass: data["averaged_mass"] || r,
         universe_id: data["universe_id"] || universe_fixture().id,
         ship_id: data["ship_id"] || ship_fixture().id,
         team_id: data["team_id"] || team_fixture().id

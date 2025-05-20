@@ -11,8 +11,7 @@ defmodule Durandal.CompositeStationModuleInstanceLibTest do
       type_id: ResourcesFixtures.composite_type_fixture().id,
       ratios: [123, 456],
       quantity: 123,
-      combined_mass: 123,
-      combined_volume: 123,
+      averaged_mass: 123,
       universe_id: Durandal.GameFixtures.universe_fixture().id,
       station_module_id: Durandal.SpaceFixtures.station_module_fixture().id,
       team_id: Durandal.PlayerFixtures.team_fixture().id
@@ -24,8 +23,7 @@ defmodule Durandal.CompositeStationModuleInstanceLibTest do
       type_id: ResourcesFixtures.composite_type_fixture().id,
       ratios: [123, 456, 789],
       quantity: 456,
-      combined_mass: 456,
-      combined_volume: 456,
+      averaged_mass: 456,
       universe_id: Durandal.GameFixtures.universe_fixture().id,
       station_module_id: Durandal.SpaceFixtures.station_module_fixture().id,
       team_id: Durandal.PlayerFixtures.team_fixture().id
@@ -37,8 +35,7 @@ defmodule Durandal.CompositeStationModuleInstanceLibTest do
       type_id: nil,
       ratios: nil,
       quantity: nil,
-      combined_mass: nil,
-      combined_volume: nil,
+      averaged_mass: nil,
       universe_id: nil,
       station_module_id: nil,
       team_id: nil
@@ -80,8 +77,7 @@ defmodule Durandal.CompositeStationModuleInstanceLibTest do
 
       assert composite_station_module_instance.ratios == [123, 456]
       assert composite_station_module_instance.quantity == 123
-      assert composite_station_module_instance.combined_mass == 123
-      assert composite_station_module_instance.combined_volume == 123
+      assert composite_station_module_instance.averaged_mass == 123
     end
 
     test "create_composite_station_module_instance/1 with invalid data returns error changeset" do
@@ -101,8 +97,7 @@ defmodule Durandal.CompositeStationModuleInstanceLibTest do
 
       assert composite_station_module_instance.ratios == [123, 456, 789]
       assert composite_station_module_instance.quantity == 456
-      assert composite_station_module_instance.combined_mass == 456
-      assert composite_station_module_instance.combined_volume == 456
+      assert composite_station_module_instance.averaged_mass == 456
     end
 
     test "update_composite_station_module_instance/2 with invalid data returns error changeset" do

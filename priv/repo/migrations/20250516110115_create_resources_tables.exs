@@ -87,8 +87,7 @@ defmodule Durandal.Repo.Migrations.CreateResources do
 
       add(:ratios, {:array, :integer})
       add(:quantity, :integer)
-      add(:combined_mass, :integer)
-      add(:combined_volume, :integer)
+      add(:averaged_mass, :float)
 
       add(:universe_id, references(:game_universes, on_delete: :nothing, type: :uuid),
         type: :uuid
@@ -114,8 +113,7 @@ defmodule Durandal.Repo.Migrations.CreateResources do
 
       add(:ratios, {:array, :integer})
       add(:quantity, :integer)
-      add(:combined_mass, :integer)
-      add(:combined_volume, :integer)
+      add(:averaged_mass, :float)
 
       add(:universe_id, references(:game_universes, on_delete: :nothing, type: :uuid),
         type: :uuid

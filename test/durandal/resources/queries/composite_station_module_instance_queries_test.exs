@@ -48,10 +48,8 @@ defmodule Durandal.CompositeStationModuleInstanceQueriesTest do
             not_has_ratios: 456,
             quantity: [123, 456],
             quantity: 789,
-            combined_mass: [123, 456],
-            combined_mass: 789,
-            combined_volume: [123, 456],
-            combined_volume: 789,
+            averaged_mass: [123, 456],
+            averaged_mass: 789,
             universe_id: [
               "92a26447-572e-4e3e-893c-42008287a9aa",
               "5bed6cfe-0ffd-40bf-ad49-4e82ca65c9be"

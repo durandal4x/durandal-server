@@ -7,8 +7,7 @@ defmodule Durandal.Resources.CompositeShipInstance do
   * `:type_id` - resources_composite_types field description
   * `:ratios` - field description
   * `:quantity` - field description
-  * `:combined_mass` - field description
-  * `:combined_volume` - field description
+  * `:averaged_mass` - field description
   * `:universe_id` - game_universes field description
   * `:ship_id` - space_ships field description
   """
@@ -20,8 +19,7 @@ defmodule Durandal.Resources.CompositeShipInstance do
     belongs_to(:type, Durandal.Resources.CompositeType, type: Ecto.UUID)
     field(:ratios, {:array, :integer})
     field(:quantity, :integer)
-    field(:combined_mass, :integer)
-    field(:combined_volume, :integer)
+    field(:averaged_mass, :float)
     belongs_to(:universe, Durandal.Game.Universe, type: Ecto.UUID)
     belongs_to(:ship, Durandal.Space.Ship, type: Ecto.UUID)
     belongs_to(:team, Durandal.Player.Team, type: Ecto.UUID)
@@ -36,15 +34,14 @@ defmodule Durandal.Resources.CompositeShipInstance do
   #         type_id: resources_composite_types.id(),
   #         ratios: [Integer.t()],
   #         quantity: integer(),
-  #         combined_mass: integer(),
-  #         combined_volume: integer(),
+  #         averaged_mass: float(),
   #         universe_id: Durandal.Game.Universe.id(),
   #         ship_id: Durandal.Space.Ship.id(),
   #         inserted_at: DateTime.t(),
   #         updated_at: DateTime.t()
   #       }
 
-  @required_fields ~w(type_id ratios quantity combined_mass combined_volume universe_id ship_id team_id)a
+  @required_fields ~w(type_id ratios quantity averaged_mass universe_id ship_id team_id)a
   @optional_fields ~w()a
 
   @doc false
