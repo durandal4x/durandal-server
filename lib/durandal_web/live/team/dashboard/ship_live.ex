@@ -1,7 +1,7 @@
 defmodule DurandalWeb.Team.ShipLive do
   @moduledoc false
   use DurandalWeb, :live_view
-  alias Durandal.{Space, Player}
+  alias Durandal.{Space, Player, Resources}
 
   @impl true
   def mount(%{"ship_id" => ship_id}, _session, socket) when is_connected?(socket) do
@@ -119,12 +119,21 @@ defmodule DurandalWeb.Team.ShipLive do
           :orbiting,
           :docked_with,
           :incomplete_commands,
-          :transfer_with_destination
+          :cargo
         ]
       )
 
+    type_ids =
+      Resources.get_types_from_ship_resources(ship_id)
+      |> Enum.map(&Ecto.UUID.load!/1)
+
+    resource_types =
+      Resources.list_resources_simple_types(where: [id: type_ids])
+      |> Map.new(fn t -> {t.id, t} end)
+
     socket
     |> assign(:ship, ship)
+    |> assign(:resource_types, resource_types)
     |> assign(:page_title, "Ship: #{ship.name}")
   end
 

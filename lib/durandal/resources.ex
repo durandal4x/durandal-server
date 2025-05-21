@@ -2,7 +2,6 @@ defmodule Durandal.Resources do
   @moduledoc """
 
   """
-
   # SimpleTypes
   alias Durandal.Resources.{SimpleType, SimpleTypeLib, SimpleTypeQueries}
 
@@ -113,47 +112,6 @@ defmodule Durandal.Resources do
   defdelegate change_simple_station_module_instance(simple_station_module_instance, attrs \\ %{}),
     to: SimpleStationModuleInstanceLib
 
-  # CompositeTypes
-  alias Durandal.Resources.{CompositeType, CompositeTypeLib, CompositeTypeQueries}
-
-  @doc false
-  @spec composite_type_topic(Durandal.composite_type_id()) :: String.t()
-  defdelegate composite_type_topic(composite_type_id), to: CompositeTypeLib, as: :topic
-
-  @doc false
-  @spec composite_type_query(Durandal.query_args()) :: Ecto.Query.t()
-  defdelegate composite_type_query(args), to: CompositeTypeQueries
-
-  @doc section: :composite_type
-  @spec list_resources_composite_types(Durandal.query_args()) :: [CompositeType.t()]
-  defdelegate list_resources_composite_types(args), to: CompositeTypeLib
-
-  @doc section: :composite_type
-  @spec get_composite_type!(CompositeType.id(), Durandal.query_args()) :: CompositeType.t()
-  defdelegate get_composite_type!(composite_type_id, query_args \\ []), to: CompositeTypeLib
-
-  @doc section: :composite_type
-  @spec get_composite_type(CompositeType.id(), Durandal.query_args()) :: CompositeType.t() | nil
-  defdelegate get_composite_type(composite_type_id, query_args \\ []), to: CompositeTypeLib
-
-  @doc section: :composite_type
-  @spec create_composite_type(map) :: {:ok, CompositeType.t()} | {:error, Ecto.Changeset.t()}
-  defdelegate create_composite_type(attrs), to: CompositeTypeLib
-
-  @doc section: :composite_type
-  @spec update_composite_type(CompositeType, map) ::
-          {:ok, CompositeType.t()} | {:error, Ecto.Changeset.t()}
-  defdelegate update_composite_type(composite_type, attrs), to: CompositeTypeLib
-
-  @doc section: :composite_type
-  @spec delete_composite_type(CompositeType.t()) ::
-          {:ok, CompositeType.t()} | {:error, Ecto.Changeset.t()}
-  defdelegate delete_composite_type(composite_type), to: CompositeTypeLib
-
-  @doc section: :composite_type
-  @spec change_composite_type(CompositeType.t(), map) :: Ecto.Changeset.t()
-  defdelegate change_composite_type(composite_type, attrs \\ %{}), to: CompositeTypeLib
-
   # SimpleShipInstances
   alias Durandal.Resources.{SimpleShipInstance, SimpleShipInstanceLib, SimpleShipInstanceQueries}
 
@@ -202,6 +160,47 @@ defmodule Durandal.Resources do
   @spec change_simple_ship_instance(SimpleShipInstance.t(), map) :: Ecto.Changeset.t()
   defdelegate change_simple_ship_instance(simple_ship_instance, attrs \\ %{}),
     to: SimpleShipInstanceLib
+
+  # CompositeTypes
+  alias Durandal.Resources.{CompositeType, CompositeTypeLib, CompositeTypeQueries}
+
+  @doc false
+  @spec composite_type_topic(Durandal.composite_type_id()) :: String.t()
+  defdelegate composite_type_topic(composite_type_id), to: CompositeTypeLib, as: :topic
+
+  @doc false
+  @spec composite_type_query(Durandal.query_args()) :: Ecto.Query.t()
+  defdelegate composite_type_query(args), to: CompositeTypeQueries
+
+  @doc section: :composite_type
+  @spec list_resources_composite_types(Durandal.query_args()) :: [CompositeType.t()]
+  defdelegate list_resources_composite_types(args), to: CompositeTypeLib
+
+  @doc section: :composite_type
+  @spec get_composite_type!(CompositeType.id(), Durandal.query_args()) :: CompositeType.t()
+  defdelegate get_composite_type!(composite_type_id, query_args \\ []), to: CompositeTypeLib
+
+  @doc section: :composite_type
+  @spec get_composite_type(CompositeType.id(), Durandal.query_args()) :: CompositeType.t() | nil
+  defdelegate get_composite_type(composite_type_id, query_args \\ []), to: CompositeTypeLib
+
+  @doc section: :composite_type
+  @spec create_composite_type(map) :: {:ok, CompositeType.t()} | {:error, Ecto.Changeset.t()}
+  defdelegate create_composite_type(attrs), to: CompositeTypeLib
+
+  @doc section: :composite_type
+  @spec update_composite_type(CompositeType, map) ::
+          {:ok, CompositeType.t()} | {:error, Ecto.Changeset.t()}
+  defdelegate update_composite_type(composite_type, attrs), to: CompositeTypeLib
+
+  @doc section: :composite_type
+  @spec delete_composite_type(CompositeType.t()) ::
+          {:ok, CompositeType.t()} | {:error, Ecto.Changeset.t()}
+  defdelegate delete_composite_type(composite_type), to: CompositeTypeLib
+
+  @doc section: :composite_type
+  @spec change_composite_type(CompositeType.t(), map) :: Ecto.Changeset.t()
+  defdelegate change_composite_type(composite_type, attrs \\ %{}), to: CompositeTypeLib
 
   # CompositeStationModuleInstances
   alias Durandal.Resources.{
@@ -334,4 +333,140 @@ defmodule Durandal.Resources do
   @spec change_composite_ship_instance(CompositeShipInstance.t(), map) :: Ecto.Changeset.t()
   defdelegate change_composite_ship_instance(composite_ship_instance, attrs \\ %{}),
     to: CompositeShipInstanceLib
+
+  alias Durandal.Repo
+  import Ecto.Query, warn: false
+
+  def list_all_team_resources(team_id) do
+    simple =
+      [
+        list_resources_simple_ship_instances(where: [team_id: team_id]),
+        list_resources_simple_station_module_instances(where: [team_id: team_id])
+      ]
+      |> List.flatten()
+
+    composite =
+      [
+        list_resources_composite_ship_instances(where: [team_id: team_id], preload: [:type]),
+        list_resources_composite_station_module_instances(
+          where: [team_id: team_id],
+          preload: [:type]
+        )
+      ]
+      |> List.flatten()
+
+    {simple, composite}
+  end
+
+  def get_types_from_team_resources(team_id) do
+    query = """
+    SELECT type_id
+      FROM resources_simple_ship_instances
+      WHERE team_id = $1
+    UNION
+    SELECT type_id
+      FROM resources_simple_station_module_instances
+      WHERE team_id = $1
+    UNION
+    SELECT DISTINCT unnest(contents) AS type_id
+      FROM resources_composite_types
+      WHERE id IN (
+        SELECT type_id
+        FROM resources_composite_ship_instances
+        WHERE team_id = $1
+      )
+    UNION
+    SELECT DISTINCT unnest(contents) AS type_id
+      FROM resources_composite_types
+      WHERE id IN (
+        SELECT type_id
+        FROM resources_composite_station_module_instances
+        WHERE team_id = $1
+      )
+    """
+
+    case Ecto.Adapters.SQL.query(Repo, query, [Ecto.UUID.dump!(team_id)]) do
+      {:ok, results} ->
+        List.flatten(results.rows)
+
+      {a, b} ->
+        raise "ERR: #{a}, #{b}"
+    end
+  end
+
+  def get_types_from_ship_resources(ship_id) do
+    query = """
+    SELECT type_id
+      FROM resources_simple_ship_instances
+      WHERE ship_id = $1
+    UNION
+    SELECT DISTINCT unnest(contents) AS type_id
+      FROM resources_composite_types
+      WHERE id IN (
+        SELECT type_id
+        FROM resources_composite_ship_instances
+        WHERE ship_id = $1
+      )
+    """
+
+    case Ecto.Adapters.SQL.query(Repo, query, [Ecto.UUID.dump!(ship_id)]) do
+      {:ok, results} ->
+        List.flatten(results.rows)
+
+      {a, b} ->
+        raise "ERR: #{a}, #{b}"
+    end
+  end
+
+  def get_types_from_station_resources(station_id) do
+    query = """
+    SELECT instances.type_id
+      FROM resources_simple_station_module_instances instances
+      JOIN space_station_modules modules
+        ON modules.id = instances.station_module_id
+      WHERE modules.station_id = $1
+    UNION
+    SELECT DISTINCT unnest(contents) AS type_id
+      FROM resources_composite_types
+      WHERE id IN (
+        SELECT instances.type_id
+        FROM resources_composite_station_module_instances instances
+        JOIN space_station_modules modules
+          ON modules.id = instances.station_module_id
+        WHERE modules.station_id = $1
+      )
+    """
+
+    case Ecto.Adapters.SQL.query(Repo, query, [Ecto.UUID.dump!(station_id)]) do
+      {:ok, results} ->
+        List.flatten(results.rows)
+
+      {a, b} ->
+        raise "ERR: #{a}, #{b}"
+    end
+  end
+
+  def get_types_from_station_module_resources(station_module_id) do
+    query = """
+    SELECT type_id
+      FROM resources_simple_station_module_instances
+      WHERE station_module_id = $1
+    UNION
+    SELECT DISTINCT unnest(contents) AS type_id
+      FROM resources_composite_types
+      WHERE id IN (
+        SELECT type_id
+        FROM resources_composite_station_module_instances
+        WHERE station_module_id = $1
+      )
+    """
+
+    case Ecto.Adapters.SQL.query(Repo, query, [Ecto.UUID.dump!(station_module_id)]) do
+      {:ok, results} ->
+        List.flatten(results.rows)
+
+      {a, b} ->
+        raise "ERR: #{a}, #{b}"
+    end
+  end
 end

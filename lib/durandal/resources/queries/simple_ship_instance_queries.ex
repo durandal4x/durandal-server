@@ -52,6 +52,11 @@ defmodule Durandal.Resources.SimpleShipInstanceQueries do
       where: resources_simple_ship_instances.type_id in ^List.wrap(type_id)
   end
 
+  def _where(query, :team_id, team_id) do
+    from resources_simple_ship_instances in query,
+      where: resources_simple_ship_instances.team_id in ^List.wrap(team_id)
+  end
+
   def _where(query, :quantity, quantity) do
     from resources_simple_ship_instances in query,
       where: resources_simple_ship_instances.quantity in ^List.wrap(quantity)

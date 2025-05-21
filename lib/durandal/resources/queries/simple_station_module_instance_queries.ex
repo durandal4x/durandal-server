@@ -52,6 +52,11 @@ defmodule Durandal.Resources.SimpleStationModuleInstanceQueries do
       where: resources_simple_station_module_instances.type_id in ^List.wrap(type_id)
   end
 
+  def _where(query, :team_id, team_id) do
+    from resources_simple_station_module_instances in query,
+      where: resources_simple_station_module_instances.team_id in ^List.wrap(team_id)
+  end
+
   def _where(query, :quantity, quantity) do
     from resources_simple_station_module_instances in query,
       where: resources_simple_station_module_instances.quantity in ^List.wrap(quantity)

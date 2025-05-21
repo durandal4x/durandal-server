@@ -23,6 +23,20 @@ defmodule Durandal.Game.DeleteUniverseTask do
       system_query = "SELECT id FROM space_systems WHERE universe_id = $1"
       station_query = "SELECT id FROM space_stations WHERE system_id IN (#{system_query})"
 
+      # Resources
+      [
+        "resources_simple_station_module_instances",
+        "resources_simple_ship_instances",
+        "resources_composite_station_module_instances",
+        "resources_composite_ship_instances",
+        "resources_composite_types",
+        "resources_simple_types"
+      ]
+      |> Enum.each(fn table ->
+        query = "DELETE FROM #{table} WHERE universe_id = $1"
+        {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])
+      end)
+
       # Commands
       query = "DELETE FROM player_commands WHERE universe_id = $1"
       {:ok, _} = Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)])

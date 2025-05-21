@@ -437,6 +437,7 @@ defmodule Durandal.Game.ScenarioLib do
             ratios: composite_instance["ratios"],
             averaged_mass: 1.0,
             team_id: Map.fetch!(ids, ship["team"]),
+            ship_id: Map.fetch!(ids, ship["id"]),
             universe_id: Map.fetch!(ids, "$universe"),
             inserted_at: DateTime.utc_now(),
             updated_at: DateTime.utc_now()
@@ -567,6 +568,7 @@ defmodule Durandal.Game.ScenarioLib do
             type_id: Map.fetch!(ids, composite_instance["type"]),
             quantity: composite_instance["quantity"],
             ratios: composite_instance["ratios"],
+            station_module_id: Map.fetch!(ids, station_module["id"]),
             averaged_mass: 1.0,
             team_id: nil,
             universe_id: Map.fetch!(ids, "$universe"),

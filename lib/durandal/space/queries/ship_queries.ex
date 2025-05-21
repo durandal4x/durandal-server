@@ -256,4 +256,18 @@ defmodule Durandal.Space.ShipQueries do
       order_by: [asc: commands.ordering],
       preload: [commands: commands]
   end
+
+  def _preload(query, :cargo) do
+    from ships in query,
+      left_join: simple_cargo in assoc(ships, :simple_cargo),
+      on: simple_cargo.ship_id == ships.id,
+      left_join: composite_cargo in assoc(ships, :composite_cargo),
+      on: composite_cargo.ship_id == ships.id,
+      join: composite_cargo_types in assoc(composite_cargo, :type),
+      on: composite_cargo.type_id == composite_cargo_types.id,
+      preload: [
+        simple_cargo: simple_cargo,
+        composite_cargo: {composite_cargo, type: composite_cargo_types}
+      ]
+  end
 end

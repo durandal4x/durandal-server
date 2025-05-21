@@ -52,6 +52,11 @@ defmodule Durandal.Resources.CompositeShipInstanceQueries do
       where: resources_composite_ship_instances.type_id in ^List.wrap(type_id)
   end
 
+  def _where(query, :team_id, team_id) do
+    from resources_composite_ship_instances in query,
+      where: resources_composite_ship_instances.team_id in ^List.wrap(team_id)
+  end
+
   def _where(query, :has_ratios, ratios) do
     from(resources_composite_ship_instances in query,
       where: ^ratios in resources_composite_ship_instances.ratios
