@@ -5,7 +5,17 @@
   current_user={@current_user}
 />
 
-<div class="row">
+<div :if={@current_team == nil} class="row">
+  <div class="col p-4">
+    <.card>
+      No team selected, you can select one using the
+      <a href={~p"/profile/team_select"}>team select</a>
+      page.
+    </.card>
+  </div>
+</div>
+
+<div :if={@current_team} class="row">
   <div class="col">
     <.card>
       <h4>{gettext("Ships")}</h4>
@@ -99,7 +109,7 @@
     <.card :if={assigns[:combined_simple]}>
       <h4>{gettext("Combined simple resources")}</h4>
       <.table
-        id="simple-resources-table"
+        id="combined_simple-resources-table"
         rows={@combined_simple}
         table_class="table-sm table-hover"
       >
@@ -118,7 +128,7 @@
     <.card :if={assigns[:combined_composite]}>
       <h4>{gettext("Combined composite resources")}</h4>
       <.table
-        id="composite-resources-table"
+        id="combined_composite-resources-table"
         rows={@combined_composite}
         table_class="table-sm table-hover"
       >

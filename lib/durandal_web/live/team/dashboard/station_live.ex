@@ -21,7 +21,7 @@ defmodule DurandalWeb.Team.StationLive do
     if socket.assigns.station do
       {:ok, socket}
     else
-      {:ok, redirect(socket, to: ~p"/admin/games")}
+      {:ok, redirect(socket, to: ~p"/team/dashboard")}
     end
   end
 

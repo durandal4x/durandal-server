@@ -263,7 +263,7 @@ defmodule Durandal.Space.ShipQueries do
       on: simple_cargo.ship_id == ships.id,
       left_join: composite_cargo in assoc(ships, :composite_cargo),
       on: composite_cargo.ship_id == ships.id,
-      join: composite_cargo_types in assoc(composite_cargo, :type),
+      left_join: composite_cargo_types in assoc(composite_cargo, :type),
       on: composite_cargo.type_id == composite_cargo_types.id,
       preload: [
         simple_cargo: simple_cargo,

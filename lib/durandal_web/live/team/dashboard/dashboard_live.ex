@@ -5,8 +5,6 @@ defmodule DurandalWeb.Team.DashboardLive do
 
   @impl true
   def mount(_params, _session, socket) when is_connected?(socket) do
-    :ok = Durandal.subscribe(Player.team_topic(socket.assigns.current_team.id))
-
     socket
     |> get_data
     |> assign(:site_menu_active, "team")
@@ -21,7 +19,13 @@ defmodule DurandalWeb.Team.DashboardLive do
     |> ok
   end
 
+  defp get_data(%{assigns: %{current_team: nil}} = socket) do
+    socket
+  end
+
   defp get_data(%{assigns: %{current_team: team}} = socket) do
+    :ok = Durandal.subscribe(Player.team_topic(team.id))
+
     stations = Space.list_stations(where: [team_id: team.id], order_by: ["Name (A-Z)"])
 
     ships =
