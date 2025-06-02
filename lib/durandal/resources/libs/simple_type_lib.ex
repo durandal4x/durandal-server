@@ -13,12 +13,12 @@ defmodule Durandal.Resources.SimpleTypeLib do
 
   ## Examples
 
-      iex> list_resources_simple_types()
+      iex> list_simple_types()
       [%SimpleType{}, ...]
 
   """
-  @spec list_resources_simple_types(Durandal.query_args()) :: [SimpleType.t()]
-  def list_resources_simple_types(query_args) do
+  @spec list_simple_types(Durandal.query_args()) :: [SimpleType.t()]
+  def list_simple_types(query_args) do
     query_args
     |> SimpleTypeQueries.simple_type_query()
     |> Repo.all()

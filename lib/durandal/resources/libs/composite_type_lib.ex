@@ -13,12 +13,12 @@ defmodule Durandal.Resources.CompositeTypeLib do
 
   ## Examples
 
-      iex> list_resources_composite_types()
+      iex> list_composite_types()
       [%CompositeType{}, ...]
 
   """
-  @spec list_resources_composite_types(Durandal.query_args()) :: [CompositeType.t()]
-  def list_resources_composite_types(query_args) do
+  @spec list_composite_types(Durandal.query_args()) :: [CompositeType.t()]
+  def list_composite_types(query_args) do
     query_args
     |> CompositeTypeQueries.composite_type_query()
     |> Repo.all()

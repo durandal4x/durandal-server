@@ -31,6 +31,13 @@ defmodule Durandal.Engine.CommandMacro do
       @behaviour Durandal.Engine.CommandMacro
       require Logger
       alias Durandal.Engine
+
+      def calculate_progress(completion, target) do
+        p = completion / target * 100
+
+        :math.floor(p)
+        |> round
+      end
     end
   end
 end

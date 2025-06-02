@@ -16,14 +16,14 @@ defmodule Durandal.Resources.CompositeShipInstanceLib do
 
   ## Examples
 
-      iex> list_resources_composite_ship_instances()
+      iex> list_composite_ship_instances()
       [%CompositeShipInstance{}, ...]
 
   """
-  @spec list_resources_composite_ship_instances(Durandal.query_args()) :: [
+  @spec list_composite_ship_instances(Durandal.query_args()) :: [
           CompositeShipInstance.t()
         ]
-  def list_resources_composite_ship_instances(query_args) do
+  def list_composite_ship_instances(query_args) do
     query_args
     |> CompositeShipInstanceQueries.composite_ship_instance_query()
     |> Repo.all()

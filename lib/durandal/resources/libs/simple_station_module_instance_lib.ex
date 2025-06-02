@@ -16,14 +16,14 @@ defmodule Durandal.Resources.SimpleStationModuleInstanceLib do
 
   ## Examples
 
-      iex> list_resources_simple_station_module_instances()
+      iex> list_simple_station_module_instances()
       [%SimpleStationModuleInstance{}, ...]
 
   """
-  @spec list_resources_simple_station_module_instances(Durandal.query_args()) :: [
+  @spec list_simple_station_module_instances(Durandal.query_args()) :: [
           SimpleStationModuleInstance.t()
         ]
-  def list_resources_simple_station_module_instances(query_args) do
+  def list_simple_station_module_instances(query_args) do
     query_args
     |> SimpleStationModuleInstanceQueries.simple_station_module_instance_query()
     |> Repo.all()

@@ -64,6 +64,13 @@ defmodule DurandalWeb.Player.ShipCommandListComponent do
           <span :if={command.command_type == "dock_at_station"}>
             {gettext("Target")}: {@station_lookup[command.contents["station_id"]].name}
           </span>
+
+          <span :if={command.command_type == "load_cargo"}>
+            {gettext("Total quantity")}: {inspect(command.contents["total"])}
+          </span>
+          <span :if={command.command_type == "unload_cargo"}>
+            {gettext("Total quantity")}: {inspect(command.contents["total"])}
+          </span>
         </:col>
         <:action :let={command}>
           <span

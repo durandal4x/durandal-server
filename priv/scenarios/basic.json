@@ -77,7 +77,6 @@
               "composite_resources": [
                 {
                   "type": "$comet",
-                  "ratios": [1, 3, 2, 1],
                   "quantity": 1000
                 }
               ]
@@ -143,12 +142,10 @@
               "composite_resources": [
                 {
                   "type": "$metal-asteroid",
-                  "ratios": [1, 3, 2, 1],
                   "quantity": 300
                 },
                 {
                   "type": "$comet",
-                  "ratios": [1, 3, 2, 1],
                   "quantity": 200
                 }
               ]
@@ -259,7 +256,6 @@
           "composite_resources": [
             {
               "type": "$metal-asteroid",
-              "ratios": [5, 1],
               "quantity": 1000
             }
           ]
@@ -290,12 +286,10 @@
           "composite_resources": [
             {
               "type": "$metal-asteroid",
-              "ratios": [1, 3, 2, 1],
               "quantity": 1000
             },
             {
               "type": "$comet",
-              "ratios": [1, 3, 2, 1],
               "quantity": 1000
             }
           ]
@@ -395,12 +389,14 @@
     {
       "id": "$metal-asteroid",
       "name": "Metal asteroid ore",
-      "contents": ["$iron-ore", "$copper-ore"]
+      "contents": ["$iron-ore", "$copper-ore"],
+      "ratios": [50, 50]
     },
     {
       "id": "$comet",
       "name": "Comet",
-      "contents": ["$oxygen", "$water", "$iron-ore", "$copper-ore"]
+      "contents": ["$oxygen", "$water", "$iron-ore", "$copper-ore"],
+      "ratios": [100, 50, 50, 10]
     }
   ],
   "teams": [

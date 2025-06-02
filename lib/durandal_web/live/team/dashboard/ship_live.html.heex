@@ -204,13 +204,13 @@
         rows={@ship.simple_cargo}
         table_class="table-sm table-hover"
       >
-        <:col :let={cargo} label="Simple">{@resource_types[cargo.type_id].name}</:col>
+        <:col :let={cargo} label="Simple">{cargo.type.name}</:col>
         <:col :let={cargo} label="Quantity">{format_number(cargo.quantity)}</:col>
         <:col :let={cargo} label="Mass">
-          {format_number(cargo.quantity * @resource_types[cargo.type_id].mass)}
+          {format_number(cargo.quantity * cargo.type.mass)}
         </:col>
         <:col :let={cargo} label="Volume">
-          {format_number(cargo.quantity * @resource_types[cargo.type_id].volume)}
+          {format_number(cargo.quantity * cargo.type.volume)}
         </:col>
       </.table>
 
@@ -222,7 +222,7 @@
         <:col :let={cargo} label="Composite">{cargo.type.name}</:col>
         <:col :let={cargo} label="Quantity">{format_number(cargo.quantity)}</:col>
         <:col :let={cargo} label="Approx mass">
-          {format_number(round(cargo.quantity * cargo.averaged_mass))}
+          {format_number(round(cargo.quantity * cargo.type.averaged_mass))}
         </:col>
       </.table>
     </.card>

@@ -75,13 +75,13 @@
         rows={@simple_resources}
         table_class="table-sm table-hover"
       >
-        <:col :let={resource} label="Simple">{@resource_types[resource.type_id].name}</:col>
+        <:col :let={resource} label="Simple">{resource.type.name}</:col>
         <:col :let={resource} label="Quantity">{format_number(resource.quantity)}</:col>
         <:col :let={resource} label="Mass">
-          {format_number(resource.quantity * @resource_types[resource.type_id].mass)}
+          {format_number(resource.quantity * resource.type.mass)}
         </:col>
         <:col :let={resource} label="Volume">
-          {format_number(resource.quantity * @resource_types[resource.type_id].volume)}
+          {format_number(resource.quantity * resource.type.volume)}
         </:col>
       </.table>
     </.card>
@@ -97,7 +97,7 @@
         <:col :let={resource} label="Composite">{resource.type.name}</:col>
         <:col :let={resource} label="Quantity">{format_number(resource.quantity)}</:col>
         <:col :let={resource} label="Approx mass">
-          {format_number(round(resource.quantity * resource.averaged_mass))}
+          {format_number(round(resource.quantity * resource.type.averaged_mass))}
         </:col>
       </.table>
     </.card>
@@ -113,13 +113,13 @@
         rows={@combined_simple}
         table_class="table-sm table-hover"
       >
-        <:col :let={resource} label="Simple">{@resource_types[resource.type_id].name}</:col>
+        <:col :let={resource} label="Simple">{resource.type.name}</:col>
         <:col :let={resource} label="Quantity">{format_number(resource.quantity)}</:col>
         <:col :let={resource} label="Mass">
-          {format_number(resource.quantity * @resource_types[resource.type_id].mass)}
+          {format_number(resource.quantity * resource.type.mass)}
         </:col>
         <:col :let={resource} label="Volume">
-          {format_number(resource.quantity * @resource_types[resource.type_id].volume)}
+          {format_number(resource.quantity * resource.type.volume)}
         </:col>
       </.table>
     </.card>
@@ -135,7 +135,7 @@
         <:col :let={resource} label="Composite">{resource.type.name}</:col>
         <:col :let={resource} label="Quantity">{format_number(resource.quantity)}</:col>
         <:col :let={resource} label="Approx mass">
-          {format_number(round(resource.quantity * resource.averaged_mass))}
+          {format_number(round(resource.quantity * resource.type.averaged_mass))}
         </:col>
       </.table>
     </.card>

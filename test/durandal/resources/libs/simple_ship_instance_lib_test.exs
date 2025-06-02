@@ -46,11 +46,11 @@ defmodule Durandal.SimpleShipInstanceLibTest do
 
     test "list_simple_ship_instance/0 returns simple_ship_instance" do
       # No simple_ship_instance yet
-      assert Resources.list_resources_simple_ship_instances([]) == []
+      assert Resources.list_simple_ship_instances([]) == []
 
       # Add a simple_ship_instance
       ResourcesFixtures.simple_ship_instance_fixture()
-      assert Resources.list_resources_simple_ship_instances([]) != []
+      assert Resources.list_simple_ship_instances([]) != []
     end
 
     test "get_simple_ship_instance!/1 and get_simple_ship_instance/1 returns the simple_ship_instance with given id" do

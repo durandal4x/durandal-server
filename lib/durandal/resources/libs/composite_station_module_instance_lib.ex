@@ -17,14 +17,14 @@ defmodule Durandal.Resources.CompositeStationModuleInstanceLib do
 
   ## Examples
 
-      iex> list_resources_composite_station_module_instances()
+      iex> list_composite_station_module_instances()
       [%CompositeStationModuleInstance{}, ...]
 
   """
-  @spec list_resources_composite_station_module_instances(Durandal.query_args()) :: [
+  @spec list_composite_station_module_instances(Durandal.query_args()) :: [
           CompositeStationModuleInstance.t()
         ]
-  def list_resources_composite_station_module_instances(query_args) do
+  def list_composite_station_module_instances(query_args) do
     query_args
     |> CompositeStationModuleInstanceQueries.composite_station_module_instance_query()
     |> Repo.all()

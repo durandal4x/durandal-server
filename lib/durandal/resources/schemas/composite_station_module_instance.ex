@@ -17,9 +17,7 @@ defmodule Durandal.Resources.CompositeStationModuleInstance do
   @primary_key {:id, Ecto.UUID, autogenerate: true}
   schema "resources_composite_station_module_instances" do
     belongs_to(:type, Durandal.Resources.CompositeType, type: Ecto.UUID)
-    field(:ratios, {:array, :integer})
     field(:quantity, :integer)
-    field(:averaged_mass, :float)
     belongs_to(:universe, Durandal.Game.Universe, type: Ecto.UUID)
     belongs_to(:station_module, Durandal.Space.StationModule, type: Ecto.UUID)
     belongs_to(:team, Durandal.Player.Team, type: Ecto.UUID)
@@ -41,7 +39,7 @@ defmodule Durandal.Resources.CompositeStationModuleInstance do
   #         updated_at: DateTime.t()
   #       }
 
-  @required_fields ~w(type_id ratios quantity averaged_mass universe_id station_module_id team_id)a
+  @required_fields ~w(type_id quantity universe_id station_module_id team_id)a
   @optional_fields ~w()a
 
   @doc false

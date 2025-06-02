@@ -74,6 +74,8 @@ defmodule Durandal.ResourcesFixtures do
         contents:
           data["contents"] ||
             ["65e90589-5dbe-4b4c-a3e4-5f2fd889bead", "006dd7a9-a4b9-40a0-a80f-5f197620d2cb"],
+        ratios: data["ratios"] || [r, r + 1],
+        averaged_mass: data["averaged_mass"] || r,
         universe_id: data["universe_id"] || universe_fixture().id
       }
     )
@@ -90,9 +92,7 @@ defmodule Durandal.ResourcesFixtures do
       %CompositeStationModuleInstance{},
       %{
         type_id: data["type_id"] || composite_type_fixture().id,
-        ratios: data["ratios"] || [r, r + 1],
         quantity: data["quantity"] || r,
-        averaged_mass: data["averaged_mass"] || r,
         universe_id: data["universe_id"] || universe_fixture().id,
         station_module_id: data["station_module_id"] || station_module_fixture().id,
         team_id: data["team_id"] || team_fixture().id
@@ -111,9 +111,7 @@ defmodule Durandal.ResourcesFixtures do
       %CompositeShipInstance{},
       %{
         type_id: data["type_id"] || composite_type_fixture().id,
-        ratios: data["ratios"] || [r, r + 1],
         quantity: data["quantity"] || r,
-        averaged_mass: data["averaged_mass"] || r,
         universe_id: data["universe_id"] || universe_fixture().id,
         ship_id: data["ship_id"] || ship_fixture().id,
         team_id: data["team_id"] || team_fixture().id

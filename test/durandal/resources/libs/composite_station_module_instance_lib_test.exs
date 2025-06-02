@@ -9,9 +9,7 @@ defmodule Durandal.CompositeStationModuleInstanceLibTest do
   defp valid_attrs do
     %{
       type_id: ResourcesFixtures.composite_type_fixture().id,
-      ratios: [123, 456],
       quantity: 123,
-      averaged_mass: 123,
       universe_id: Durandal.GameFixtures.universe_fixture().id,
       station_module_id: Durandal.SpaceFixtures.station_module_fixture().id,
       team_id: Durandal.PlayerFixtures.team_fixture().id
@@ -21,9 +19,7 @@ defmodule Durandal.CompositeStationModuleInstanceLibTest do
   defp update_attrs do
     %{
       type_id: ResourcesFixtures.composite_type_fixture().id,
-      ratios: [123, 456, 789],
       quantity: 456,
-      averaged_mass: 456,
       universe_id: Durandal.GameFixtures.universe_fixture().id,
       station_module_id: Durandal.SpaceFixtures.station_module_fixture().id,
       team_id: Durandal.PlayerFixtures.team_fixture().id
@@ -33,9 +29,7 @@ defmodule Durandal.CompositeStationModuleInstanceLibTest do
   defp invalid_attrs do
     %{
       type_id: nil,
-      ratios: nil,
       quantity: nil,
-      averaged_mass: nil,
       universe_id: nil,
       station_module_id: nil,
       team_id: nil
@@ -52,11 +46,11 @@ defmodule Durandal.CompositeStationModuleInstanceLibTest do
 
     test "list_composite_station_module_instance/0 returns composite_station_module_instance" do
       # No composite_station_module_instance yet
-      assert Resources.list_resources_composite_station_module_instances([]) == []
+      assert Resources.list_composite_station_module_instances([]) == []
 
       # Add a composite_station_module_instance
       ResourcesFixtures.composite_station_module_instance_fixture()
-      assert Resources.list_resources_composite_station_module_instances([]) != []
+      assert Resources.list_composite_station_module_instances([]) != []
     end
 
     test "get_composite_station_module_instance!/1 and get_composite_station_module_instance/1 returns the composite_station_module_instance with given id" do
@@ -75,9 +69,7 @@ defmodule Durandal.CompositeStationModuleInstanceLibTest do
       assert {:ok, %CompositeStationModuleInstance{} = composite_station_module_instance} =
                Resources.create_composite_station_module_instance(valid_attrs())
 
-      assert composite_station_module_instance.ratios == [123, 456]
       assert composite_station_module_instance.quantity == 123
-      assert composite_station_module_instance.averaged_mass == 123
     end
 
     test "create_composite_station_module_instance/1 with invalid data returns error changeset" do
@@ -95,9 +87,7 @@ defmodule Durandal.CompositeStationModuleInstanceLibTest do
                  update_attrs()
                )
 
-      assert composite_station_module_instance.ratios == [123, 456, 789]
       assert composite_station_module_instance.quantity == 456
-      assert composite_station_module_instance.averaged_mass == 456
     end
 
     test "update_composite_station_module_instance/2 with invalid data returns error changeset" do

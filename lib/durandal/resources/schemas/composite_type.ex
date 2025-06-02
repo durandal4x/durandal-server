@@ -15,6 +15,8 @@ defmodule Durandal.Resources.CompositeType do
   schema "resources_composite_types" do
     field(:name, :string)
     field(:contents, {:array, Ecto.UUID})
+    field(:ratios, {:array, :integer})
+    field(:averaged_mass, :float)
     belongs_to(:universe, Durandal.Game.Universe, type: Ecto.UUID)
 
     timestamps(type: :utc_datetime_usec)
@@ -31,7 +33,7 @@ defmodule Durandal.Resources.CompositeType do
   #         updated_at: DateTime.t()
   #       }
 
-  @required_fields ~w(name contents universe_id)a
+  @required_fields ~w(name contents ratios averaged_mass universe_id)a
   @optional_fields ~w()a
 
   @doc false

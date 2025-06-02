@@ -14,8 +14,8 @@ defmodule Durandal.Resources do
   defdelegate simple_type_query(args), to: SimpleTypeQueries
 
   @doc section: :simple_type
-  @spec list_resources_simple_types(Durandal.query_args()) :: [SimpleType.t()]
-  defdelegate list_resources_simple_types(args), to: SimpleTypeLib
+  @spec list_simple_types(Durandal.query_args()) :: [SimpleType.t()]
+  defdelegate list_simple_types(args), to: SimpleTypeLib
 
   @doc section: :simple_type
   @spec get_simple_type!(SimpleType.id(), Durandal.query_args()) :: SimpleType.t()
@@ -61,10 +61,10 @@ defmodule Durandal.Resources do
   defdelegate simple_station_module_instance_query(args), to: SimpleStationModuleInstanceQueries
 
   @doc section: :simple_station_module_instance
-  @spec list_resources_simple_station_module_instances(Durandal.query_args()) :: [
+  @spec list_simple_station_module_instances(Durandal.query_args()) :: [
           SimpleStationModuleInstance.t()
         ]
-  defdelegate list_resources_simple_station_module_instances(args),
+  defdelegate list_simple_station_module_instances(args),
     to: SimpleStationModuleInstanceLib
 
   @doc section: :simple_station_module_instance
@@ -126,8 +126,8 @@ defmodule Durandal.Resources do
   defdelegate simple_ship_instance_query(args), to: SimpleShipInstanceQueries
 
   @doc section: :simple_ship_instance
-  @spec list_resources_simple_ship_instances(Durandal.query_args()) :: [SimpleShipInstance.t()]
-  defdelegate list_resources_simple_ship_instances(args), to: SimpleShipInstanceLib
+  @spec list_simple_ship_instances(Durandal.query_args()) :: [SimpleShipInstance.t()]
+  defdelegate list_simple_ship_instances(args), to: SimpleShipInstanceLib
 
   @doc section: :simple_ship_instance
   @spec get_simple_ship_instance!(SimpleShipInstance.id(), Durandal.query_args()) ::
@@ -173,8 +173,8 @@ defmodule Durandal.Resources do
   defdelegate composite_type_query(args), to: CompositeTypeQueries
 
   @doc section: :composite_type
-  @spec list_resources_composite_types(Durandal.query_args()) :: [CompositeType.t()]
-  defdelegate list_resources_composite_types(args), to: CompositeTypeLib
+  @spec list_composite_types(Durandal.query_args()) :: [CompositeType.t()]
+  defdelegate list_composite_types(args), to: CompositeTypeLib
 
   @doc section: :composite_type
   @spec get_composite_type!(CompositeType.id(), Durandal.query_args()) :: CompositeType.t()
@@ -222,10 +222,10 @@ defmodule Durandal.Resources do
     to: CompositeStationModuleInstanceQueries
 
   @doc section: :composite_station_module_instance
-  @spec list_resources_composite_station_module_instances(Durandal.query_args()) :: [
+  @spec list_composite_station_module_instances(Durandal.query_args()) :: [
           CompositeStationModuleInstance.t()
         ]
-  defdelegate list_resources_composite_station_module_instances(args),
+  defdelegate list_composite_station_module_instances(args),
     to: CompositeStationModuleInstanceLib
 
   @doc section: :composite_station_module_instance
@@ -295,10 +295,10 @@ defmodule Durandal.Resources do
   defdelegate composite_ship_instance_query(args), to: CompositeShipInstanceQueries
 
   @doc section: :composite_ship_instance
-  @spec list_resources_composite_ship_instances(Durandal.query_args()) :: [
+  @spec list_composite_ship_instances(Durandal.query_args()) :: [
           CompositeShipInstance.t()
         ]
-  defdelegate list_resources_composite_ship_instances(args), to: CompositeShipInstanceLib
+  defdelegate list_composite_ship_instances(args), to: CompositeShipInstanceLib
 
   @doc section: :composite_ship_instance
   @spec get_composite_ship_instance!(CompositeShipInstance.id(), Durandal.query_args()) ::
@@ -340,15 +340,18 @@ defmodule Durandal.Resources do
   def list_all_team_resources(team_id) do
     simple =
       [
-        list_resources_simple_ship_instances(where: [team_id: team_id]),
-        list_resources_simple_station_module_instances(where: [team_id: team_id])
+        list_simple_ship_instances(where: [team_id: team_id], preload: [:type]),
+        list_simple_station_module_instances(
+          where: [team_id: team_id],
+          preload: [:type]
+        )
       ]
       |> List.flatten()
 
     composite =
       [
-        list_resources_composite_ship_instances(where: [team_id: team_id], preload: [:type]),
-        list_resources_composite_station_module_instances(
+        list_composite_ship_instances(where: [team_id: team_id], preload: [:type]),
+        list_composite_station_module_instances(
           where: [team_id: team_id],
           preload: [:type]
         )
@@ -469,4 +472,58 @@ defmodule Durandal.Resources do
         raise "ERR: #{a}, #{b}"
     end
   end
+
+  @moduledoc """
+  Given a list of different resource instances it will combine them into individual items
+
+  [
+    %{type_id: 1, quantity: 10},
+    %{type_id: 1, quantity: 10},
+    %{type_id: 2, quantity: 10}
+  ]
+
+  Becomes
+  [
+    %{type_id: 1, quantity: 20},
+    %{type_id: 2, quantity: 10}
+  ]
+
+  """
+  def combine_instances_by_type(cargo_list) do
+    cargo_list
+    |> List.flatten()
+    |> Enum.group_by(& &1.type_id)
+    |> Enum.map(fn {_type_id, [initial_cargo | remainder]} ->
+      remainder
+      |> Enum.reduce(initial_cargo, fn c, acc ->
+        struct(acc, %{quantity: acc.quantity + c.quantity})
+      end)
+    end)
+  end
+
+  # def combine_simple_instances_by_type(cargo_list) do
+  #   cargo_list
+  #   |> List.flatten
+  #   |> Enum.group_by(& &1.type_id)
+  #   |> Enum.map(fn {_type_id, [initial_cargo | remainder]} ->
+  #     remainder
+  #     |> Enum.reduce(initial_cargo, fn (c, acc) ->
+  #       struct(acc, %{quantity: acc.quantity + c.quantity})
+  #     end)
+  #   end)
+  #   # |> List.flatten
+  # end
+
+  # def combine_composite_instances_by_type(cargo_list) do
+  #   cargo_list
+  #   |> List.flatten
+  #   |> Enum.group_by(fn r -> {r.type_id, r.ratios, r.averaged_mass} end)
+  #   |> Enum.map(fn {_keys, [initial_cargo | remainder]} ->
+  #     remainder
+  #     |> Enum.reduce(initial_cargo, fn (c, acc) ->
+  #       struct(acc, %{quantity: acc.quantity + c.quantity})
+  #     end)
+  #   end)
+  #   # |> List.flatten
+  # end
 end

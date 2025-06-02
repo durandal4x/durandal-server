@@ -57,27 +57,9 @@ defmodule Durandal.Resources.CompositeStationModuleInstanceQueries do
       where: resources_composite_station_module_instances.team_id in ^List.wrap(team_id)
   end
 
-  def _where(query, :has_ratios, ratios) do
-    from(resources_composite_station_module_instances in query,
-      where: ^ratios in resources_composite_station_module_instances.ratios
-    )
-  end
-
-  def _where(query, :not_has_ratios, ratios) do
-    from(resources_composite_station_module_instances in query,
-      where: ^ratios not in resources_composite_station_module_instances.ratios
-    )
-  end
-
   def _where(query, :quantity, quantity) do
     from resources_composite_station_module_instances in query,
       where: resources_composite_station_module_instances.quantity in ^List.wrap(quantity)
-  end
-
-  def _where(query, :averaged_mass, averaged_mass) do
-    from resources_composite_station_module_instances in query,
-      where:
-        resources_composite_station_module_instances.averaged_mass in ^List.wrap(averaged_mass)
   end
 
   def _where(query, :universe_id, :not_nil) do

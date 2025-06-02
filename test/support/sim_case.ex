@@ -25,7 +25,14 @@ defmodule Durandal.SimCase do
       import Ecto.Changeset
       import Ecto.Query
       import Durandal.SimCase
-      import Durandal.{AccountFixtures, PlayerFixtures, TypesFixtures, SpaceFixtures}
+
+      import Durandal.{
+        AccountFixtures,
+        PlayerFixtures,
+        TypesFixtures,
+        SpaceFixtures,
+        ResourcesFixtures
+      }
     end
   end
 

@@ -46,11 +46,11 @@ defmodule Durandal.SimpleStationModuleInstanceLibTest do
 
     test "list_simple_station_module_instance/0 returns simple_station_module_instance" do
       # No simple_station_module_instance yet
-      assert Resources.list_resources_simple_station_module_instances([]) == []
+      assert Resources.list_simple_station_module_instances([]) == []
 
       # Add a simple_station_module_instance
       ResourcesFixtures.simple_station_module_instance_fixture()
-      assert Resources.list_resources_simple_station_module_instances([]) != []
+      assert Resources.list_simple_station_module_instances([]) != []
     end
 
     test "get_simple_station_module_instance!/1 and get_simple_station_module_instance/1 returns the simple_station_module_instance with given id" do

@@ -9,9 +9,7 @@ defmodule Durandal.CompositeShipInstanceLibTest do
   defp valid_attrs do
     %{
       type_id: ResourcesFixtures.composite_type_fixture().id,
-      ratios: [123, 456],
       quantity: 123,
-      averaged_mass: 123,
       universe_id: Durandal.GameFixtures.universe_fixture().id,
       ship_id: Durandal.SpaceFixtures.ship_fixture().id,
       team_id: Durandal.PlayerFixtures.team_fixture().id
@@ -21,9 +19,7 @@ defmodule Durandal.CompositeShipInstanceLibTest do
   defp update_attrs do
     %{
       type_id: ResourcesFixtures.composite_type_fixture().id,
-      ratios: [123, 456, 789],
       quantity: 456,
-      averaged_mass: 456,
       universe_id: Durandal.GameFixtures.universe_fixture().id,
       ship_id: Durandal.SpaceFixtures.ship_fixture().id,
       team_id: Durandal.PlayerFixtures.team_fixture().id
@@ -33,9 +29,7 @@ defmodule Durandal.CompositeShipInstanceLibTest do
   defp invalid_attrs do
     %{
       type_id: nil,
-      ratios: nil,
       quantity: nil,
-      averaged_mass: nil,
       universe_id: nil,
       ship_id: nil,
       team_id: nil
@@ -52,11 +46,11 @@ defmodule Durandal.CompositeShipInstanceLibTest do
 
     test "list_composite_ship_instance/0 returns composite_ship_instance" do
       # No composite_ship_instance yet
-      assert Resources.list_resources_composite_ship_instances([]) == []
+      assert Resources.list_composite_ship_instances([]) == []
 
       # Add a composite_ship_instance
       ResourcesFixtures.composite_ship_instance_fixture()
-      assert Resources.list_resources_composite_ship_instances([]) != []
+      assert Resources.list_composite_ship_instances([]) != []
     end
 
     test "get_composite_ship_instance!/1 and get_composite_ship_instance/1 returns the composite_ship_instance with given id" do
@@ -73,9 +67,7 @@ defmodule Durandal.CompositeShipInstanceLibTest do
       assert {:ok, %CompositeShipInstance{} = composite_ship_instance} =
                Resources.create_composite_ship_instance(valid_attrs())
 
-      assert composite_ship_instance.ratios == [123, 456]
       assert composite_ship_instance.quantity == 123
-      assert composite_ship_instance.averaged_mass == 123
     end
 
     test "create_composite_ship_instance/1 with invalid data returns error changeset" do
@@ -89,9 +81,7 @@ defmodule Durandal.CompositeShipInstanceLibTest do
       assert {:ok, %CompositeShipInstance{} = composite_ship_instance} =
                Resources.update_composite_ship_instance(composite_ship_instance, update_attrs())
 
-      assert composite_ship_instance.ratios == [123, 456, 789]
       assert composite_ship_instance.quantity == 456
-      assert composite_ship_instance.averaged_mass == 456
     end
 
     test "update_composite_ship_instance/2 with invalid data returns error changeset" do

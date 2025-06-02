@@ -137,39 +137,28 @@ defmodule DurandalWeb.Team.StationLive do
     station_modules =
       Durandal.Space.list_station_modules(
         where: [station_id: station_id],
-        oorder_by: ["Name (A-Z)"],
         preload: [:type, :cargo]
       )
 
     docked_ships =
       Durandal.Space.list_ships(
         where: [docked_with_id: station_id],
-        oorder_by: ["Name (A-Z)"],
         preload: [:type]
       )
 
     simple_cargo =
       station_modules
       |> Enum.map(& &1.simple_cargo)
-      |> List.flatten()
+      |> Resources.combine_instances_by_type()
 
     composite_cargo =
       station_modules
       |> Enum.map(& &1.composite_cargo)
-      |> List.flatten()
-
-    type_ids =
-      Resources.get_types_from_station_resources(station_id)
-      |> Enum.map(&Ecto.UUID.load!/1)
-
-    resource_types =
-      Resources.list_resources_simple_types(where: [id: type_ids])
-      |> Map.new(fn t -> {t.id, t} end)
+      |> Resources.combine_instances_by_type()
 
     socket
     |> assign(:station, station)
     |> assign(:simple_cargo, simple_cargo)
-    |> assign(:resource_types, resource_types)
     |> assign(:composite_cargo, composite_cargo)
     |> stream(:station_modules, station_modules, reset: true)
     |> stream(:docked_ships, docked_ships, reset: true)

@@ -138,12 +138,14 @@ defmodule Durandal.Space.StationModuleQueries do
     from station_modules in query,
       left_join: simple_cargo in assoc(station_modules, :simple_cargo),
       on: simple_cargo.station_module_id == station_modules.id,
+      left_join: simple_cargo_types in assoc(simple_cargo, :type),
+      on: simple_cargo.type_id == simple_cargo_types.id,
       left_join: composite_cargo in assoc(station_modules, :composite_cargo),
       on: composite_cargo.station_module_id == station_modules.id,
-      join: composite_cargo_types in assoc(composite_cargo, :type),
+      left_join: composite_cargo_types in assoc(composite_cargo, :type),
       on: composite_cargo.type_id == composite_cargo_types.id,
       preload: [
-        simple_cargo: simple_cargo,
+        simple_cargo: {simple_cargo, type: simple_cargo_types},
         composite_cargo: {composite_cargo, type: composite_cargo_types}
       ]
   end

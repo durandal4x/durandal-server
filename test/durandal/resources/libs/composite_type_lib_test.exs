@@ -10,6 +10,8 @@ defmodule Durandal.CompositeTypeLibTest do
     %{
       name: "some name",
       contents: ["9438c3a0-2dd1-4ba3-aae9-bab7f2f7c931", "b8bd8449-b15d-4df2-a8e2-d1a71051555a"],
+      ratios: [1, 2, 3],
+      averaged_mass: 123,
       universe_id: Durandal.GameFixtures.universe_fixture().id
     }
   end
@@ -18,6 +20,8 @@ defmodule Durandal.CompositeTypeLibTest do
     %{
       name: "some updated name",
       contents: ["6fbaf9d1-7705-46db-a4b1-ab200b2b570a", "aead8e5d-bdf3-4cdd-816f-1b282c7a33fc"],
+      ratios: [1, 3, 5],
+      averaged_mass: 456,
       universe_id: Durandal.GameFixtures.universe_fixture().id
     }
   end
@@ -26,6 +30,8 @@ defmodule Durandal.CompositeTypeLibTest do
     %{
       name: nil,
       contents: nil,
+      ratios: nil,
+      averaged_mass: nil,
       universe_id: nil
     }
   end
@@ -40,11 +46,11 @@ defmodule Durandal.CompositeTypeLibTest do
 
     test "list_composite_type/0 returns composite_type" do
       # No composite_type yet
-      assert Resources.list_resources_composite_types([]) == []
+      assert Resources.list_composite_types([]) == []
 
       # Add a composite_type
       ResourcesFixtures.composite_type_fixture()
-      assert Resources.list_resources_composite_types([]) != []
+      assert Resources.list_composite_types([]) != []
     end
 
     test "get_composite_type!/1 and get_composite_type/1 returns the composite_type with given id" do

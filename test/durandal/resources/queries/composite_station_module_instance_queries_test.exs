@@ -44,12 +44,8 @@ defmodule Durandal.CompositeStationModuleInstanceQueriesTest do
             type_id: "fc7cd2d5-004a-4799-8cec-0d198016e292",
             type_id: :is_nil,
             type_id: :not_nil,
-            has_ratios: 123,
-            not_has_ratios: 456,
             quantity: [123, 456],
             quantity: 789,
-            averaged_mass: [123, 456],
-            averaged_mass: 789,
             universe_id: [
               "92a26447-572e-4e3e-893c-42008287a9aa",
               "5bed6cfe-0ffd-40bf-ad49-4e82ca65c9be"

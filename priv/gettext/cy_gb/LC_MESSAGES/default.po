@@ -11,7 +11,7 @@ msgstr ""
 "Language: cy_GB\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3;\n"
 
-#: lib/durandal_web/components/core_components.ex:578
+#: lib/durandal_web/components/core_components.ex:579
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Gweithredoedd"
@@ -31,8 +31,8 @@ msgstr "Gweinyddu"
 msgid "Logout"
 msgstr "Allgofnodi"
 
-#: lib/durandal_web/components/nav_components.ex:79
-#: lib/durandal_web/components/nav_components.ex:484
+#: lib/durandal_web/components/nav_components.ex:82
+#: lib/durandal_web/components/nav_components.ex:493
 #: lib/durandal_web/live/general/home/index_live.html.heex:25
 #, elixir-autogen, elixir-format
 msgid "Profile"
@@ -51,37 +51,38 @@ msgstr "Dangosfwrdd tîm"
 msgid "Team select"
 msgstr "Dewis tîm"
 
-#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:136
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:113
 #, elixir-autogen, elixir-format
 msgid "Acceleration"
 msgstr "Cyflymiad"
 
-#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:86
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:63
 #, elixir-autogen, elixir-format
 msgid "Build progress"
 msgstr "Adeiladu cynnydd"
 
-#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:124
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:101
 #, elixir-autogen, elixir-format
 msgid "Build time"
 msgstr "Adeiladu amser"
 
-#: lib/durandal_web/components/player/ship_command_list_component.ex:75
+#: lib/durandal_web/components/player/ship_command_list_component.ex:93
+#: lib/durandal_web/components/player/station_command_list_component.ex:100
 #, elixir-autogen, elixir-format
 msgid "Cancel"
 msgstr "Canslo"
 
-#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:108
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:85
 #, elixir-autogen, elixir-format
 msgid "Clockwise?"
 msgstr "Clocwedd?"
 
-#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:132
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:109
 #, elixir-autogen, elixir-format
 msgid "Damage"
 msgstr "Difrod"
 
-#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:101
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:78
 #, elixir-autogen, elixir-format
 msgid "Distance"
 msgstr "Difrod"
@@ -91,23 +92,23 @@ msgstr "Difrod"
 msgid "Docked with"
 msgstr "Tocio gyda"
 
-#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:82
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:59
 #, elixir-autogen, elixir-format
 msgid "Health"
 msgstr "Iechyd"
 
-#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:128
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:105
 #, elixir-autogen, elixir-format
 msgid "Max health"
 msgstr "Iechyd mwyaf"
 
-#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:18
-#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:97
+#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:28
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:74
 #, elixir-autogen, elixir-format
 msgid "Orbiting"
 msgstr "Yn cylchdroi"
 
-#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:112
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "Period"
 msgstr "Cyfnod"
@@ -117,31 +118,24 @@ msgstr "Cyfnod"
 msgid "Position"
 msgstr "Swydd"
 
-#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:72
-#, elixir-autogen, elixir-format
-msgid "Progress"
-msgstr "Cynnydd"
-
 #: lib/durandal_web/live/team/dashboard/ship_live.html.heex:22
 #, elixir-autogen, elixir-format
 msgid "System"
 msgstr "System"
 
-#: lib/durandal_web/components/player/ship_command_list_component.ex:39
-#: lib/durandal_web/components/player/ship_command_list_component.ex:44
-#: lib/durandal_web/components/player/ship_command_list_component.ex:47
+#: lib/durandal_web/components/player/ship_command_list_component.ex:57
+#: lib/durandal_web/components/player/ship_command_list_component.ex:62
+#: lib/durandal_web/components/player/ship_command_list_component.ex:65
+#: lib/durandal_web/components/player/station_command_list_component.ex:61
+#: lib/durandal_web/components/player/station_command_list_component.ex:66
 #, elixir-autogen, elixir-format
 msgid "Target"
 msgstr "Targed"
 
-#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:61
-#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:66
-#, elixir-autogen, elixir-format
-msgid "Transfer target"
-msgstr "Targed trosglwyddo"
-
+#: lib/durandal_web/components/player/station_command_list_component.ex:69
+#: lib/durandal_web/components/player/station_command_list_component.ex:72
 #: lib/durandal_web/live/team/dashboard/ship_live.html.heex:39
-#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:120
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:97
 #, elixir-autogen, elixir-format
 msgid "Type"
 msgstr "Math"
@@ -156,35 +150,36 @@ msgstr "Cyflymder"
 msgid "Command"
 msgstr "Gorchymyn"
 
-#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:150
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:157
 #, elixir-autogen, elixir-format
 msgid "Commands"
 msgstr "Gorchmynion"
 
-#: lib/durandal_web/components/player/ship_command_add_component.ex:101
+#: lib/durandal_web/components/player/ship_command_add_component.ex:91
 #, elixir-autogen, elixir-format
 msgid "Add"
 msgstr "Ychwanegu"
 
+#: lib/durandal_web/components/player/ship_command_add_component.ex:72
 #: lib/durandal_web/components/player/ship_command_add_component.ex:82
-#: lib/durandal_web/components/player/ship_command_add_component.ex:92
 #, elixir-autogen, elixir-format
 msgid "Station"
 msgstr ""
 
 #: lib/durandal_web/components/player/ship_command_add_component.ex:51
-#: lib/durandal_web/components/player/ship_command_add_component.ex:70
 #, elixir-autogen, elixir-format, fuzzy
 msgid "System object"
 msgstr "System"
 
 #: lib/durandal_web/components/player/ship_command_add_component.ex:61
-#: lib/durandal_web/components/player/ship_command_list_component.ex:39
+#: lib/durandal_web/components/player/ship_command_list_component.ex:57
+#: lib/durandal_web/components/player/station_command_add_component.ex:60
+#: lib/durandal_web/components/player/station_command_list_component.ex:61
 #, elixir-autogen, elixir-format
 msgid "Orbit distance"
 msgstr ""
 
-#: lib/durandal_web/components/nav_components.ex:92
+#: lib/durandal_web/components/nav_components.ex:98
 #, elixir-autogen, elixir-format
 msgid "Accounts"
 msgstr ""
@@ -210,7 +205,7 @@ msgstr ""
 msgid "Default"
 msgstr ""
 
-#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:17
+#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:27
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Docked"
 msgstr "Tocio gyda"
@@ -220,7 +215,7 @@ msgstr "Tocio gyda"
 msgid "Edit user form"
 msgstr ""
 
-#: lib/durandal_web/components/nav_components.ex:97
+#: lib/durandal_web/components/nav_components.ex:104
 #, elixir-autogen, elixir-format
 msgid "Games"
 msgstr ""
@@ -231,6 +226,7 @@ msgid "Home"
 msgstr ""
 
 #: lib/durandal_web/live/general/home/guest_live.html.heex:15
+#: lib/durandal_web/live/user_auth/user_login_live.ex:54
 #, elixir-autogen, elixir-format
 msgid "Login"
 msgstr ""
@@ -240,7 +236,7 @@ msgstr ""
 msgid "No currently selected team"
 msgstr ""
 
-#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:20
+#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:29
 #, elixir-autogen, elixir-format
 msgid "On the float"
 msgstr ""
@@ -260,33 +256,104 @@ msgstr ""
 msgid "Security"
 msgstr ""
 
-#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:11
+#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:21
 #, elixir-autogen, elixir-format
 msgid "Ships"
 msgstr ""
 
-#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:32
-#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:52
+#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:41
+#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:61
 #, elixir-autogen, elixir-format
 msgid "Show"
 msgstr ""
 
-#: lib/durandal_web/components/nav_components.ex:501
+#: lib/durandal_web/components/nav_components.ex:510
 #, elixir-autogen, elixir-format
 msgid "Sign out %{name}"
 msgstr ""
 
-#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:41
+#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:50
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Stations"
 msgstr ""
 
-#: lib/durandal_web/components/nav_components.ex:83
+#: lib/durandal_web/components/nav_components.ex:89
 #, elixir-autogen, elixir-format
 msgid "Team"
 msgstr ""
 
-#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:19
+#: lib/durandal_web/live/user_auth/user_registration_live.ex:21
+#, elixir-autogen, elixir-format
+msgid "Already registered?"
+msgstr ""
+
+#: lib/durandal_web/live/team/dashboard/ship_live.html.heex:201
+#: lib/durandal_web/live/team/dashboard/station_live.html.heex:191
+#, elixir-autogen, elixir-format
+msgid "Cargo"
+msgstr ""
+
+#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:129
+#, elixir-autogen, elixir-format
+msgid "Combined composite resources"
+msgstr ""
+
+#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:110
+#, elixir-autogen, elixir-format
+msgid "Combined simple resources"
+msgstr ""
+
+#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:91
+#, elixir-autogen, elixir-format
+msgid "Composite resources"
+msgstr ""
+
+#: lib/durandal_web/live/user_auth/user_registration_live.ex:64
+#, elixir-autogen, elixir-format
+msgid "Create an account"
+msgstr ""
+
+#: lib/durandal_web/live/team/dashboard/station_live.html.heex:156
 #, elixir-autogen, elixir-format, fuzzy
-msgid "Transferring"
-msgstr "Targed trosglwyddo"
+msgid "Docked ships"
+msgstr "Tocio gyda"
+
+#: lib/durandal_web/live/user_auth/user_login_live.ex:33
+#, elixir-autogen, elixir-format
+msgid "Forgot your password?"
+msgstr ""
+
+#: lib/durandal_web/live/team/dashboard/station_live.html.heex:126
+#, elixir-autogen, elixir-format
+msgid "Modules"
+msgstr ""
+
+#: lib/durandal_web/live/user_auth/user_registration_live.ex:39
+#, elixir-autogen, elixir-format
+msgid "Oops, something went wrong! Please check the errors below."
+msgstr ""
+
+#: lib/durandal_web/live/user_auth/user_registration_live.ex:19
+#, elixir-autogen, elixir-format
+msgid "Register for an account"
+msgstr ""
+
+#: lib/durandal_web/live/user_auth/user_login_live.ex:18
+#, elixir-autogen, elixir-format
+msgid "Sign In"
+msgstr ""
+
+#: lib/durandal_web/live/user_auth/user_registration_live.ex:23
+#, elixir-autogen, elixir-format
+msgid "Sign in"
+msgstr ""
+
+#: lib/durandal_web/live/team/dashboard/dashboard_live.html.heex:72
+#, elixir-autogen, elixir-format
+msgid "Simple resources"
+msgstr ""
+
+#: lib/durandal_web/live/user_auth/user_registration_live.ex:25
+#, elixir-autogen, elixir-format
+msgid "to your account now."
+msgstr ""

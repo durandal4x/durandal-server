@@ -46,11 +46,11 @@ defmodule Durandal.SimpleTypeLibTest do
 
     test "list_simple_type/0 returns simple_type" do
       # No simple_type yet
-      assert Resources.list_resources_simple_types([]) == []
+      assert Resources.list_simple_types([]) == []
 
       # Add a simple_type
       ResourcesFixtures.simple_type_fixture()
-      assert Resources.list_resources_simple_types([]) != []
+      assert Resources.list_simple_types([]) != []
     end
 
     test "get_simple_type!/1 and get_simple_type/1 returns the simple_type with given id" do

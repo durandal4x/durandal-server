@@ -16,12 +16,12 @@ defmodule Durandal.Resources.SimpleShipInstanceLib do
 
   ## Examples
 
-      iex> list_resources_simple_ship_instances()
+      iex> list_simple_ship_instances()
       [%SimpleShipInstance{}, ...]
 
   """
-  @spec list_resources_simple_ship_instances(Durandal.query_args()) :: [SimpleShipInstance.t()]
-  def list_resources_simple_ship_instances(query_args) do
+  @spec list_simple_ship_instances(Durandal.query_args()) :: [SimpleShipInstance.t()]
+  def list_simple_ship_instances(query_args) do
     query_args
     |> SimpleShipInstanceQueries.simple_ship_instance_query()
     |> Repo.all()
