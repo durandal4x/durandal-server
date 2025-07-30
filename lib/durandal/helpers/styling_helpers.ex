@@ -1,6 +1,5 @@
 defmodule Durandal.Helper.StylingHelper do
   @moduledoc false
-  # alias HTMLIcons
 
   @spec icon(atom) :: String.t()
   def icon(:report), do: "fa-signal"

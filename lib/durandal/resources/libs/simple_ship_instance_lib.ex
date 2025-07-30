@@ -71,6 +71,18 @@ defmodule Durandal.Resources.SimpleShipInstanceLib do
     |> Repo.one()
   end
 
+  @spec get_simple_ship_instance_by_ship_and_type_id(
+          Durandal.ship_id(),
+          Durandal.simple_resource_type_id(),
+          Durandal.query_args()
+        ) ::
+          SimpleShipInstance.t() | nil
+  def get_simple_ship_instance_by_ship_and_type_id(ship_id, type_id, query_args \\ []) do
+    (query_args ++ [ship_id: ship_id, type_id: type_id])
+    |> SimpleShipInstanceQueries.simple_ship_instance_query()
+    |> Repo.one()
+  end
+
   @doc """
   Creates a simple_ship_instance.
 

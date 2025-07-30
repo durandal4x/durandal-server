@@ -22,6 +22,9 @@ defmodule Durandal do
   @type positional_entity ::
           Durandal.Space.Ship.t() | Durandal.Space.Station.t() | Durandal.Space.SystemObject.t()
 
+  @type simple_resource_type_id :: Durandal.Resources.SimpleType.id()
+  @type composite_resource_type_id :: Durandal.Resources.CompositeType.id()
+
   @type query_args ::
           keyword(
             id: non_neg_integer() | nil,

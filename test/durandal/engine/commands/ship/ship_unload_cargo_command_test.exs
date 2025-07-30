@@ -233,7 +233,7 @@ defmodule Durandal.Engine.Commands.ShipUnloadCargoCommandTest do
     [result] = tick_universe(universe.id)
 
     assert result.command_logs[command.id] == [
-             "Completed cargo transfer from ship #{ship.id} to station #{station.id}, module #{station_module.id}"
+             "Completed cargo transfer from ship #{ship.id} to station #{station.id}, module #{station_module.id}, stopped early as no more cargo on ship"
            ]
 
     # Now, ensure the resources have moved the way we expect

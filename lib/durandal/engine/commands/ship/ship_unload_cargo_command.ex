@@ -211,19 +211,19 @@ defmodule Durandal.Engine.ShipUnloadCargoCommand do
     end
   end
 
-  defp reduce_transfer(remaining, cargo_quantity) do
-    reduce_transfer(remaining, cargo_quantity, %{}, @transfer_rate)
+  defp reduce_transfer(remaining, ship_cargo_quantity) do
+    reduce_transfer(remaining, ship_cargo_quantity, %{}, @transfer_rate)
   end
 
-  defp reduce_transfer([], _cargo_quantity, to_transfer, _transfer_limit) do
+  defp reduce_transfer([], _ship_cargo_quantity, to_transfer, _transfer_limit) do
     {:no_more_cargo, to_transfer}
   end
 
-  defp reduce_transfer(_, _cargo_quantity, to_transfer, 0), do: {:reached_limit, to_transfer}
+  defp reduce_transfer(_, _ship_cargo_quantity, to_transfer, 0), do: {:reached_limit, to_transfer}
 
   defp reduce_transfer(
          [[type_id, res_count] | remaining],
-         cargo_quantity,
+         ship_cargo_quantity,
          to_transfer,
          transfer_limit
        ) do
@@ -231,15 +231,16 @@ defmodule Durandal.Engine.ShipUnloadCargoCommand do
     # - the amount we can transfer (cargo in our hold)
     # - the amount we want to transfer (cargo remaining in the command)
     # - the amount able to be transferred per tick
-    actual_amount = Enum.min([res_count, cargo_quantity[type_id], transfer_limit])
+    actual_amount = Enum.min([res_count, ship_cargo_quantity[type_id], transfer_limit])
 
-    new_cargo = Map.put(cargo_quantity, type_id, cargo_quantity[type_id] - actual_amount)
+    new_ship_cargo =
+      Map.put(ship_cargo_quantity, type_id, ship_cargo_quantity[type_id] - actual_amount)
 
-    # We do the Map.get incase we transferred some of this cargo last tick
+    # We do the Map.get in case we transferred some of this cargo last tick
     new_to_transfer =
       Map.put(to_transfer, type_id, Map.get(to_transfer, type_id, 0) + actual_amount)
 
     # And now we recurse
-    reduce_transfer(remaining, new_cargo, new_to_transfer, transfer_limit - actual_amount)
+    reduce_transfer(remaining, new_ship_cargo, new_to_transfer, transfer_limit - actual_amount)
   end
 end

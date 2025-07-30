@@ -141,6 +141,15 @@ defmodule Durandal.Resources do
   defdelegate get_simple_ship_instance(simple_ship_instance_id, query_args \\ []),
     to: SimpleShipInstanceLib
 
+  @spec get_simple_ship_instance_by_ship_and_type_id(
+          Durandal.ship_id(),
+          Durandal.simple_resource_type_id(),
+          Durandal.query_args()
+        ) ::
+          SimpleShipInstance.t() | nil
+  defdelegate get_simple_ship_instance_by_ship_and_type_id(ship_id, type_id, query_args \\ []),
+    to: SimpleShipInstanceLib
+
   @doc section: :simple_ship_instance
   @spec create_simple_ship_instance(map) ::
           {:ok, SimpleShipInstance.t()} | {:error, Ecto.Changeset.t()}
@@ -312,6 +321,15 @@ defmodule Durandal.Resources do
   defdelegate get_composite_ship_instance(composite_ship_instance_id, query_args \\ []),
     to: CompositeShipInstanceLib
 
+  @spec get_composite_ship_instance_by_ship_and_type_id(
+          Durandal.ship_id(),
+          Durandal.composite_resource_type_id(),
+          Durandal.query_args()
+        ) ::
+          CompositeShipInstance.t() | nil
+  defdelegate get_composite_ship_instance_by_ship_and_type_id(ship_id, type_id, query_args \\ []),
+    to: CompositeShipInstanceLib
+
   @doc section: :composite_ship_instance
   @spec create_composite_ship_instance(map) ::
           {:ok, CompositeShipInstance.t()} | {:error, Ecto.Changeset.t()}
@@ -334,7 +352,6 @@ defmodule Durandal.Resources do
   defdelegate change_composite_ship_instance(composite_ship_instance, attrs \\ %{}),
     to: CompositeShipInstanceLib
 
-  alias Durandal.Repo
   import Ecto.Query, warn: false
 
   def list_all_team_resources(team_id) do
@@ -361,119 +378,139 @@ defmodule Durandal.Resources do
     {simple, composite}
   end
 
-  def get_types_from_team_resources(team_id) do
-    query = """
-    SELECT type_id
-      FROM resources_simple_ship_instances
-      WHERE team_id = $1
-    UNION
-    SELECT type_id
-      FROM resources_simple_station_module_instances
-      WHERE team_id = $1
-    UNION
-    SELECT DISTINCT unnest(contents) AS type_id
-      FROM resources_composite_types
-      WHERE id IN (
-        SELECT type_id
-        FROM resources_composite_ship_instances
-        WHERE team_id = $1
-      )
-    UNION
-    SELECT DISTINCT unnest(contents) AS type_id
-      FROM resources_composite_types
-      WHERE id IN (
-        SELECT type_id
-        FROM resources_composite_station_module_instances
-        WHERE team_id = $1
-      )
-    """
+  def list_all_station_resources(station_id, type_id \\ nil) do
+    module_ids =
+      Durandal.Space.list_station_modules(where: [station_id: station_id], select: [:id])
+      |> Enum.map(& &1.id)
 
-    case Ecto.Adapters.SQL.query(Repo, query, [Ecto.UUID.dump!(team_id)]) do
-      {:ok, results} ->
-        List.flatten(results.rows)
+    simple =
+      list_simple_station_module_instances(
+        where: [station_module_id: module_ids, type_id: type_id],
+        preload: [:type]
+      )
 
-      {a, b} ->
-        raise "ERR: #{a}, #{b}"
-    end
+    composite =
+      list_composite_station_module_instances(
+        where: [station_module_id: module_ids, type_id: type_id],
+        preload: [:type]
+      )
+
+    {simple, composite}
   end
 
-  def get_types_from_ship_resources(ship_id) do
-    query = """
-    SELECT type_id
-      FROM resources_simple_ship_instances
-      WHERE ship_id = $1
-    UNION
-    SELECT DISTINCT unnest(contents) AS type_id
-      FROM resources_composite_types
-      WHERE id IN (
-        SELECT type_id
-        FROM resources_composite_ship_instances
-        WHERE ship_id = $1
-      )
-    """
+  # def get_types_from_team_resources(team_id) do
+  #   query = """
+  #   SELECT type_id
+  #     FROM resources_simple_ship_instances
+  #     WHERE team_id = $1
+  #   UNION
+  #   SELECT type_id
+  #     FROM resources_simple_station_module_instances
+  #     WHERE team_id = $1
+  #   UNION
+  #   SELECT DISTINCT unnest(contents) AS type_id
+  #     FROM resources_composite_types
+  #     WHERE id IN (
+  #       SELECT type_id
+  #       FROM resources_composite_ship_instances
+  #       WHERE team_id = $1
+  #     )
+  #   UNION
+  #   SELECT DISTINCT unnest(contents) AS type_id
+  #     FROM resources_composite_types
+  #     WHERE id IN (
+  #       SELECT type_id
+  #       FROM resources_composite_station_module_instances
+  #       WHERE team_id = $1
+  #     )
+  #   """
 
-    case Ecto.Adapters.SQL.query(Repo, query, [Ecto.UUID.dump!(ship_id)]) do
-      {:ok, results} ->
-        List.flatten(results.rows)
+  #   case Ecto.Adapters.SQL.query(Repo, query, [Ecto.UUID.dump!(team_id)]) do
+  #     {:ok, results} ->
+  #       List.flatten(results.rows)
 
-      {a, b} ->
-        raise "ERR: #{a}, #{b}"
-    end
-  end
+  #     {a, b} ->
+  #       raise "ERR: #{a}, #{b}"
+  #   end
+  # end
 
-  def get_types_from_station_resources(station_id) do
-    query = """
-    SELECT instances.type_id
-      FROM resources_simple_station_module_instances instances
-      JOIN space_station_modules modules
-        ON modules.id = instances.station_module_id
-      WHERE modules.station_id = $1
-    UNION
-    SELECT DISTINCT unnest(contents) AS type_id
-      FROM resources_composite_types
-      WHERE id IN (
-        SELECT instances.type_id
-        FROM resources_composite_station_module_instances instances
-        JOIN space_station_modules modules
-          ON modules.id = instances.station_module_id
-        WHERE modules.station_id = $1
-      )
-    """
+  # def get_types_from_ship_resources(ship_id) do
+  #   query = """
+  #   SELECT type_id
+  #     FROM resources_simple_ship_instances
+  #     WHERE ship_id = $1
+  #   UNION
+  #   SELECT DISTINCT unnest(contents) AS type_id
+  #     FROM resources_composite_types
+  #     WHERE id IN (
+  #       SELECT type_id
+  #       FROM resources_composite_ship_instances
+  #       WHERE ship_id = $1
+  #     )
+  #   """
 
-    case Ecto.Adapters.SQL.query(Repo, query, [Ecto.UUID.dump!(station_id)]) do
-      {:ok, results} ->
-        List.flatten(results.rows)
+  #   case Ecto.Adapters.SQL.query(Repo, query, [Ecto.UUID.dump!(ship_id)]) do
+  #     {:ok, results} ->
+  #       List.flatten(results.rows)
 
-      {a, b} ->
-        raise "ERR: #{a}, #{b}"
-    end
-  end
+  #     {a, b} ->
+  #       raise "ERR: #{a}, #{b}"
+  #   end
+  # end
 
-  def get_types_from_station_module_resources(station_module_id) do
-    query = """
-    SELECT type_id
-      FROM resources_simple_station_module_instances
-      WHERE station_module_id = $1
-    UNION
-    SELECT DISTINCT unnest(contents) AS type_id
-      FROM resources_composite_types
-      WHERE id IN (
-        SELECT type_id
-        FROM resources_composite_station_module_instances
-        WHERE station_module_id = $1
-      )
-    """
+  # def get_types_from_station_resources(station_id) do
+  #   query = """
+  #   SELECT instances.type_id
+  #     FROM resources_simple_station_module_instances instances
+  #     JOIN space_station_modules modules
+  #       ON modules.id = instances.station_module_id
+  #     WHERE modules.station_id = $1
+  #   UNION
+  #   SELECT DISTINCT unnest(contents) AS type_id
+  #     FROM resources_composite_types
+  #     WHERE id IN (
+  #       SELECT instances.type_id
+  #       FROM resources_composite_station_module_instances instances
+  #       JOIN space_station_modules modules
+  #         ON modules.id = instances.station_module_id
+  #       WHERE modules.station_id = $1
+  #     )
+  #   """
 
-    case Ecto.Adapters.SQL.query(Repo, query, [Ecto.UUID.dump!(station_module_id)]) do
-      {:ok, results} ->
-        List.flatten(results.rows)
+  #   case Ecto.Adapters.SQL.query(Repo, query, [Ecto.UUID.dump!(station_id)]) do
+  #     {:ok, results} ->
+  #       List.flatten(results.rows)
 
-      {a, b} ->
-        raise "ERR: #{a}, #{b}"
-    end
-  end
+  #     {a, b} ->
+  #       raise "ERR: #{a}, #{b}"
+  #   end
+  # end
 
-  @moduledoc """
+  # def get_types_from_station_module_resources(station_module_id) do
+  #   query = """
+  #   SELECT type_id
+  #     FROM resources_simple_station_module_instances
+  #     WHERE station_module_id = $1
+  #   UNION
+  #   SELECT DISTINCT unnest(contents) AS type_id
+  #     FROM resources_composite_types
+  #     WHERE id IN (
+  #       SELECT type_id
+  #       FROM resources_composite_station_module_instances
+  #       WHERE station_module_id = $1
+  #     )
+  #   """
+
+  #   case Ecto.Adapters.SQL.query(Repo, query, [Ecto.UUID.dump!(station_module_id)]) do
+  #     {:ok, results} ->
+  #       List.flatten(results.rows)
+
+  #     {a, b} ->
+  #       raise "ERR: #{a}, #{b}"
+  #   end
+  # end
+
+  @doc """
   Given a list of different resource instances it will combine them into individual items
 
   [
@@ -500,30 +537,4 @@ defmodule Durandal.Resources do
       end)
     end)
   end
-
-  # def combine_simple_instances_by_type(cargo_list) do
-  #   cargo_list
-  #   |> List.flatten
-  #   |> Enum.group_by(& &1.type_id)
-  #   |> Enum.map(fn {_type_id, [initial_cargo | remainder]} ->
-  #     remainder
-  #     |> Enum.reduce(initial_cargo, fn (c, acc) ->
-  #       struct(acc, %{quantity: acc.quantity + c.quantity})
-  #     end)
-  #   end)
-  #   # |> List.flatten
-  # end
-
-  # def combine_composite_instances_by_type(cargo_list) do
-  #   cargo_list
-  #   |> List.flatten
-  #   |> Enum.group_by(fn r -> {r.type_id, r.ratios, r.averaged_mass} end)
-  #   |> Enum.map(fn {_keys, [initial_cargo | remainder]} ->
-  #     remainder
-  #     |> Enum.reduce(initial_cargo, fn (c, acc) ->
-  #       struct(acc, %{quantity: acc.quantity + c.quantity})
-  #     end)
-  #   end)
-  #   # |> List.flatten
-  # end
 end

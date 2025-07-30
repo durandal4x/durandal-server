@@ -10,6 +10,8 @@ defmodule Durandal.Resources.SimpleShipInstanceQueries do
 
     query
     |> do_where(id: args[:id])
+    |> do_where(ship_id: args[:ship_id])
+    |> do_where(type_id: args[:type_id])
     |> do_where(args[:where])
     |> do_where(args[:search])
     |> do_preload(args[:preload])
