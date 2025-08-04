@@ -27,7 +27,7 @@ defmodule Durandal.SpaceFixtures do
   @spec system_object_fixture(map) :: SystemObject.t()
   def system_object_fixture(data \\ %{}) do
     r = :rand.uniform(999_999_999)
-    team = Durandal.Player.get_team(data["team_id"]) || team_fixture()
+    team = (data["team_id"] && Durandal.Player.get_team(data["team_id"])) || team_fixture()
 
     SystemObject.changeset(
       %SystemObject{},
@@ -52,7 +52,7 @@ defmodule Durandal.SpaceFixtures do
   @spec station_fixture(map) :: Station.t()
   def station_fixture(data \\ %{}) do
     r = :rand.uniform(999_999_999)
-    team = Durandal.Player.get_team(data["team_id"]) || team_fixture()
+    team = (data["team_id"] && Durandal.Player.get_team(data["team_id"])) || team_fixture()
 
     Station.changeset(
       %Station{},
@@ -76,7 +76,7 @@ defmodule Durandal.SpaceFixtures do
   @spec station_module_fixture(map) :: StationModule.t()
   def station_module_fixture(data \\ %{}) do
     r = :rand.uniform(999_999_999)
-    team = Durandal.Player.get_team(data["team_id"]) || team_fixture()
+    team = (data["team_id"] && Durandal.Player.get_team(data["team_id"])) || team_fixture()
 
     StationModule.changeset(
       %StationModule{},
@@ -98,7 +98,7 @@ defmodule Durandal.SpaceFixtures do
   @spec ship_fixture(map) :: Ship.t()
   def ship_fixture(data \\ %{}) do
     r = :rand.uniform(999_999_999)
-    team = Durandal.Player.get_team(data["team_id"]) || team_fixture()
+    team = (data["team_id"] && Durandal.Player.get_team(data["team_id"])) || team_fixture()
 
     Ship.changeset(
       %Ship{},

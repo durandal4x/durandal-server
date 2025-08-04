@@ -32,3 +32,9 @@ msgstr "Transfer to station"
 
 msgid "transfer_to_system_object"
 msgstr "Transfer to system object"
+
+msgid "load_cargo"
+msgstr "Load cargo"
+
+msgid "unload_cargo"
+msgstr "Unload cargo"

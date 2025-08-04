@@ -32,3 +32,9 @@ msgstr "Trosglwyddo i orsaf"
 
 msgid "transfer_to_system_object"
 msgstr "Trosglwyddo i wrthrych system"
+
+msgid "load_cargo"
+msgstr ""
+
+msgid "unload_cargo"
+msgstr ""

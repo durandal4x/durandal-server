@@ -1,7 +1,7 @@
 defmodule DurandalWeb.Team.StationLive do
   @moduledoc false
   use DurandalWeb, :live_view
-  alias Durandal.{Space, Player, Types}
+  alias Durandal.{Space, Player, Types, Resources}
 
   @impl true
   def mount(%{"station_id" => station_id}, _session, socket) when is_connected?(socket) do
@@ -21,7 +21,7 @@ defmodule DurandalWeb.Team.StationLive do
     if socket.assigns.station do
       {:ok, socket}
     else
-      {:ok, redirect(socket, to: ~p"/admin/games")}
+      {:ok, redirect(socket, to: ~p"/team/dashboard")}
     end
   end
 
@@ -137,19 +137,29 @@ defmodule DurandalWeb.Team.StationLive do
     station_modules =
       Durandal.Space.list_station_modules(
         where: [station_id: station_id],
-        oorder_by: ["Name (A-Z)"],
-        preload: [:type]
+        preload: [:type, :cargo]
       )
 
     docked_ships =
       Durandal.Space.list_ships(
         where: [docked_with_id: station_id],
-        oorder_by: ["Name (A-Z)"],
         preload: [:type]
       )
 
+    simple_cargo =
+      station_modules
+      |> Enum.map(& &1.simple_cargo)
+      |> Resources.combine_instances_by_type()
+
+    composite_cargo =
+      station_modules
+      |> Enum.map(& &1.composite_cargo)
+      |> Resources.combine_instances_by_type()
+
     socket
     |> assign(:station, station)
+    |> assign(:simple_cargo, simple_cargo)
+    |> assign(:composite_cargo, composite_cargo)
     |> stream(:station_modules, station_modules, reset: true)
     |> stream(:docked_ships, docked_ships, reset: true)
     |> assign(:page_title, "Station: #{station.name}")

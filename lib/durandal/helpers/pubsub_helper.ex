@@ -16,11 +16,15 @@ defmodule Durandal.Helpers.PubSubHelper do
   Used to broadcast a message based on the successful completion of a function and then
   pass through the successful result.
 
-  Has three main ways of calling:
+  Has four main ways of calling:
 
     # String as topic
     insert_object()
     |> broadcast_on_ok("MyTopicString", :object, %{event: :created_object})
+
+    # List of strings as topic
+    insert_object()
+    |> broadcast_on_ok(["MyTopicString", "MyOtherTopicString"], :object, %{event: :created_object})
 
     # Function as topic, by default will pass in the id of the success object to the topic function
     insert_object()
@@ -32,7 +36,7 @@ defmodule Durandal.Helpers.PubSubHelper do
   """
   @spec broadcast_on_ok({:ok, any} | {:error, any}, String.t() | function(), atom(), map()) :: :ok
   def broadcast_on_ok({:ok, result}, topic, result_key, message) do
-    topic_string =
+    topic_strings =
       case topic do
         {topic_function, topic_key} ->
           topic_function.(Map.get(result, topic_key))
@@ -45,7 +49,12 @@ defmodule Durandal.Helpers.PubSubHelper do
           end
       end
 
-    broadcast(topic_string, Map.put(message, result_key, result))
+    topic_strings
+    |> List.wrap()
+    |> Enum.each(fn topic_string ->
+      broadcast(topic_string, Map.put(message, result_key, result))
+    end)
+
     {:ok, result}
   end
 

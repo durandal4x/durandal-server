@@ -28,3 +28,9 @@ msgstr ""
 
 msgid "transfer_to_system_object"
 msgstr ""
+
+msgid "load_cargo"
+msgstr ""
+
+msgid "unload_cargo"
+msgstr ""

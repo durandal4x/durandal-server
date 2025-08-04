@@ -20,6 +20,9 @@ defmodule Durandal.Space.StationModule do
     field(:build_progress, :integer)
     field(:health, :integer)
 
+    has_many(:simple_cargo, Durandal.Resources.SimpleStationModuleInstance)
+    has_many(:composite_cargo, Durandal.Resources.CompositeStationModuleInstance)
+
     timestamps(type: :utc_datetime_usec)
   end
 

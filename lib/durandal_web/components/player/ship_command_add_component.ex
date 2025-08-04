@@ -10,7 +10,7 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
   />
   """
   use DurandalWeb, :live_component
-  alias Durandal.{Player, Space}
+  alias Durandal.{Player, Space, Resources}
   alias Durandal.Player.CommandLib
 
   @impl true
@@ -83,6 +83,54 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
                 options={@target_list}
               />
             </div>
+
+            <%!-- Cargo --%>
+            <div :if={@command_type == "unload_cargo"}>
+              <div :if={@subject.docked_with_id == nil}>
+                Need to dock to unload cargo
+              </div>
+              <div :if={@subject.docked_with_id != nil}>
+                <.table
+                  id="unload-simple-resources-table"
+                  rows={@cargo}
+                  table_class="table-sm table-hover"
+                >
+                  <:col :let={cargo} label="Simple">{cargo.type.name}</:col>
+                  <:col :let={cargo} label="Available">{format_number(cargo.quantity)}</:col>
+                  <:col :let={cargo} label="Unload amount">
+                    <.input
+                      field={@form[:contents]}
+                      type="in_map"
+                      key={["form_resources", cargo.type_id]}
+                      actual_type="number"
+                    />
+                  </:col>
+                </.table>
+              </div>
+            </div>
+            <div :if={@command_type == "load_cargo"}>
+              <div :if={@subject.docked_with_id == nil}>
+                Need to dock to load cargo
+              </div>
+              <div :if={@subject.docked_with_id != nil}>
+                <.table
+                  id="load-simple-resources-table"
+                  rows={@cargo}
+                  table_class="table-sm table-hover"
+                >
+                  <:col :let={cargo} label="Simple">{cargo.type.name}</:col>
+                  <:col :let={cargo} label="Available">{format_number(cargo.quantity)}</:col>
+                  <:col :let={cargo} label="Load amount">
+                    <.input
+                      field={@form[:contents]}
+                      type="in_map"
+                      key={["form_resources", cargo.type_id]}
+                      actual_type="number"
+                    />
+                  </:col>
+                </.table>
+              </div>
+            </div>
           </div>
 
           <div class="col-md-2">
@@ -127,6 +175,8 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
     |> assign_form(changeset)
     |> assign(:last_name_lookup, nil)
     |> assign(:target_list_type, nil)
+    |> assign(:ship_cargo, nil)
+    |> assign(:station_cargo, nil)
     |> maybe_change_command_type()
     |> ok
   end
@@ -141,8 +191,8 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
     if new_value != assigns.command_type do
       socket
       |> assign(:command_module, CommandLib.get_command_module!("ship$" <> new_value))
-      |> do_change_command_type(new_value)
       |> assign(:command_type, new_value)
+      |> do_change_command_type(new_value)
     else
       socket
     end
@@ -216,6 +266,78 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
     |> assign_form(changeset)
   end
 
+  defp do_change_command_type(
+         %{assigns: %{subject: %{docked_with_id: nil}}} = socket,
+         "load_cargo"
+       ) do
+    socket
+  end
+
+  defp do_change_command_type(
+         %{assigns: %{subject: %{docked_with_id: station_id}} = assigns} = socket,
+         "load_cargo"
+       ) do
+    cargo =
+      Space.list_station_modules(
+        where: [station_id: station_id],
+        preload: [:cargo]
+      )
+      |> Enum.map(&(&1.simple_cargo ++ &1.composite_cargo))
+      |> Resources.combine_instances_by_type()
+      |> Enum.sort_by(fn i -> i.type.name end, &<=/2)
+
+    empty_resources =
+      cargo
+      |> Map.new(fn cargo -> {cargo.type_id, 0} end)
+
+    changeset =
+      assigns.command
+      |> Player.change_command(%{
+        "contents" => %{
+          "form_resources" => empty_resources
+        }
+      })
+
+    socket
+    |> assign(:cargo, cargo)
+    |> assign_form(changeset)
+  end
+
+  defp do_change_command_type(
+         %{assigns: %{subject: %{docked_with_id: nil}}} = socket,
+         "unload_cargo"
+       ) do
+    socket
+  end
+
+  defp do_change_command_type(%{assigns: assigns} = socket, "unload_cargo") do
+    ship =
+      Space.get_ship(assigns.subject.id,
+        preload: [:cargo]
+      )
+
+    cargo =
+      (ship.simple_cargo ++ ship.composite_cargo)
+      |> Resources.combine_instances_by_type()
+      |> Enum.sort_by(fn i -> i.type.name end, &<=/2)
+
+    empty_resources =
+      cargo
+      |> Map.new(fn cargo -> {cargo.type_id, 0} end)
+
+    changeset =
+      assigns.command
+      |> Player.change_command(%{
+        "contents" => %{
+          "form_resources" => empty_resources
+        }
+      })
+
+    socket
+    |> assign(:cargo, cargo)
+    |> assign_form(changeset)
+  end
+
   defp do_change_command_type(%{assigns: _assigns} = socket, command_type) do
     raise "No handler for command type of #{command_type}"
     socket
@@ -226,6 +348,7 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
     parsed_contents =
       if socket.assigns[:command_module] do
         command_params["contents"]
+        |> parse_from_form(socket.assigns.command_type)
         |> socket.assigns.command_module.parse()
       else
         command_params["contents"]
@@ -249,6 +372,7 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
   def handle_event("save", %{"command" => command_params}, socket) do
     parsed_contents =
       command_params["contents"]
+      |> parse_from_form(socket.assigns.command_type)
       |> socket.assigns.command_module.parse()
 
     ordering =
@@ -296,4 +420,38 @@ defmodule DurandalWeb.Player.ShipCommandAddComponent do
     )
     |> Enum.map(fn row -> {row.name, row.id} end)
   end
+
+  defp parse_from_form(params, "unload_cargo") do
+    new_resources =
+      params["form_resources"]
+      |> Enum.map(fn {k, v} ->
+        v =
+          case v do
+            "" -> 0
+            _ -> String.to_integer(v)
+          end
+
+        [k, v]
+      end)
+
+    Map.put(params, "resources", new_resources)
+  end
+
+  defp parse_from_form(params, "load_cargo") do
+    new_resources =
+      params["form_resources"]
+      |> Enum.map(fn {k, v} ->
+        v =
+          case v do
+            "" -> 0
+            _ -> String.to_integer(v)
+          end
+
+        [k, v]
+      end)
+
+    Map.put(params, "resources", new_resources)
+  end
+
+  defp parse_from_form(params, _command_type), do: params
 end

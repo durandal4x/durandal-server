@@ -19,7 +19,7 @@ defmodule DurandalWeb.Team.ShipLive do
     if socket.assigns.ship do
       {:ok, socket}
     else
-      {:ok, redirect(socket, to: ~p"/admin/games")}
+      {:ok, redirect(socket, to: ~p"/team/dashboard")}
     end
   end
 
@@ -119,7 +119,7 @@ defmodule DurandalWeb.Team.ShipLive do
           :orbiting,
           :docked_with,
           :incomplete_commands,
-          :transfer_with_destination
+          :cargo
         ]
       )
 

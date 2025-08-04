@@ -1,12 +1,10 @@
 defmodule DurandalWeb.Team.DashboardLive do
   use DurandalWeb, :live_view
 
-  alias Durandal.{Space, Player}
+  alias Durandal.{Space, Player, Resources}
 
   @impl true
   def mount(_params, _session, socket) when is_connected?(socket) do
-    :ok = Durandal.subscribe(Player.team_topic(socket.assigns.current_team.id))
-
     socket
     |> get_data
     |> assign(:site_menu_active, "team")
@@ -21,15 +19,30 @@ defmodule DurandalWeb.Team.DashboardLive do
     |> ok
   end
 
+  defp get_data(%{assigns: %{current_team: nil}} = socket) do
+    socket
+  end
+
   defp get_data(%{assigns: %{current_team: team}} = socket) do
+    :ok = Durandal.subscribe(Player.team_topic(team.id))
+
     stations = Space.list_stations(where: [team_id: team.id], order_by: ["Name (A-Z)"])
 
     ships =
       Space.list_ships(where: [team_id: team.id], order_by: ["Name (A-Z)"], preload: [:type])
 
+    {simple_resources, composite_resources} = Resources.list_all_team_resources(team.id)
+
+    combined_simple = Resources.combine_instances_by_type(simple_resources)
+    combined_composite = Resources.combine_instances_by_type(composite_resources)
+
     socket
     |> stream(:ships, ships, reset: true)
     |> stream(:stations, stations, reset: true)
+    |> assign(:simple_resources, simple_resources)
+    |> assign(:composite_resources, composite_resources)
+    |> assign(:combined_simple, combined_simple)
+    |> assign(:combined_composite, combined_composite)
   end
 
   @impl true

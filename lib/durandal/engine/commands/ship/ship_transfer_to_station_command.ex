@@ -91,7 +91,6 @@ defmodule Durandal.Engine.ShipTransferToStationCommand do
 
     {:ok, _ship} =
       Space.update_ship(ship, %{
-        current_transfer_id: nil,
         velocity: station.velocity,
         orbiting_id: station.orbiting_id,
         orbit_clockwise: station.orbit_clockwise,

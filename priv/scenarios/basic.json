@@ -58,6 +58,28 @@
               "type": "$sm-laser-turret",
               "build_progress": 100,
               "health": 100
+            },
+            {
+              "id": "$station1-cargo-bay",
+              "type": "$cargo-bay",
+              "build_progress": 100,
+              "health": 100,
+              "simple_resources": [
+                {
+                  "type": "$copper-ore",
+                  "quantity": 1000
+                },
+                {
+                  "type": "$oxygen",
+                  "quantity": 500
+                }
+              ],
+              "composite_resources": [
+                {
+                  "type": "$comet",
+                  "quantity": 1000
+                }
+              ]
             }
           ],
           "commands": [
@@ -101,6 +123,32 @@
               "type": "$sm-laser-turret",
               "build_progress": 100,
               "health": 100
+            },
+            {
+              "id": "$station2-cargo-bay",
+              "type": "$cargo-bay",
+              "build_progress": 100,
+              "health": 100,
+              "simple_resources": [
+                {
+                  "type": "$iron-ore",
+                  "quantity": 660
+                },
+                {
+                  "type": "$water",
+                  "quantity": 450
+                }
+              ],
+              "composite_resources": [
+                {
+                  "type": "$metal-asteroid",
+                  "quantity": 300
+                },
+                {
+                  "type": "$comet",
+                  "quantity": 200
+                }
+              ]
             }
           ],
           "commands": [
@@ -194,7 +242,23 @@
           "orbit_period": null,
           "build_progress": 100,
           "health": 100,
-          "docked_with": "$station1"
+          "docked_with": "$station1",
+          "simple_resources": [
+            {
+              "type": "$iron-ore",
+              "quantity": 1000
+            },
+            {
+              "type": "$water",
+              "quantity": 1000
+            }
+          ],
+          "composite_resources": [
+            {
+              "type": "$metal-asteroid",
+              "quantity": 1000
+            }
+          ]
         },
         {
           "id": "$team2builder",
@@ -208,7 +272,27 @@
           "orbit_period": null,
           "build_progress": 100,
           "health": 100,
-          "docked_with": "$station2"
+          "docked_with": "$station2",
+          "simple_resources": [
+            {
+              "type": "$iron-ore",
+              "quantity": 1000
+            },
+            {
+              "type": "$water",
+              "quantity": 1000
+            }
+          ],
+          "composite_resources": [
+            {
+              "type": "$metal-asteroid",
+              "quantity": 1000
+            },
+            {
+              "type": "$comet",
+              "quantity": 1000
+            }
+          ]
         }
       ]
     }
@@ -252,6 +336,13 @@
       "max_health": 100,
       "damage": 10,
       "build_time": 100
+    },
+    {
+      "id": "$cargo-bay",
+      "name": "Cargo bay",
+      "max_health": 100,
+      "damage": 10,
+      "build_time": 100
     }
   ],
   "system_object_types": [
@@ -262,6 +353,50 @@
     {
       "id": "$so-planet",
       "name": "Planet"
+    }
+  ],
+  "simple_resource_types": [
+    {
+      "id": "$iron-ore",
+      "name": "Iron ore",
+      "mass": 26,
+      "volume": 1,
+      "tags": []
+    },
+    {
+      "id": "$copper-ore",
+      "name": "Copper ore",
+      "mass": 12,
+      "volume": 1,
+      "tags": []
+    },
+    {
+      "id": "$water",
+      "name": "Water",
+      "mass": 10,
+      "volume": 1,
+      "tags": ["liquid"]
+    },
+    {
+      "id": "$oxygen",
+      "name": "Oxygen",
+      "mass": 4,
+      "volume": 1,
+      "tags": ["combustible", "gas"]
+    }
+  ],
+  "composite_resource_types": [
+    {
+      "id": "$metal-asteroid",
+      "name": "Metal asteroid ore",
+      "contents": ["$iron-ore", "$copper-ore"],
+      "ratios": [50, 50]
+    },
+    {
+      "id": "$comet",
+      "name": "Comet",
+      "contents": ["$oxygen", "$water", "$iron-ore", "$copper-ore"],
+      "ratios": [100, 50, 50, 10]
     }
   ],
   "teams": [

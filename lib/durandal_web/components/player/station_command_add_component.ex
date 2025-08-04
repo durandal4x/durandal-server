@@ -234,6 +234,11 @@ defmodule DurandalWeb.Player.StationCommandAddComponent do
     |> assign_form(changeset)
   end
 
+  defp do_change_command_type(%{assigns: _assigns} = socket, command_type) do
+    raise "No handler for command type of #{command_type}"
+    socket
+  end
+
   @impl true
   def handle_event("validate", %{"command" => command_params}, socket) do
     parsed_contents =

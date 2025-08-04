@@ -394,6 +394,7 @@ defmodule DurandalWeb.CoreComponents do
 
     assigns =
       Map.merge(assigns, %{
+        id: "#{assigns[:name]}#{name}",
         name: "#{assigns[:name]}#{name}",
         type: assigns[:actual_type],
         value: get_in(assigns[:value], List.wrap(assigns[:key]))

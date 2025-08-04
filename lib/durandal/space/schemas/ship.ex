@@ -40,6 +40,8 @@ defmodule Durandal.Space.Ship do
     belongs_to(:docked_with, Durandal.Space.Station, type: Ecto.UUID)
 
     has_many(:commands, Durandal.Player.Command, foreign_key: :subject_id)
+    has_many(:simple_cargo, Durandal.Resources.SimpleShipInstance)
+    has_many(:composite_cargo, Durandal.Resources.CompositeShipInstance)
 
     timestamps(type: :utc_datetime_usec)
   end

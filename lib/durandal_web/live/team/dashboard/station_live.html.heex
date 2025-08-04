@@ -45,32 +45,6 @@
                 <td>Velocity</td>
                 <td><.vector_string value={@station.velocity} /></td>
               </tr>
-              <%= cond do %>
-                <% @station.current_transfer_id == nil -> %>
-                  <tr>
-                    <td colspan="2">No transfer</td>
-                  </tr>
-                <% @station.current_transfer.to_station_id -> %>
-                  <tr>
-                    <td>{gettext("Transfer target")}</td>
-                    <td>{@station.current_transfer.to_station.name}</td>
-                  </tr>
-                <% @station.current_transfer.to_system_object_id -> %>
-                  <tr>
-                    <td>{gettext("Transfer target")}</td>
-                    <td>{@station.current_transfer.to_system_object.name}</td>
-                  </tr>
-              <% end %>
-              <%= if @station.current_transfer_id != nil do %>
-                <tr>
-                  <td>{gettext("Progress")}</td>
-                  <td>
-                    {normalize(@station.current_transfer.progress)} / {normalize(
-                      @station.current_transfer.distance
-                    )} ({round(@station.current_transfer.progress_percentage)}%)
-                  </td>
-                </tr>
-              <% end %>
             </tbody>
           </table>
         </div>
@@ -107,10 +81,49 @@
   </div>
 </div>
 
+<div class="col-md-12 px-4 py-1">
+  <div
+    class="btn btn-sm btn-secondary"
+    id="show-modules-button"
+    style="display: none"
+    phx-click={JS.show(to: "#modules-column") |> JS.hide(to: "#show-modules-button")}
+  >
+    Show modules
+  </div>
+
+  <div
+    class="btn btn-sm btn-secondary"
+    id="show-docked-button"
+    style="display: none"
+    phx-click={JS.show(to: "#docked-column") |> JS.hide(to: "#show-docked-button")}
+  >
+    Show docked
+  </div>
+
+  <div
+    class="btn btn-sm btn-secondary"
+    id="show-cargo-button"
+    style="display: none"
+    phx-click={JS.show(to: "#cargo-column") |> JS.hide(to: "#show-cargo-button")}
+  >
+    Show cargo
+  </div>
+  &nbsp;
+</div>
+
 <div :if={@station} class="row mt-2">
-  <div class="col">
+  <div class="col" id="modules-column">
     <.card>
-      <h4>Modules</h4>
+      <span
+        class="btn btn-sm btn-secondary float-end"
+        phx-click={
+          JS.hide(to: "#modules-column")
+          |> JS.show(to: "#show-modules-button", display: "inline-block")
+        }
+      >
+        Hide
+      </span>
+      <h4>{gettext("Modules")}</h4>
       <.table id="modules" rows={@streams.station_modules} table_class="table-sm table-hover">
         <:col :let={{_id, module}} label="Name">{module.type.name}</:col>
         <:col :let={{_id, module}} label="Health">
@@ -129,9 +142,18 @@
     </.card>
   </div>
 
-  <div class="col">
+  <div class="col" id="docked-column">
     <.card>
-      <h4>Docked ships</h4>
+      <span
+        class="btn btn-sm btn-secondary float-end"
+        phx-click={
+          JS.hide(to: "#docked-column")
+          |> JS.show(to: "#show-docked-button", display: "inline-block")
+        }
+      >
+        Hide
+      </span>
+      <h4>{gettext("Docked ships")}</h4>
       <.table id="docked_ships" rows={@streams.docked_ships} table_class="table-sm table-hover">
         <:col :let={{_id, ship}} label="Name">{ship.type.name}</:col>
         <:col :let={{_id, ship}} label="Health">
@@ -151,6 +173,43 @@
             Show
           </.link>
         </:action>
+      </.table>
+    </.card>
+  </div>
+
+  <div class="col" id="cargo-column">
+    <.card>
+      <span
+        class="btn btn-sm btn-secondary float-end"
+        phx-click={
+          JS.hide(to: "#cargo-column")
+          |> JS.show(to: "#show-cargo-button", display: "inline-block")
+        }
+      >
+        Hide
+      </span>
+      <h4>{gettext("Cargo")}</h4>
+      <.table id="simple-resources-table" rows={@simple_cargo} table_class="table-sm table-hover">
+        <:col :let={cargo} label="Simple">{cargo.type.name}</:col>
+        <:col :let={cargo} label="Quantity">{format_number(cargo.quantity)}</:col>
+        <:col :let={cargo} label="Mass">
+          {format_number(cargo.quantity * cargo.type.mass)}
+        </:col>
+        <:col :let={cargo} label="Volume">
+          {format_number(cargo.quantity * cargo.type.volume)}
+        </:col>
+      </.table>
+
+      <.table
+        id="composite-resources-table"
+        rows={@composite_cargo}
+        table_class="table-sm table-hover"
+      >
+        <:col :let={cargo} label="Composite">{cargo.type.name}</:col>
+        <:col :let={cargo} label="Quantity">{format_number(cargo.quantity)}</:col>
+        <:col :let={cargo} label="Approx mass">
+          {format_number(round(cargo.quantity * cargo.type.averaged_mass))}
+        </:col>
       </.table>
     </.card>
   </div>

@@ -19,6 +19,7 @@ defmodule Durandal.Game.ScenarioLib do
 
   """
   alias Durandal.{Repo, Game, Account}
+  import Ecto.UUID, only: [dump!: 1]
 
   @spec uuid() :: Ecto.UUID.t()
   defp uuid(), do: Ecto.UUID.generate()
@@ -167,10 +168,15 @@ defmodule Durandal.Game.ScenarioLib do
 
       build_teams(data["teams"], ids, opts[:team_data])
       build_ship_types(data["ship_types"], ids)
-      build_system_object_types(data["system_object_types"], ids)
-      build_station_module_types(data["station_module_types"], ids)
+      build_system_object_types(data["system_object_types"] || [], ids)
+      build_station_module_types(data["station_module_types"] || [], ids)
+      build_simple_resource_types(data["simple_resource_types"] || [], ids)
+      build_composite_resource_types(data["composite_resource_types"] || [], ids)
+
       build_team_members(data["teams"], ids, opts[:user_data] || %{})
       build_systems(data["systems"], ids)
+
+      post_creation_process(universe.id)
 
       universe
     end)
@@ -193,6 +199,44 @@ defmodule Durandal.Game.ScenarioLib do
       end)
 
     Repo.insert_all(Durandal.Player.Team, rows)
+  end
+
+  defp build_simple_resource_types(data, ids) do
+    rows =
+      data
+      |> Enum.map(fn type ->
+        %{
+          id: Map.fetch!(ids, type["id"]),
+          universe_id: Map.fetch!(ids, "$universe"),
+          name: type["name"],
+          mass: type["mass"],
+          volume: type["volume"],
+          tags: type["tags"],
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
+        }
+      end)
+
+    Repo.insert_all(Durandal.Resources.SimpleType, rows)
+  end
+
+  defp build_composite_resource_types(data, ids) do
+    rows =
+      data
+      |> Enum.map(fn type ->
+        %{
+          id: Map.fetch!(ids, type["id"]),
+          universe_id: Map.fetch!(ids, "$universe"),
+          name: type["name"],
+          contents: type["contents"] |> Enum.map(fn c -> Map.fetch!(ids, c) end),
+          ratios: type["ratios"],
+          averaged_mass: 1.0,
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
+        }
+      end)
+
+    Repo.insert_all(Durandal.Resources.CompositeType, rows)
   end
 
   defp build_ship_types(data, ids) do
@@ -324,6 +368,8 @@ defmodule Durandal.Game.ScenarioLib do
 
     Repo.insert_all(Durandal.Space.Ship, rows)
     build_ship_commands(data, ids)
+    build_ship_simple_instances(data, ids)
+    build_ship_composite_instances(data, ids)
   end
 
   defp build_ship_commands(data, ids) do
@@ -353,6 +399,54 @@ defmodule Durandal.Game.ScenarioLib do
       |> List.flatten()
 
     Repo.insert_all(Durandal.Player.Command, rows)
+  end
+
+  defp build_ship_simple_instances(data, ids) do
+    rows =
+      data
+      |> Enum.filter(fn ship -> Map.get(ship, "simple_resources") != nil end)
+      |> Enum.map(fn ship ->
+        ship["simple_resources"]
+        |> Enum.map(fn simple_instance ->
+          %{
+            id: Ecto.UUID.generate(),
+            type_id: Map.fetch!(ids, simple_instance["type"]),
+            quantity: simple_instance["quantity"],
+            ship_id: Map.fetch!(ids, ship["id"]),
+            team_id: Map.fetch!(ids, ship["team"]),
+            universe_id: Map.fetch!(ids, "$universe"),
+            inserted_at: DateTime.utc_now(),
+            updated_at: DateTime.utc_now()
+          }
+        end)
+      end)
+      |> List.flatten()
+
+    Repo.insert_all(Durandal.Resources.SimpleShipInstance, rows)
+  end
+
+  defp build_ship_composite_instances(data, ids) do
+    rows =
+      data
+      |> Enum.filter(fn ship -> Map.get(ship, "composite_resources") != nil end)
+      |> Enum.map(fn ship ->
+        ship["composite_resources"]
+        |> Enum.map(fn composite_instance ->
+          %{
+            id: Ecto.UUID.generate(),
+            type_id: Map.fetch!(ids, composite_instance["type"]),
+            quantity: composite_instance["quantity"],
+            team_id: Map.fetch!(ids, ship["team"]),
+            ship_id: Map.fetch!(ids, ship["id"]),
+            universe_id: Map.fetch!(ids, "$universe"),
+            inserted_at: DateTime.utc_now(),
+            updated_at: DateTime.utc_now()
+          }
+        end)
+      end)
+      |> List.flatten()
+
+    Repo.insert_all(Durandal.Resources.CompositeShipInstance, rows)
   end
 
   defp build_stations(data, system_id, ids) do
@@ -432,6 +526,58 @@ defmodule Durandal.Game.ScenarioLib do
       end)
 
     Repo.insert_all(Durandal.Space.StationModule, rows)
+    build_station_module_simple_instances(data, ids)
+    build_station_module_composite_instances(data, ids)
+  end
+
+  defp build_station_module_simple_instances(data, ids) do
+    rows =
+      data
+      |> Enum.filter(fn station_module -> Map.get(station_module, "simple_resources") != nil end)
+      |> Enum.map(fn station_module ->
+        station_module["simple_resources"]
+        |> Enum.map(fn simple_instance ->
+          %{
+            id: Ecto.UUID.generate(),
+            type_id: Map.fetch!(ids, simple_instance["type"]),
+            quantity: simple_instance["quantity"],
+            station_module_id: Map.fetch!(ids, station_module["id"]),
+            team_id: nil,
+            universe_id: Map.fetch!(ids, "$universe"),
+            inserted_at: DateTime.utc_now(),
+            updated_at: DateTime.utc_now()
+          }
+        end)
+      end)
+      |> List.flatten()
+
+    Repo.insert_all(Durandal.Resources.SimpleStationModuleInstance, rows)
+  end
+
+  defp build_station_module_composite_instances(data, ids) do
+    rows =
+      data
+      |> Enum.filter(fn station_module ->
+        Map.get(station_module, "composite_resources") != nil
+      end)
+      |> Enum.map(fn station_module ->
+        station_module["composite_resources"]
+        |> Enum.map(fn composite_instance ->
+          %{
+            id: Ecto.UUID.generate(),
+            type_id: Map.fetch!(ids, composite_instance["type"]),
+            quantity: composite_instance["quantity"],
+            station_module_id: Map.fetch!(ids, station_module["id"]),
+            team_id: nil,
+            universe_id: Map.fetch!(ids, "$universe"),
+            inserted_at: DateTime.utc_now(),
+            updated_at: DateTime.utc_now()
+          }
+        end)
+      end)
+      |> List.flatten()
+
+    Repo.insert_all(Durandal.Resources.CompositeStationModuleInstance, rows)
   end
 
   defp build_team_members(data, ids, user_data) do
@@ -471,6 +617,59 @@ defmodule Durandal.Game.ScenarioLib do
       end)
 
     Repo.insert_all(Durandal.Player.TeamMember, rows)
+  end
+
+  defp post_creation_process(universe_id) do
+    update_station_module_instances_team_id(universe_id)
+    Durandal.Resources.CalculateCombinedValuesJob.perform(universe_id: universe_id)
+  end
+
+  defp update_station_module_instances_team_id(universe_id) do
+    # Simple
+    table = Durandal.Resources.SimpleStationModuleInstance.__schema__(:source)
+
+    query = """
+      UPDATE #{table} AS instances
+      SET team_id = (
+        SELECT stations.team_id
+        FROM space_station_modules AS modules
+        JOIN space_stations AS stations
+          ON modules.station_id = stations.id
+        WHERE modules.id = instances.station_module_id
+      )
+      WHERE universe_id = $1
+    """
+
+    case Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)]) do
+      {:ok, results} ->
+        results.rows
+
+      {a, b} ->
+        raise "ERR: #{a}, #{b}"
+    end
+
+    # Composite
+    table = Durandal.Resources.CompositeStationModuleInstance.__schema__(:source)
+
+    query = """
+      UPDATE #{table} AS instances
+      SET team_id = (
+        SELECT stations.team_id
+        FROM space_station_modules AS modules
+        JOIN space_stations AS stations
+          ON modules.station_id = stations.id
+        WHERE modules.id = instances.station_module_id
+      )
+      WHERE universe_id = $1
+    """
+
+    case Ecto.Adapters.SQL.query(Repo, query, [dump!(universe_id)]) do
+      {:ok, results} ->
+        results.rows
+
+      {a, b} ->
+        raise "ERR: #{a}, #{b}"
+    end
   end
 
   defp apply_ids(the_map, ids) when is_map(the_map) do
